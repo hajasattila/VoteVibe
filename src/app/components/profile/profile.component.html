@@ -1,0 +1,146 @@
+<main
+  class="w-full max-w-xs mx-auto py-4 bg-gray-200 my-4 px-4 shadow-xl rounded-xl mb-32"
+>
+  <div class="w-full max-w-xs mx-auto" *ngIf="user$ | async as user">
+    <header class="flex flex-wrap items-center justify-center">
+      <!-- Módosítás: justify-center hozzáadva -->
+      <div class="relative">
+        <!-- profile image -->
+        <img
+          class="w-40 h-40 rounded-full mb-4"
+          [src]="user.photoURL ?? '/assets/images/image-placeholder.png'"
+          alt="Profile Image"
+        />
+        <button
+          class="bg-blue-500 text-white hover:bg-blue-600 focus:outline-none rounded-full p-2 absolute top-5 right-5 -mt-4 -mr-4"
+          (click)="inputField.click()"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+      <input
+        #inputField
+        hidden
+        type="file"
+        (change)="uploadFile($event, user)"
+      />
+
+      <!-- profile meta -->
+      <div class="w-8/12 md:w-7/12 ml-4">
+        <div class="md:flex md:flex-wrap md:items-center mb-4">
+          <h2 class="text-3xl inline-block font-light md:mr-2 mb-2 sm:mb-0">
+            {{ user.displayName }}
+          </h2>
+
+          <!-- badge -->
+          <span
+            class="inline-block text-blue-500 relative mr-6 text-xl transform -translate-y-2"
+            aria-hidden="true"
+          >
+            <i class="text-white text-xs absolute inset-x-0 ml-1 mt-px"></i>
+          </span>
+
+          <!-- follow button -->
+          <button
+            mat-raised-button
+            color="primary"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold text-sm rounded block text-center relative top-[-10px]"
+          >
+            Add Friend
+          </button>
+        </div>
+
+        <!-- post, following, followers list for medium screens -->
+        <ul class="hidden md:flex space-x-8 mb-4" *ngIf="user">
+          <li>
+            <span class="font-semibold">{{ user.polls || 0 }}</span>
+            polls
+          </li>
+          <li>
+            <span class="font-semibold">{{ user.games || 0 }}</span>
+            games
+          </li>
+          <li>
+            <span class="font-semibold">{{
+              user.friendList?.length || 0
+            }}</span>
+            friends
+          </li>
+        </ul>
+      </div>
+    </header>
+    <div
+      class="w-full max-w-xs mx-auto py-4 bg-gray-200 my-4 px-4 shadow-xl rounded-xl"
+    >
+      <ng-container *ngIf="user">
+        <app-friend-list [friends]="user.friendList"></app-friend-list>
+      </ng-container>
+
+      <form class="mt-4" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+        <div class="grid grid-cols-2 gap-4">
+          <mat-form-field class="w-full">
+            <input
+              type="text"
+              matInput
+              formControlName="firstName"
+              placeholder="First Name"
+              class="w-full"
+            />
+          </mat-form-field>
+          <mat-form-field class="w-full">
+            <input
+              type="text"
+              matInput
+              formControlName="lastName"
+              placeholder="Last Name"
+              class="w-full"
+            />
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          <mat-form-field class="w-full">
+            <input
+              type="text"
+              matInput
+              formControlName="displayName"
+              placeholder="Nickname"
+              class="w-full"
+            />
+          </mat-form-field>
+          <mat-form-field class="w-full">
+            <input
+              type="text"
+              matInput
+              formControlName="phone"
+              placeholder="Phone"
+              class="w-full"
+            />
+          </mat-form-field>
+        </div>
+        <mat-form-field class="w-full mt-4">
+          <input
+            type="text"
+            matInput
+            formControlName="address"
+            placeholder="Description"
+            class="w-full"
+          />
+        </mat-form-field>
+
+        <button
+          class="bg-blue-500 text-white hover:bg-blue-600 focus:outline-none rounded-full p-2 float-right"
+          (click)="resetPassword()"
+        >
+          Reset Password
+        </button>
+        <button
+          type="submit"
+          class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full focus:outline-none"
+        >
+          Save
+        </button>
+      </form>
+    </div>
+  </div>
+</main>

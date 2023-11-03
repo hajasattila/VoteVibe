@@ -1,0 +1,9 @@
+{
+  "hosting": [
+    {
+      "target": "camera-app",
+      "source": ".",
+      "frameworksBackend": {}
+    }
+  ]
+}

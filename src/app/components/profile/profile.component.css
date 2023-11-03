@@ -1,0 +1,32 @@
+.friend-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Jobb oldalon elhelyezés */
+    position: relative;
+    margin-right: 10px; /* Válassz megfelelő margót a jobb oldali elrendezéshez */
+  }
+  
+  .friend-list {
+    background-color: #fff; /* Válassz megfelelő háttérszínt */
+    padding: 10px;
+    border: 1px solid #ccc; /* Válassz megfelelő keretet */
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  
+  /* Változó méretű barátlista telefon nézeten */
+  @media (max-width: 767px) {
+    .friend-list-container {
+      align-items: stretch; /* Kitölti a szélességet telefon nézeten */
+      margin: 0; /* Ne legyen margin jobb oldalon telefon nézeten */
+    }
+  
+    .friend-list {
+      position: static;
+      border: none; /* Ne legyen keret telefon nézeten */
+    }
+  }
+  
