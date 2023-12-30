@@ -29,4 +29,17 @@
       border: none; /* Ne legyen keret telefon nézeten */
     }
   }
+
+  /* Initial state */
+.friend-requests-animation {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* Final state when active */
+.friend-requests-animation.ng-animate-active {
+  display: block;
+  opacity: 1;
+}
   

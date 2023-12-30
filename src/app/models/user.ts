@@ -1,6 +1,6 @@
 export interface ProfileUser {
-  uid: string;
-  email?: string;
+  uid: string ;
+  email?: string | null;
   firstName?: string;
   lastName?: string;
   displayName?: string;
@@ -11,4 +11,7 @@ export interface ProfileUser {
   friendList?: ProfileUser[];
   games?: number;
   polls?: number;
+  friendRequests?: string[];
+  sentFriendRequests?: string[];
 }
+

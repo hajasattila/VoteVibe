@@ -1,5 +1,9 @@
 mat-toolbar {
   justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1000; /* Ezt adjuk hozzá */
 }
 
 .content {

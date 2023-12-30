@@ -1,9 +1,2 @@
-.friend-list {
-    max-width: 60rem; /* A maximális szélesség beállítása */
-    overflow-x: auto; /* Oldalra görgetés engedélyezése, ha a tartalom túl nagy */
-  }
-  .friend-list {
-    max-width: 100%; /* A maximális szélesség beállítása a teljes szélességre */
-    overflow-x: auto; /* Oldalra görgetés engedélyezése, ha a tartalom túl nagy */
-  }
+
   

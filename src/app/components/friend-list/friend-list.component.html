@@ -1,20 +1,20 @@
 <div class="friend-list">
-  <h3 class="text-xl font-semibold mb-2" *ngIf="friends">
-    Friends ({{ friends }})
-  </h3>
-
   <div class="overflow-x-auto">
-    <ul class="flex space-x-4">
+    <ul class="flex flex-wrap justify-start space-x-4">
       <li *ngFor="let friend of friends" class="friend-item">
-        <div class="friend-avatar">
-          <img
-            class="w-10 h-10 rounded-full mb-4"
-            [src]="friend.photoURL || '/assets/images/image-placeholder.png'"
-            alt="Profile Image"
-          />
-        </div>
-        <div class="friend-details">
-          <h4>{{ friend.displayName }}</h4>
+        <div class="flex flex-col items-center"> <!-- Flex container for vertical stacking -->
+          <div class="friend-avatar">
+            <img
+            class="w-10 h-10 rounded-full mb-2 cursor-pointer hover:opacity-75"
+            *ngIf="getFriendPhotoURL(friend.uid) | async as photoURL"
+              [src]="photoURL"
+              alt="Profile Image"
+              (click)="removeFriend(friend)"
+            />
+          </div>
+          <div class="friend-details text-center"> <!-- Centered text for the name -->
+            <h4><strong>{{ getFriendDisplayName(friend) }}</strong></h4>
+          </div>
         </div>
       </li>
     </ul>

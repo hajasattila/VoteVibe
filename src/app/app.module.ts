@@ -24,6 +24,9 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { FooterComponent } from './components/footer/footer.component';
 import { FriendListComponent } from './components/friend-list/friend-list.component';
+import { ProfileSearchComponent } from './profile-search/profile-search.component';
+import { UserNamePipe } from './user-name.pipe';
+import { ScrollToTopComponent } from './scroll-to-top/scroll-to-top.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +38,9 @@ import { FriendListComponent } from './components/friend-list/friend-list.compon
     ProfileComponent,
     FooterComponent,
     FriendListComponent,
+    ProfileSearchComponent,
+    UserNamePipe,
+    ScrollToTopComponent
   ],
   imports: [
     BrowserModule,
@@ -46,12 +52,14 @@ import { FriendListComponent } from './components/friend-list/friend-list.compon
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
+    MatButtonModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
     provideStorage(() => getStorage()),
     HotToastModule.forRoot(),
     MatMenuModule,
+    MatButtonModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
