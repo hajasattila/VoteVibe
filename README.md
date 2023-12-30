@@ -23,17 +23,27 @@ A szavazások végeztével a felhasználók diagramokat tekinthetnek meg a szava
 Ez a szakdolgozatvázlat összefoglalja egy szavazás alapú döntéshozatali web alkalmazásnak tervezését. Az alkalmazás egyszerű használata és rugalmas szavazási konfigurációi lehetővé teszik a baráti közösségek számára, hogy könnyedén és élvezetesen hozzanak közös döntéseket.
 
 ## Felhasznált technológiák
-- **Fejlesztői eszközök:** Visual Studio Code a választott kódszerkesztő, valamint Git a verziókezelő.
-- **Programnyelvek:** Node.js, TypeScript.
-- **Könyvtárak és keretrendszerek:** Angular v16.2, TailwindCss.
-- **Adatbázis-kezelő rendszer:** Az alkalmazás adatbázis-kezeléséhez Firebase-t választottam.
+- **Fejlesztői eszközök:** (Visual Studio Code)[https://code.visualstudio.com/] a választott kódszerkesztő, valamint (Git)[https://git-scm.com/] a verziókezelő.
+- **Programnyelvek:** (Node.js)[https://nodejs.org/en], (TypeScript)[https://www.typescriptlang.org/].
+- **Könyvtárak és keretrendszerek:** (Angular v16.2)[https://angular.io/], (TailwindCss)[https://tailwindcss.com/].
+- **Adatbázis-kezelő rendszer:** Az alkalmazás adatbázis-kezeléséhez (Firebase)[https://firebase.google.com/]-t választottam.
 - **Hosztolás és szerver:** Az alkalmazás a Firebase Hosting-on lesz deployolva.
 
-# Példa Fiók
+
+## Letöltés utáni futtatási parancs
+```
+npm install
+```
+## Lokális futtatási parancs
+```
+ng serve
+```
+
+## Példa Fiók
 
 Az alábbiakban található egy példa fiók, amelyet a rendszer használatához használhat:
 
-| Felhasználónév     | E-mail cím          | Jelszó   |
-|--------------------|---------------------|----------|
-| Példa Felhasználó  | asdasdasd@gmail.com | asdasd   |
+|  E-mail cím          | Jelszó   |
+|--------------------|---------------------|
+|  asdasdasd@gmail.com | asdasd   |
 
