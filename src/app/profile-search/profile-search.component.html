@@ -1,14 +1,15 @@
-<div class="w-full max-w-xs mx-auto" id="searchContainer">
+<div class="mb-5 mt-2.5 w-full max-w-md mx-auto" id="searchContainer">
   <div class="relative">
     <input
       type="text"
       (focus)="showSuggestions = true"
+      (focusout)="showSuggestions = false"
       [formControl]="searchControl"
       placeholder="Search for friends!"
-      class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+      class="cursor-pointer pl-10 pr-4 py-2 border-2 border-gray-300 rounded-full focus:outline-none focus:border-indigo-500 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
     />
-    <div *ngIf="filteredUsers$ | async as users" id="suggestionsList" class="absolute w-full bg-white rounded-md shadow-lg z-10">
-      <ul *ngIf="searchControl.value && users.length > 0; else noResults">
+    <div *ngIf="showSuggestions && (filteredUsers$ | async) as users" id="suggestionsList" class="absolute w-full mt-1 bg-white rounded-md shadow-lg z-10">
+      <ul *ngIf="searchControl.value && users.length > 0; else noResults" class="max-h-60 overflow-auto">
         <li *ngFor="let user of users" class="flex items-center px-4 py-2 hover:bg-gray-100">
           <img class="w-10 h-10 rounded-full mr-3" [src]="user.photoURL ?? 'assets/images/image-placeholder.png'" alt="{{ user.displayName }}" />
           <div class="flex-grow">
@@ -16,14 +17,13 @@
             <!-- Add more user details here if needed -->
           </div>
           <!-- Plus icon button -->
-          <button class="ml-4 hover:text-indigo-500" (click)="onAddFriend(user)">
+          <button class="ml-4 hover:text-indigo-500 focus:outline-none" (click)="onAddFriend(user)">
             <mat-icon>add</mat-icon>
           </button>
         </li>
       </ul>
-
       <ng-template #noResults>
-        <div *ngIf="searchControl.value" class="px-4 py-2 text-gray-700">Nincs ilyen user</div>
+        <div *ngIf="searchControl.value" class="px-4 py-2 text-gray-700">No users found</div>
       </ng-template>
     </div>
   </div>

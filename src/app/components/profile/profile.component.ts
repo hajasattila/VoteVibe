@@ -25,7 +25,7 @@ export class ProfileComponent implements OnInit {
     displayName: [""],
     firstName: [""],
     lastName: [""],
-    phone: ["", [Validators.required, Validators.pattern(/^06\d{9}$/)]],
+    phone: ['', Validators.pattern(/^06\d{9}$/)],
     description: [""],
   });
 
@@ -40,6 +40,19 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.user$.pipe(take(1)).subscribe((user) => {
+      if (user) {
+        this.user = user; // Set the local user property
+        this.profileForm.patchValue({
+          uid: user.uid,
+          displayName: user.displayName,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          phone: user.phone,
+          description: user.description,
+        });
+      }
+    });
   }
 
   uploadFile(event: any, { uid }: ProfileUser) {
@@ -65,7 +78,7 @@ export class ProfileComponent implements OnInit {
     const { uid, ...data } = this.profileForm.value;
     let displayName = this.profileForm.get("displayName")?.value;
 
-    if (!uid || typeof displayName !== "string") {
+    if (!uid || typeof displayName !== "string" || this.profileForm.invalid) {
       this.toast.error("Please ensure all fields are filled out correctly.");
       return;
     }
