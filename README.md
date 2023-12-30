@@ -28,3 +28,12 @@ Ez a szakdolgozatvázlat összefoglalja egy szavazás alapú döntéshozatali we
 - **Könyvtárak és keretrendszerek:** Angular v16.2, TailwindCss.
 - **Adatbázis-kezelő rendszer:** Az alkalmazás adatbázis-kezeléséhez Firebase-t választottam.
 - **Hosztolás és szerver:** Az alkalmazás a Firebase Hosting-on lesz deployolva.
+
+# Példa Fiók
+
+Az alábbiakban található egy példa fiók, amelyet a rendszer használatához használhat:
+
+| Felhasználónév     | E-mail cím          | Jelszó   |
+|--------------------|---------------------|----------|
+| Példa Felhasználó  | asdasdasd@gmail.com | asdasd   |
+
