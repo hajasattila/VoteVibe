@@ -77,7 +77,6 @@ export class UsersService {
             const friendData = friendDoc.data() as ProfileUser; // Replace with your actual user data type
 
             if (friendData?.friendList?.some((friend: any) => friend.uid === currentUserId)) {
-              this.toast.info("You are already friends");
               return throwError(() => new Error("Users are already friends"));
             } else {
               return from(
@@ -88,7 +87,6 @@ export class UsersService {
             }
           }),
           catchError((error) => {
-            this.toast.error("Nem sikerült elküldeni a baráti kérelmet");
             return throwError(() => error);
           })
         );
@@ -176,7 +174,9 @@ export class UsersService {
       })
     );
   }
-  isDisplayNameTaken(displayName: string): Observable<boolean> {
-    return this.getFilteredUsers(displayName).pipe(map((users) => users.some((user) => user.displayName?.toLowerCase() === displayName.toLowerCase())));
+  isDisplayNameTaken(displayName: string, currentUserId: string): Observable<boolean> {
+    return this.getFilteredUsers(displayName).pipe(
+      map(users => users.some(user => user.uid !== currentUserId && user.displayName?.toLowerCase() === displayName.toLowerCase()))
+    );
   }
 }

@@ -22,7 +22,7 @@
         </p>
       </div>
       <div class="animate-prominence p-5 bg-white md:flex-1">
-        <h3 class="my-4 text-2xl font-semibold text-gray-700 text-center tracking-wider">Sign Up</h3>
+        <h3 class="my-4  text-center tracking-wider"><span class="text-2xl font-semibold text-gray-700">Sign Up</span></h3>
         <div class="flex flex-col space-y-1">
           <label for="name" class="text-sm font-semibold text-gray-500">Nickname</label>
           <input
@@ -47,7 +47,7 @@
           <div class="text-red-500" *ngIf="email?.errors?.['required']">Email address is required</div>
           <div class="text-red-500" *ngIf="email?.errors?.['email']">Please enter a valid email address</div>
         </div>
-        <div class="flex flex-col space-y-1">
+        <div class="flex flex-col space-y-1 ">
           <label for="password" class="text-sm font-semibold text-gray-500">Password</label>
           <input
             type="password"
@@ -57,7 +57,7 @@
           />
           <div class="text-red-500" *ngIf="password?.errors?.['required']">Password is required</div>
         </div>
-        <div class="flex flex-col space-y-1">
+        <div class="flex flex-col space-y-1 mb-5">
           <label for="confirmPassword" class="text-sm font-semibold text-gray-500">Confirm Password</label>
           <input
             type="password"

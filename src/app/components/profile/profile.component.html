@@ -1,4 +1,4 @@
-<div class=" relative max-w-md mx-auto md:max-w-2xl mt-6 min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded-xl mt-16 text-lg">
+<div class="relative max-w-md mx-auto md:max-w-2xl mt-6 min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded-xl mt-16 text-lg">
   <div class="animate-prominence px-6 py-4 w-full max-w-xs mx-auto" *ngIf="user$ | async as user">
     <div class="flex flex-wrap justify-center">
       <div class="w-full flex justify-center">
@@ -12,7 +12,7 @@
           </button>
         </div>
       </div>
-      <div class="w-full text-center mt-5  ">
+      <div class="w-full text-center mt-5">
         <!-- Statistics -->
         <div class="flex justify-center lg:pt-4 pt-8 pb-0">
           <div class="p-3 text-center">
@@ -78,7 +78,7 @@
       </header>
       <!-- Profile form -->
       <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="space-y-6">
-        <div class="grid grid-cols-1 gap-6 ">
+        <div class="grid grid-cols-1 gap-6">
           <mat-form-field class="w-full">
             <input type="text" #firstName matInput formControlName="firstName" placeholder="First Name" class="w-full" maxlength="12" />
             <mat-hint align="end">{{ firstName.value.length }} / 12</mat-hint>
