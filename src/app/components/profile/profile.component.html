@@ -42,7 +42,7 @@
       </ng-container>
       <!-- Friend Requests Section -->
       <header class="flex flex-wrap items-center justify-center">
-        <div class="relative justify-between items-center p-4 bg-transparent shadow rounded mb-4">
+        <div class="relative justify-between items-center p-4 bg-transparent rounded mb-4">
           <div class="flex flex-col items-center justify-center">
             <ng-container *ngIf="user?.friendRequests?.length !== 0; else noFriendRequests">
               <h3 class="text-lg font-semibold">Friend Requests ({{ user?.friendRequests?.length ?? 0 }})</h3>
@@ -63,12 +63,22 @@
         <div [class.max-h-0]="!showFriendRequests" [class.max-h-96]="showFriendRequests" class="overflow-hidden transition-all duration-700 ease-in-out">
           <div *ngIf="user.friendRequests && user.friendRequests.length > 0" class="friend-requests-section bg-transparent shadow rounded mb-4">
             <ul>
-              <li *ngFor="let friendRequest of user?.friendRequests" class="mb-2 p-2 border-b last:border-b-0">
+              <li *ngFor="let friendRequest of user?.friendRequests" class="shadow-xl mb-2 p-2 border-b last:border-b-0">
                 Request from: <strong>{{ friendRequest | userName | async }}</strong>
                 <div class="mt-2">
                   <div class="text-center">
-                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2" (click)="acceptFriendRequest(friendRequest)">Accept</button>
-                    <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded" (click)="rejectFriendRequest(friendRequest)">Reject</button>
+                    <button
+                      class="mr-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
+                      (click)="acceptFriendRequest(friendRequest)"
+                    >
+                      <span class="material-icons" style="vertical-align: middle">check</span> Accept
+                    </button>
+                    <button
+                      class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
+                      (click)="rejectFriendRequest(friendRequest)"
+                    >
+                      <span class="material-icons" style="vertical-align: middle">close</span> Reject
+                    </button>
                   </div>
                 </div>
               </li>

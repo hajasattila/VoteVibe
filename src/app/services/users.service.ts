@@ -146,20 +146,29 @@ export class UsersService {
     return this.authService.currentUser$.pipe(
       switchMap((currentUser) => {
         if (!currentUser || !currentUser.uid) {
-          // If no logged-in user or no UID, throw an error
+          // Ha nincs bejelentkezett felhasználó vagy UID, dobjon egy hibát
           return throwError(() => new Error("You must be logged in to remove friends."));
         }
-        // Referenciák a dokumentumokhoz
+        // Dokumentum referenciák
         const currentUserDocRef = doc(this.firestore, `users/${currentUser.uid}`);
         const friendDocRef = doc(this.firestore, `users/${friend.uid}`);
-
-        // Tranzakció létrehozása a mindkét user friendList-jének frissítésére
+  
         return from(
           runTransaction(this.firestore, async (transaction) => {
+            // Olvasások a tranzakcióban a következetesség érdekében
+            const currentUserDoc = await transaction.get(currentUserDocRef);
+            const friendDoc = await transaction.get(friendDocRef);
+  
+            // Biztosítja, hogy a dokumentumok léteznek
+            if (!currentUserDoc.exists() || !friendDoc.exists()) {
+              throw new Error("One of the user profiles does not exist.");
+            }
+  
             // Eltávolítja a barátot az aktuális felhasználó friendList-jéből
             transaction.update(currentUserDocRef, {
               friendList: arrayRemove({ uid: friend.uid, displayName: friend.displayName }),
             });
+  
             // Eltávolítja az aktuális felhasználót a barát friendList-jéből
             transaction.update(friendDocRef, {
               friendList: arrayRemove({ uid: currentUser.uid, displayName: currentUser.displayName }),
@@ -168,12 +177,15 @@ export class UsersService {
         );
       }),
       catchError((error) => {
-        // Handle the error
+        // Kezeli a hibát
         console.error("Error removing friend:", error);
         return throwError(() => error);
       })
     );
   }
+  
+  
+
   isDisplayNameTaken(displayName: string, currentUserId: string): Observable<boolean> {
     return this.getFilteredUsers(displayName).pipe(
       map(users => users.some(user => user.uid !== currentUserId && user.displayName?.toLowerCase() === displayName.toLowerCase()))

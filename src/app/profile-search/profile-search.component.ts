@@ -94,7 +94,7 @@ export class ProfileSearchComponent implements OnInit {
                 this.toast.observe({
                   loading: "Friend request is being sent...",
                   success: `Friend request has been sent to ${user.displayName}`,
-                  error: `${user.displayName} is already your friend!`,
+                  error: `${user.displayName} is already your friend or deleted from your friendlist!`,
                 })
               )
               .subscribe();
