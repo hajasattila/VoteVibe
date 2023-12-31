@@ -5,6 +5,7 @@ import { ProfileUser } from "../models/user";
 import { AuthService } from "./auth.service";
 import { runTransaction } from "firebase/firestore";
 import { HotToastService } from "@ngneat/hot-toast";
+import { Room } from "../models/room";
 
 @Injectable({
   providedIn: "root",
@@ -152,23 +153,23 @@ export class UsersService {
         // Dokumentum referenciák
         const currentUserDocRef = doc(this.firestore, `users/${currentUser.uid}`);
         const friendDocRef = doc(this.firestore, `users/${friend.uid}`);
-  
+
         return from(
           runTransaction(this.firestore, async (transaction) => {
             // Olvasások a tranzakcióban a következetesség érdekében
             const currentUserDoc = await transaction.get(currentUserDocRef);
             const friendDoc = await transaction.get(friendDocRef);
-  
+
             // Biztosítja, hogy a dokumentumok léteznek
             if (!currentUserDoc.exists() || !friendDoc.exists()) {
               throw new Error("One of the user profiles does not exist.");
             }
-  
+
             // Eltávolítja a barátot az aktuális felhasználó friendList-jéből
             transaction.update(currentUserDocRef, {
               friendList: arrayRemove({ uid: friend.uid, displayName: friend.displayName }),
             });
-  
+
             // Eltávolítja az aktuális felhasználót a barát friendList-jéből
             transaction.update(friendDocRef, {
               friendList: arrayRemove({ uid: currentUser.uid, displayName: currentUser.displayName }),
@@ -183,12 +184,21 @@ export class UsersService {
       })
     );
   }
-  
-  
 
   isDisplayNameTaken(displayName: string, currentUserId: string): Observable<boolean> {
-    return this.getFilteredUsers(displayName).pipe(
-      map(users => users.some(user => user.uid !== currentUserId && user.displayName?.toLowerCase() === displayName.toLowerCase()))
+    return this.getFilteredUsers(displayName).pipe(map((users) => users.some((user) => user.uid !== currentUserId && user.displayName?.toLowerCase() === displayName.toLowerCase())));
+  }
+
+  addRoomToUser(userId: string | null, room: Room): Observable<void> {
+    if (!userId) {
+      console.error("Invalid user ID");
+      return throwError(() => new Error("Invalid user ID")); // Create an observable that emits an error
+    }
+    const userDocRef = doc(this.firestore, `users/${userId}`);
+    return from(
+      updateDoc(userDocRef, {
+        gameRooms: arrayUnion(room), // Assumes gameRooms is an array in the user's document
+      })
     );
   }
 }

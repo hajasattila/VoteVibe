@@ -6,6 +6,7 @@ import { LoginComponent } from "./components/login/login.component";
 import { SignUpComponent } from "./components/sign-up/sign-up.component";
 import { canActivate, redirectLoggedInTo, redirectUnauthorizedTo } from "@angular/fire/auth-guard";
 import { ProfileComponent } from "./components/profile/profile.component";
+import { GameComponent } from "./components/game/game.component";
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["login"]);
 const redirectLoggedInToHome = () => redirectLoggedInTo(["home"]);
@@ -35,6 +36,11 @@ const routes: Routes = [
     path: "profile",
     component: ProfileComponent,
     ...canActivate(redirectUnauthorizedToLogin),
+  },
+  {
+    path: 'game',
+    component: GameComponent,
+    ...canActivate(redirectUnauthorizedToLogin), // Ha szükséges, szabályozd az hozzáférést
   },
 ];
 

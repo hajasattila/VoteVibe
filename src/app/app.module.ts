@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { environment } from '../environments/environment';
 import { provideAuth, getAuth } from '@angular/fire/auth';
@@ -27,6 +27,8 @@ import { FriendListComponent } from './components/friend-list/friend-list.compon
 import { ProfileSearchComponent } from './profile-search/profile-search.component';
 import { UserNamePipe } from './user-name.pipe';
 import { ScrollToTopComponent } from './scroll-to-top/scroll-to-top.component';
+import { GameComponent } from './components/game/game.component';
+import { DatabaseService } from './services/database.service';
 
 @NgModule({
   declarations: [
@@ -40,7 +42,8 @@ import { ScrollToTopComponent } from './scroll-to-top/scroll-to-top.component';
     FriendListComponent,
     ProfileSearchComponent,
     UserNamePipe,
-    ScrollToTopComponent
+    ScrollToTopComponent,
+    GameComponent
   ],
   imports: [
     BrowserModule,
@@ -60,8 +63,10 @@ import { ScrollToTopComponent } from './scroll-to-top/scroll-to-top.component';
     HotToastModule.forRoot(),
     MatMenuModule,
     MatButtonModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
-  providers: [],
+  providers: [DatabaseService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

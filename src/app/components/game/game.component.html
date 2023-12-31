@@ -1,0 +1,100 @@
+<!-- Generate or join a room -->
+<div class="area">
+  <ul class="circles">
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+  </ul>
+
+  <div class="flex flex-col justify-center items-center text-center h-screen lg:min-h-screen">
+    <!-- Option 1 -->
+    <div *ngIf="showGenerateText; else roomDetails" class="animate-slideIn flex justify-center items-center p-10 transition duration-500 ease-out transform fadeOut">
+      <label class="option-01 cursor-pointer bounce py-5 px-4 md:py-10 md:px-10 bg-white rounded-lg shadow-lg hover:bg-gray-300 transition duration-300 ease-in-out" (click)="toggleRoomDetails()">
+        <span class="text-lg md:text-2xl lg:text-3xl font-bold text-gray-700">Generate a room</span>
+      </label>
+    </div>
+
+    <!-- Room details form template -->
+    <ng-template #roomDetails>
+      <div class="container mx-auto p-8" [class.hidden]="!showRoomDetails" class="animate-slideOut mb-10">
+        <div class="w-full max-w-4xl mx-auto bg-white shadow-xl rounded-xl p-8 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:shadow-2xl">
+          <div class="text-center mb-6">
+            <span class="text-lg font-medium">Current Room Code: {{ roomCode }}</span>
+          </div>
+
+          <form>
+            <div class="mb-6">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="roomName">Szoba neve</label>
+              <input
+                [(ngModel)]="roomName"
+                name="roomName"
+                id="roomName"
+                type="text"
+                placeholder="Szoba neve"
+                required
+                maxlength="12"
+                #roomNameField="ngModel"
+                class="transition duration-500 ease-in-out transform border-2 border-gray-300 focus:border-blue-500 rounded-lg w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none"
+              />
+
+              <div *ngIf="roomNameField.errors?.['required'] && roomNameField.dirty" class="text-red-500 text-xs italic mt-2">A szoba nevének megadása kötelező.</div>
+            </div>
+
+            <div class="mb-6">
+              <label class="block text-gray-700 text-sm font-bold mb-2">Időkorlát</label>
+              <select
+                [(ngModel)]="selectedTimeLimit"
+                name="selectedTimeLimit"
+                class="block appearance-none w-full bg-white border-2 border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+              >
+                <option value="1">1 óra</option>
+                <option value="6">6 óra</option>
+                <option value="12">12 óra</option>
+                <option value="24">24 óra</option>
+              </select>
+            </div>
+
+            <div class="mb-6">
+              <label class="block text-gray-700 text-sm font-bold mb-2">Szavazás típusa</label>
+              <select
+                [(ngModel)]="selectedVoteType"
+                name="selectedVoteType"
+                class="block appearance-none w-full bg-white border-2 border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+              >
+                <option>Kép alapú</option>
+                <option>Szöveg alapú</option>
+              </select>
+            </div>
+
+            
+
+            <div class="flex items-center justify-between mt-8">
+              <button
+                (click)="createRoom()"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transform hover:-translate-y-1 transition duration-300 ease-in-out"
+                type="button"
+              >
+                Szoba létrehozása
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- Option 2 -->
+    <div class="animate-slideOut w-full md:w-1/2 flex justify-center items-center p-10 md:p-10">
+      <label class="option-02 cursor-pointer bounce py-5 px-4 md:py-10 md:px-10 bg-white rounded-lg shadow-lg hover:bg-gray-300 transition duration-300 ease-in-out">
+        <span class="text-lg md:text-2xl lg:text-3xl font-bold text-gray-700">Join a room</span>
+        <input id="joinRoom" name="Choice" type="radio" class="hidden" />
+      </label>
+    </div>
+  </div>
+</div>
