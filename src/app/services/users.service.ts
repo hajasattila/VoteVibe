@@ -11,6 +11,16 @@ import { Room } from "../models/room";
   providedIn: "root",
 })
 export class UsersService {
+  getFriends(userId: string): Observable<ProfileUser[]> {
+    const friendsRef = collection(this.firestore, `/users/${userId}/friendList`);
+    return collectionData(friendsRef, { idField: "key" }).pipe(
+      map((friends: any[]) =>
+        friends.map((friend) => ({
+          ...(friend as ProfileUser),
+        }))
+      )
+    );
+  }
   constructor(private firestore: Firestore, private authService: AuthService, private toast: HotToastService) {}
 
   get currentUserProfile$(): Observable<ProfileUser | null> {

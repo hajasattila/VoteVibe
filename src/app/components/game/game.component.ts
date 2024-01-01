@@ -1,3 +1,4 @@
+import { animate, state, style, transition, trigger } from "@angular/animations";
 import { Component, OnInit } from "@angular/core";
 import { HotToastService } from "@ngneat/hot-toast";
 import { take } from "rxjs";
@@ -22,23 +23,25 @@ export class GameComponent implements OnInit {
   isAuthenticated: boolean = false;
   showRoomDetails = false;
   showGenerateText = true;
-  
+  friends: ProfileUser[] = []; // Assuming you have a ProfileUser model
+  showFriendList = false; // Tracks the visibility of the friend list
 
   toggleRoomDetails() {
     this.showGenerateText = false; // Azonnal eltünteti a "Generate a room" szöveget
     this.showRoomDetails = true;
   }
 
-  constructor(
-    private authService: AuthService,
-    private dbService: DatabaseService,
-    private userService: UsersService,
-    private toast: HotToastService // Inject the toast service
-  ) {
+  toggleFriendList() {
+    this.showFriendList = !this.showFriendList;
+  }
+
+  constructor(private authService: AuthService, private dbService: DatabaseService, private userService: UsersService, private toast: HotToastService) {
     this.roomCode = this.generateRoomCode(6, 12);
   }
 
   ngOnInit() {
+    this.loadFriends();
+
     this.authService.getCurrentUser().subscribe((user) => {
       if (user) {
         this.isAuthenticated = true;
@@ -49,6 +52,16 @@ export class GameComponent implements OnInit {
       } else {
         this.isAuthenticated = false;
         this.currentUserId = null;
+      }
+    });
+  }
+
+  loadFriends() {
+    this.authService.getCurrentUser().subscribe((user) => {
+      if (user) {
+        this.userService.getFriends(user.uid).subscribe((friends) => {
+          this.friends = friends;
+        });
       }
     });
   }
@@ -95,7 +108,17 @@ export class GameComponent implements OnInit {
 
         // Now, proceed to use your database service to save the new room
         this.dbService.createRoom(newRoom).subscribe({
-          next: () => this.toast.success("Room successfully created with code: " + this.roomCode),
+          next: () => {
+            this.toast.success("Room successfully created with code: " + this.roomCode);
+
+            // Increase the polls count for the current user
+            if (this.currentUser) {
+              this.currentUser.polls = (this.currentUser.polls || 0) + 1;
+
+              // Update the current user in the database using UsersService
+              this.userService.updateUser(this.currentUser).subscribe();
+            }
+          },
           error: (error) => this.toast.error("Failed to create room: " + error.message),
         });
       });

@@ -24,15 +24,16 @@
     <!-- Room details form template -->
     <ng-template #roomDetails>
       <div class="container mx-auto p-8" [class.hidden]="!showRoomDetails" class="animate-slideOut mb-10">
-        <div class="w-full max-w-4xl mx-auto bg-white shadow-xl rounded-xl p-8 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:shadow-2xl">
+        <div class="z-2000 w-full max-w-4xl mx-auto bg-white shadow-xl rounded-xl p-8 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:shadow-2xl">
           <div class="text-center mb-6">
-            <span class="text-lg font-medium">Current Room Code: {{ roomCode }}</span>
+            <span class="text-lg font-medium">Room Code: {{ roomCode }}</span>
           </div>
 
           <form>
             <div class="mb-6">
               <label class="block text-gray-700 text-sm font-bold mb-2" for="roomName">Szoba neve</label>
               <input
+                autocomplete="off"
                 [(ngModel)]="roomName"
                 name="roomName"
                 id="roomName"
@@ -73,12 +74,22 @@
               </select>
             </div>
 
-            
+            <!-- Friend List Component -->
+            <ng-container *ngIf="currentUser">
+              <h2 class="text-slate-700 hover:text-blue-500 font-bold leading-normal mb-1 font-semibold cursor-pointer" (click)="toggleFriendList()">
+                <strong>Invite friends: <span class="text-sm">(click)</span></strong>
+              </h2>
 
-            <div class="flex items-center justify-between mt-8">
+              <!-- Replace the inner ng-container with a div and apply the animation to it -->
+              <div *ngIf="showFriendList">
+                <app-friend-list [friends]="currentUser.friendList"></app-friend-list>
+              </div>
+            </ng-container>
+
+            <div class="flex items-center mt-3 justify-center">
               <button
                 (click)="createRoom()"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transform hover:-translate-y-1 transition duration-300 ease-in-out"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transform hover: transition duration-300 ease-in-out"
                 type="button"
               >
                 Szoba létrehozása

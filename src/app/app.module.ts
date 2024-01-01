@@ -30,6 +30,7 @@ import { ScrollToTopComponent } from './scroll-to-top/scroll-to-top.component';
 import { GameComponent } from './components/game/game.component';
 import { DatabaseService } from './services/database.service';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -43,7 +44,8 @@ import { DatabaseService } from './services/database.service';
     ProfileSearchComponent,
     UserNamePipe,
     ScrollToTopComponent,
-    GameComponent
+    GameComponent,
+    FriendListComponent
   ],
   imports: [
     BrowserModule,
@@ -64,7 +66,8 @@ import { DatabaseService } from './services/database.service';
     MatMenuModule,
     MatButtonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BrowserAnimationsModule
   ],
   providers: [DatabaseService],
   bootstrap: [AppComponent],
