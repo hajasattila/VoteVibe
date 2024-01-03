@@ -30,6 +30,7 @@ import { ScrollToTopComponent } from './scroll-to-top/scroll-to-top.component';
 import { GameComponent } from './components/game/game.component';
 import { DatabaseService } from './services/database.service';
 import { RoomDetailsComponent } from './room-details/room-details.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import { RoomDetailsComponent } from './room-details/room-details.component';
     ScrollToTopComponent,
     GameComponent,
     FriendListComponent,
-    RoomDetailsComponent
+    RoomDetailsComponent,
+    PageNotFoundComponent
   ],
   imports: [
     BrowserModule,
@@ -69,7 +71,8 @@ import { RoomDetailsComponent } from './room-details/room-details.component';
     MatButtonModule,
     FormsModule,
     ReactiveFormsModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    HotToastModule.forRoot() // ToastrModule added
   ],
   providers: [DatabaseService],
   bootstrap: [AppComponent],

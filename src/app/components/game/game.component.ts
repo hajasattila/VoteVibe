@@ -177,7 +177,7 @@ export class GameComponent implements OnInit {
       }
 
       // Here we check if the currentUser is already a member of the room.
-      if (room.members.some((member) => member.uid === currentUserId)) {
+      if (room && room.members?.some((member) => member.uid === currentUserId)) {
         this.toast.info("You are already a member of this room.");
       } else {
         // We can assert that docId and currentUser are not null or undefined here.

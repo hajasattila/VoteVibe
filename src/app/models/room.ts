@@ -1,14 +1,12 @@
 import { ProfileUser } from "./user";
 
-// room.model.ts
 export interface Creator {
   description: string;
   displayName: string;
-  // Add további mezőket, ha szükséges
 }
 
 export interface Room {
-  docId?: string; // Optional property to store the document ID
+  docId?: string; // opcionális csak, az adatbázis ID miatt.
   roomId: string;
   roomName: string;
   creator: ProfileUser;

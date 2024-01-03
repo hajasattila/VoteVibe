@@ -8,6 +8,8 @@ import { canActivate, redirectLoggedInTo, redirectUnauthorizedTo } from "@angula
 import { ProfileComponent } from "./components/profile/profile.component";
 import { GameComponent } from "./components/game/game.component";
 import { RoomDetailsComponent } from "./room-details/room-details.component";
+import { RoomMemberGuard } from "./services/roommemberguard.service";
+import { PageNotFoundComponent } from "./components/page-not-found/page-not-found.component";
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["login"]);
 const redirectLoggedInToHome = () => redirectLoggedInTo(["home"]);
@@ -42,7 +44,12 @@ const routes: Routes = [
     path: "game",
     component: GameComponent,
   },
-  { path: "room/:code", component: RoomDetailsComponent },
+  { path: "room/:code", component: RoomDetailsComponent, canActivate: [RoomMemberGuard] },
+  {
+    path: "notfound",
+    component: PageNotFoundComponent,
+  },
+  { path: "**", redirectTo: "notfound" },
 ];
 
 @NgModule({
