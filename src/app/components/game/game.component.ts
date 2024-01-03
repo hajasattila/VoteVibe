@@ -1,5 +1,6 @@
 import { animate, state, style, transition, trigger } from "@angular/animations";
 import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 import { HotToastService } from "@ngneat/hot-toast";
 import { take } from "rxjs";
 import { Room } from "src/app/models/room";
@@ -17,25 +18,46 @@ export class GameComponent implements OnInit {
   currentUser: ProfileUser | null = null;
   roomName: string = "";
   selectedTimeLimit: number = 1;
-  selectedVoteType: string = "Kép alapú";
+  selectedVoteType: string = "Text based";
   currentUserId: string | null = null;
   showSuggestions = false;
   isAuthenticated: boolean = false;
+  friends: ProfileUser[] = [];
+  showFriendList = false;
+  enteredRoomCode: string = "";
+
+  showRoomForm: boolean = false;
   showRoomDetails = false;
   showGenerateText = true;
-  friends: ProfileUser[] = []; // Assuming you have a ProfileUser model
-  showFriendList = false; // Tracks the visibility of the friend list
+  showRoomText = true;
 
   toggleRoomDetails() {
-    this.showGenerateText = false; // Azonnal eltünteti a "Generate a room" szöveget
-    this.showRoomDetails = true;
+    this.showRoomDetails = !this.showRoomDetails;
+
+    // Ha a generáló űrlapot meg akarjuk jeleníteni, akkor az esetlegesen megnyitott csatlakozó űrlapot el kell tüntetni
+    if (this.showRoomDetails) {
+      this.showRoomForm = false;
+    }
+
+    // A generáló szöveg és a generáló űrlap megjelenítésének kezelése
+    this.showGenerateText = !this.showRoomDetails;
+  }
+
+  toggleRoomForm() {
+    this.showRoomForm = !this.showRoomForm;
+
+    // Ha a csatlakozó űrlapot meg akarjuk jeleníteni, akkor az esetlegesen megnyitott generáló űrlapot el kell tüntetni
+    if (this.showRoomForm) {
+      this.showRoomDetails = false;
+      this.showGenerateText = true; // A "Generate a room" szöveg visszajelenítése
+    }
   }
 
   toggleFriendList() {
     this.showFriendList = !this.showFriendList;
   }
 
-  constructor(private authService: AuthService, private dbService: DatabaseService, private userService: UsersService, private toast: HotToastService) {
+  constructor(private router: Router, private authService: AuthService, private dbService: DatabaseService, private userService: UsersService, private toast: HotToastService) {
     this.roomCode = this.generateRoomCode(6, 12);
   }
 
@@ -67,7 +89,6 @@ export class GameComponent implements OnInit {
   }
 
   createRoom(): void {
-    // Ensure the current user exists before attempting to create a room
     if (!this.currentUser) {
       this.toast.error("You must be logged in to create a room.");
       return;
@@ -78,6 +99,8 @@ export class GameComponent implements OnInit {
     }
 
     const timeLimitInHours = Number(this.selectedTimeLimit);
+    let timeLimitInMilliseconds = timeLimitInHours * 3600000;
+    let futureTime = Date.now() + timeLimitInMilliseconds;
     // Define the room outside so it's accessible in the entire method scope
     let newRoom: Room = {
       roomId: this.roomCode,
@@ -88,7 +111,10 @@ export class GameComponent implements OnInit {
       connectionCode: this.roomCode,
       timeLimit: this.selectedTimeLimit,
       startTime: new Date(),
-      endTime: new Date(Date.now() + timeLimitInHours * 3600000),
+      endTime: {
+        seconds: Math.floor(futureTime / 1000),
+        nanoseconds: (futureTime % 1000) * 1000000,
+      },
     };
 
     // Check if the roomId already exists in the database
@@ -111,17 +137,64 @@ export class GameComponent implements OnInit {
           next: () => {
             this.toast.success("Room successfully created with code: " + this.roomCode);
 
-            // Increase the polls count for the current user
+            // Increase the games count for the current user
             if (this.currentUser) {
-              this.currentUser.polls = (this.currentUser.polls || 0) + 1;
+              this.currentUser.games = (this.currentUser.games || 0) + 1;
 
               // Update the current user in the database using UsersService
               this.userService.updateUser(this.currentUser).subscribe();
             }
+            this.router.navigate(["/room", this.roomCode]);
           },
           error: (error) => this.toast.error("Failed to create room: " + error.message),
         });
       });
+  }
+
+  joinRoom() {
+    if (!this.enteredRoomCode) {
+      this.toast.error("Please enter a room code.");
+      return;
+    }
+
+    if (!this.currentUser) {
+      this.toast.error("You must be logged in to join a room.");
+      return;
+    }
+
+    // Now we can safely assert currentUser is not null.
+    const currentUserId = this.currentUser.uid;
+
+    this.dbService.getRoomByCode(this.enteredRoomCode).subscribe((room) => {
+      if (!room) {
+        this.toast.error("No such room code.");
+        return;
+      }
+
+      if (!room.docId) {
+        this.toast.error("Room data is incomplete. Missing document ID.");
+        return;
+      }
+
+      // Here we check if the currentUser is already a member of the room.
+      if (room.members.some((member) => member.uid === currentUserId)) {
+        this.toast.info("You are already a member of this room.");
+      } else {
+        // We can assert that docId and currentUser are not null or undefined here.
+        this.dbService.updateRoomMembers(room.docId, this.currentUser!).subscribe(
+          () => {
+            this.toast.success("Successfully joined the room.");
+            if (this.currentUser) {
+              this.currentUser.polls = (this.currentUser.polls || 0) + 1;
+              this.userService.updateUser(this.currentUser).subscribe();
+            }
+          },
+          (error) => {
+            this.toast.error("There was an error joining the room: " + error.message);
+          }
+        );
+      }
+    });
   }
 
   // Method to generate a random room code

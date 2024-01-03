@@ -22,10 +22,11 @@
         </p>
       </div>
       <div class="animate-prominence p-5 bg-white md:flex-1">
-        <h3 class="my-4  text-center tracking-wider"><span class="text-2xl font-semibold text-gray-700">Sign Up</span></h3>
+        <h3 class="my-4 text-center tracking-wider"><span class="text-2xl font-semibold text-gray-700">Sign Up</span></h3>
         <div class="flex flex-col space-y-1">
           <label for="name" class="text-sm font-semibold text-gray-500">Nickname</label>
           <input
+            autocomplete="off"
             type="text"
             placeholder="Nickname"
             formControlName="name"
@@ -38,6 +39,7 @@
         <div class="flex flex-col space-y-1">
           <label for="email" class="text-sm font-semibold text-gray-500">Email address</label>
           <input
+            autocomplete="off"
             type="email"
             placeholder="Email address"
             formControlName="email"
@@ -47,19 +49,21 @@
           <div class="text-red-500" *ngIf="email?.errors?.['required']">Email address is required</div>
           <div class="text-red-500" *ngIf="email?.errors?.['email']">Please enter a valid email address</div>
         </div>
-        <div class="flex flex-col space-y-1 ">
+        <div class="flex flex-col space-y-1">
           <label for="password" class="text-sm font-semibold text-gray-500">Password</label>
           <input
+            autocomplete="off"
             type="password"
             placeholder="Password"
             formControlName="password"
             class="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
           />
-          <div class="text-red-500" *ngIf="password?.errors?.['required']">Password is required</div>
+          <div class="text-red-500" *ngIf="password?.errors?.['required'] ">Password is required</div>
         </div>
         <div class="flex flex-col space-y-1 mb-5">
           <label for="confirmPassword" class="text-sm font-semibold text-gray-500">Confirm Password</label>
           <input
+            autocomplete="off"
             type="password"
             placeholder="Confirm Password"
             formControlName="confirmPassword"

@@ -7,6 +7,7 @@ import { SignUpComponent } from "./components/sign-up/sign-up.component";
 import { canActivate, redirectLoggedInTo, redirectUnauthorizedTo } from "@angular/fire/auth-guard";
 import { ProfileComponent } from "./components/profile/profile.component";
 import { GameComponent } from "./components/game/game.component";
+import { RoomDetailsComponent } from "./room-details/room-details.component";
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["login"]);
 const redirectLoggedInToHome = () => redirectLoggedInTo(["home"]);
@@ -38,10 +39,10 @@ const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLogin),
   },
   {
-    path: 'game',
+    path: "game",
     component: GameComponent,
-    ...canActivate(redirectUnauthorizedToLogin), // Ha szükséges, szabályozd az hozzáférést
   },
+  { path: "room/:code", component: RoomDetailsComponent },
 ];
 
 @NgModule({

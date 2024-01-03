@@ -1,0 +1,16 @@
+<!-- room-details.component.html -->
+<div *ngIf="room">
+  <h1>Room Name: {{ room.roomName }}</h1>
+  <p>Room ID: {{ room.roomId }}</p>
+  <p>Connection Code: {{ room.connectionCode }}</p>
+  <p>Vote Type: {{ room.voteType }}</p>
+  <p>Time Limit: {{ room.timeLimit }}</p>
+  <p>Remaining Time: {{ remainingTime }}</p>
+  <p>Creator: {{ room.creator.displayName }}</p>
+  <div>
+    <h3>Members:</h3>
+    <ul>
+      <li *ngFor="let member of room.members">{{ member.displayName }}</li>
+    </ul>
+  </div>
+</div>

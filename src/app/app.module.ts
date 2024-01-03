@@ -29,6 +29,7 @@ import { UserNamePipe } from './user-name.pipe';
 import { ScrollToTopComponent } from './scroll-to-top/scroll-to-top.component';
 import { GameComponent } from './components/game/game.component';
 import { DatabaseService } from './services/database.service';
+import { RoomDetailsComponent } from './room-details/room-details.component';
 
 
 @NgModule({
@@ -45,7 +46,8 @@ import { DatabaseService } from './services/database.service';
     UserNamePipe,
     ScrollToTopComponent,
     GameComponent,
-    FriendListComponent
+    FriendListComponent,
+    RoomDetailsComponent
   ],
   imports: [
     BrowserModule,
