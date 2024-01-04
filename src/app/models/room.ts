@@ -19,4 +19,5 @@ export interface Room {
     seconds: number;
     nanoseconds: number;
   };
+  isAnonymous: boolean;
 }

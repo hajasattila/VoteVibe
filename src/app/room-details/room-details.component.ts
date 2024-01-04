@@ -14,6 +14,8 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
   room: Room | null = null;
   remainingTime: string = "";
   private timerSubscription: Subscription | null = null;
+  // Add a property to store the poll options
+  options: string[] = [""];
 
   constructor(private route: ActivatedRoute, private dbService: DatabaseService) {}
 
@@ -43,8 +45,6 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
-  
 
   startTimer(endTime: Date) {
     this.timerSubscription = interval(1000)
@@ -69,10 +69,20 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
     let minutes = Math.floor((milliseconds / (1000 * 60)) % 60);
     let hours = Math.floor((milliseconds / (1000 * 60 * 60)) % 24);
 
-    return `${hours} óra, ${minutes} perc, ${seconds} másodperc`;
+    return `${hours} h, ${minutes} m, ${seconds} s`;
   }
 
   ngOnDestroy() {
     this.timerSubscription?.unsubscribe();
+  }
+  addOption() {
+    this.options.push(""); // Adds a new empty string to represent the new option
+  }
+
+  // Method to remove an option field
+  removeOption(index: number) {
+    if (this.options.length > 1) {
+      this.options.splice(index, 1); // Remove the option at the given index
+    }
   }
 }

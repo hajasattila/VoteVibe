@@ -72,7 +72,6 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    HotToastModule.forRoot() // ToastrModule added
   ],
   providers: [DatabaseService],
   bootstrap: [AppComponent],

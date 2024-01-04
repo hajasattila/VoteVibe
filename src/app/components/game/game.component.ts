@@ -25,6 +25,7 @@ export class GameComponent implements OnInit {
   friends: ProfileUser[] = [];
   showFriendList = false;
   enteredRoomCode: string = "";
+  isAnonymous: boolean = false;
 
   showRoomForm: boolean = false;
   showRoomDetails = false;
@@ -115,6 +116,7 @@ export class GameComponent implements OnInit {
         seconds: Math.floor(futureTime / 1000),
         nanoseconds: (futureTime % 1000) * 1000000,
       },
+      isAnonymous: this.isAnonymous,
     };
 
     // Check if the roomId already exists in the database
@@ -176,11 +178,21 @@ export class GameComponent implements OnInit {
         return;
       }
 
+      // Here we check if the room has already expired.
+      const now = new Date();
+      const roomEndTime = new Date(room.endTime.seconds * 1000); // Convert seconds to milliseconds
+
+      if (room.endTime && roomEndTime < now) {
+        this.toast.error("The room already expired.");
+        return;
+      }
+
       // Here we check if the currentUser is already a member of the room.
-      if (room && room.members?.some((member) => member.uid === currentUserId)) {
+      if (room.members?.some((member) => member.uid === currentUserId)) {
         this.toast.info("You are already a member of this room.");
+        this.router.navigate(["/room", this.enteredRoomCode]); // Navigate to the room details page if already a member
       } else {
-        // We can assert that docId and currentUser are not null or undefined here.
+        // If the user is not already a member, add them to the room and navigate.
         this.dbService.updateRoomMembers(room.docId, this.currentUser!).subscribe(
           () => {
             this.toast.success("Successfully joined the room.");
@@ -188,6 +200,7 @@ export class GameComponent implements OnInit {
               this.currentUser.polls = (this.currentUser.polls || 0) + 1;
               this.userService.updateUser(this.currentUser).subscribe();
             }
+            this.router.navigate(["/room", this.enteredRoomCode]); // Navigate to the room details page after joining
           },
           (error) => {
             this.toast.error("There was an error joining the room: " + error.message);
