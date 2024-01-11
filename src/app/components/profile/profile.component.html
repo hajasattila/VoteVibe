@@ -119,6 +119,7 @@
           <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full focus:outline-none">Save</button>
           <button (click)="resetPassword()" class="bg-blue-500 text-white hover:bg-blue-600 focus:outline-none rounded-full p-2">Reset Password</button>
         </div>
+        <button (click)="logout()" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-10 rounded-full focus:outline-none">Logout</button>
       </form>
     </div>
     <input #inputField hidden type="file" (change)="uploadFile($event, user)" />

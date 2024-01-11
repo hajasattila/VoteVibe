@@ -1,5 +1,4 @@
 import { Room } from "./room";
-import { RoomInvitation } from "./roomInvitation";
 
 export interface ProfileUser {
   uid: string ;
@@ -16,6 +15,5 @@ export interface ProfileUser {
   friendRequests?: string[];
   sentFriendRequests?: string[];
   gameRooms?: Room[]; // Array of Room objects the user is part of
-  roomInvitations?: RoomInvitation[]; // Invitations for the user to join game rooms
 }
 

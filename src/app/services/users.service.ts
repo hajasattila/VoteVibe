@@ -71,16 +71,13 @@ export class UsersService {
       map((users: ProfileUser[]) => users.filter((user) => user.displayName?.toLowerCase().includes(query.toLowerCase())))
     );
   }
-
   sendFriendRequest(currentUserId: string, friendId: string): Observable<any> {
     return this.authService.currentUser$.pipe(
       switchMap((currentUser) => {
         if (!currentUser?.uid) {
           throw new Error("You must be logged in to send friend requests.");
         }
-
         const friendUserRef = doc(this.firestore, "users", friendId);
-
         // Convert the Promise returned by getDoc() to an Observable
         return from(getDoc(friendUserRef)).pipe(
           switchMap((friendDoc) => {
@@ -104,11 +101,9 @@ export class UsersService {
       })
     );
   }
-
   acceptFriendRequest(currentUserId: string, requestingUserId: string): Observable<void> {
     const currentUserDocRef = doc(this.firestore, `users/${currentUserId}`);
     const requestingUserDocRef = doc(this.firestore, `users/${requestingUserId}`);
-
     return from(
       runTransaction(this.firestore, async (transaction) => {
         const requestingUserDoc = await transaction.get(requestingUserDocRef);
@@ -133,19 +128,15 @@ export class UsersService {
       })
     );
   }
-
   getUserById(uid: string): Observable<ProfileUser> {
     const userDocRef = doc(this.firestore, `users/${uid}`);
     return docData(userDocRef) as Observable<ProfileUser>;
   }
-
   hasAlreadySentRequest(currentUserId: string, potentialFriendId: string): Observable<boolean> {
     return this.getUserById(currentUserId).pipe(map((user) => user?.sentFriendRequests?.includes(potentialFriendId) || false));
   }
-
   rejectFriendRequest(currentUserId: string, requestingUserId: string): Observable<void> {
     const currentUserDocRef = doc(this.firestore, `users/${currentUserId}`);
-
     // Remove the requesting user's ID from the current user's friendRequests array
     return from(
       updateDoc(currentUserDocRef, {
@@ -169,17 +160,14 @@ export class UsersService {
             // Olvasások a tranzakcióban a következetesség érdekében
             const currentUserDoc = await transaction.get(currentUserDocRef);
             const friendDoc = await transaction.get(friendDocRef);
-
             // Biztosítja, hogy a dokumentumok léteznek
             if (!currentUserDoc.exists() || !friendDoc.exists()) {
               throw new Error("One of the user profiles does not exist.");
             }
-
             // Eltávolítja a barátot az aktuális felhasználó friendList-jéből
             transaction.update(currentUserDocRef, {
               friendList: arrayRemove({ uid: friend.uid, displayName: friend.displayName }),
             });
-
             // Eltávolítja az aktuális felhasználót a barát friendList-jéből
             transaction.update(friendDocRef, {
               friendList: arrayRemove({ uid: currentUser.uid, displayName: currentUser.displayName }),
@@ -194,11 +182,9 @@ export class UsersService {
       })
     );
   }
-
   isDisplayNameTaken(displayName: string, currentUserId: string): Observable<boolean> {
     return this.getFilteredUsers(displayName).pipe(map((users) => users.some((user) => user.uid !== currentUserId && user.displayName?.toLowerCase() === displayName.toLowerCase())));
   }
-
   addRoomToUser(userId: string | null, room: Room): Observable<void> {
     if (!userId) {
       console.error("Invalid user ID");

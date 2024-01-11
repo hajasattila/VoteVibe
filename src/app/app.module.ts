@@ -24,13 +24,14 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { FooterComponent } from './components/footer/footer.component';
 import { FriendListComponent } from './components/friend-list/friend-list.component';
-import { ProfileSearchComponent } from './profile-search/profile-search.component';
+import { ProfileSearchComponent } from './components/profile-search/profile-search.component';
 import { UserNamePipe } from './user-name.pipe';
 import { ScrollToTopComponent } from './scroll-to-top/scroll-to-top.component';
 import { GameComponent } from './components/game/game.component';
 import { DatabaseService } from './services/database.service';
-import { RoomDetailsComponent } from './room-details/room-details.component';
+import { RoomDetailsComponent } from './components/room-details/room-details.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { TextPollComponent } from './components/text-poll/text-poll.component';
 
 
 @NgModule({
@@ -49,7 +50,8 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
     GameComponent,
     FriendListComponent,
     RoomDetailsComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    TextPollComponent
   ],
   imports: [
     BrowserModule,

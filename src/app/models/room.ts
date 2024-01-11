@@ -1,9 +1,5 @@
+import { textPoll } from "./textPoll";
 import { ProfileUser } from "./user";
-
-export interface Creator {
-  description: string;
-  displayName: string;
-}
 
 export interface Room {
   docId?: string; // opcionális csak, az adatbázis ID miatt.
@@ -20,4 +16,9 @@ export interface Room {
     nanoseconds: number;
   };
   isAnonymous: boolean;
+  poll?: textPoll;
+  pollCreated?: boolean; // Add this line in your Room interface
+
 }
+export { textPoll };
+

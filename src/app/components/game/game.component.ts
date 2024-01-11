@@ -26,6 +26,7 @@ export class GameComponent implements OnInit {
   showFriendList = false;
   enteredRoomCode: string = "";
   isAnonymous: boolean = false;
+  pollCreated: boolean = false;
 
   showRoomForm: boolean = false;
   showRoomDetails = false;
@@ -103,6 +104,7 @@ export class GameComponent implements OnInit {
     let timeLimitInMilliseconds = timeLimitInHours * 3600000;
     let futureTime = Date.now() + timeLimitInMilliseconds;
     // Define the room outside so it's accessible in the entire method scope
+
     let newRoom: Room = {
       roomId: this.roomCode,
       roomName: this.roomName,
@@ -117,6 +119,11 @@ export class GameComponent implements OnInit {
         nanoseconds: (futureTime % 1000) * 1000000,
       },
       isAnonymous: this.isAnonymous,
+      poll: {
+        question: "",
+        options: [],
+      },
+      pollCreated: false,
     };
 
     // Check if the roomId already exists in the database
