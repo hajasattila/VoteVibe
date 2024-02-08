@@ -51,12 +51,13 @@
     </div>
 
     <!-- Profile and Logout Section -->
-    <div class="flex justify-center md:justify-end items-center w-full md:w-auto md:order-2">
+    <div class="flex flex-col md:flex-row justify-center md:justify-end items-center w-full md:w-auto md:order-2">
+
       <ng-template #loginButtons>
-        <a routerLink="/login" class="mr-5 text-base font-medium leading-6 text-gray-600 hover:text-gray-900"> Login </a>
-        <a routerLink="/sign-up" class="px-3 py-2 text-base font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 whitespace-nowrap"
-          >Sign up</a
-        >
+        <a routerLink="/login" class="mb-2 mt-2 md:mt-0 md:mb-0 md:mr-5 text-base font-medium leading-6 text-gray-600 hover:text-gray-900"> Login </a>
+        <a routerLink="/sign-up" class="px-3 py-2 text-base font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 whitespace-nowrap">
+          Sign up
+        </a>
       </ng-template>
     </div>
   </div>

@@ -42,8 +42,8 @@ export class UsersService {
   }
 
   updateUser(user: ProfileUser): Observable<void> {
-    const ref = doc(this.firestore, "users", user.uid);
-    return from(updateDoc(ref, { ...user }));
+    const userRef = doc(this.firestore, "users", user.uid);
+    return from(updateDoc(userRef, { ...user }));
   }
 
   getFilteredUsers(query: string): Observable<ProfileUser[]> {

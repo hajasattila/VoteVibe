@@ -14,6 +14,6 @@ export interface ProfileUser {
   polls?: number;
   friendRequests?: string[];
   sentFriendRequests?: string[];
-  gameRooms?: Room[]; // Array of Room objects the user is part of
+  gameRooms?: Room[];
 }
 
