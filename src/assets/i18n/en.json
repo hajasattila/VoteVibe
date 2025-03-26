@@ -1,0 +1,243 @@
+{
+  "profile": {
+    "polls": "Polls",
+    "games": "Games",
+    "friends": "Friends",
+    "friendList": "Friend List",
+    "friendRequests": "Friend Requests",
+    "show": "Show",
+    "hide": "Hide",
+    "requestFrom": "Request from",
+    "accept": "Accept",
+    "reject": "Reject",
+    "noRequests": "No pending friend requests.",
+    "editProfile": "Edit Profile",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "nickname": "Nickname",
+    "phone": "Phone (06)",
+    "phoneError": "Must start with 06 and be 11 digits long!",
+    "description": "Description",
+    "save": "Save",
+    "resetPassword": "Reset Password",
+    "logout": "Logout",
+    "uploadNewPhoto": "Upload new photo",
+    "success": {
+      "updated": "Profile updated successfully.",
+      "friendAccepted": "Friend request from {{name}} accepted successfully!",
+      "friendRejected": "Friend request from {{name}} rejected successfully!"
+    },
+    "error": {
+      "fetchUser": "Error fetching user data.",
+      "invalidForm": "Please ensure all fields are filled out correctly.",
+      "nameTaken": "This display name is already taken.",
+      "updateFailed": "There was an error in updating the profile.",
+      "noUser": "You need to be logged in to perform this action.",
+      "userNotFound": "User not found.",
+      "friendAcceptFailed": "Failed to accept friend request.",
+      "friendRejectFailed": "Failed to reject friend request."
+    },
+    "upload": {
+      "loading": "Uploading profile image...",
+      "success": "Image uploaded successfully.",
+      "error": "There was an error in uploading the image."
+    }
+  },
+  "nav": {
+    "game": "Game",
+    "home": "Home",
+    "profile": "Profile",
+    "logout": "Logout",
+    "login": "Login"
+  },
+  "errorPage": {
+    "oops": "Oops!",
+    "roomNotFound": "The room you are looking for cannot be reached!",
+    "goHome": "Go back to Home"
+  },
+  "footer": {
+    "contact": {
+      "title": "Contact",
+      "subtitle": "We are available on these platforms:"
+    },
+    "links": {
+      "title": "Useful Links",
+      "home": "Home",
+      "features": "Features",
+      "examples": "Examples"
+    },
+    "more": {
+      "title": "More Info",
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions",
+      "contact": "Contact"
+    },
+    "copyright": "All rights reserved. Built by:"
+  },
+  "search": {
+    "placeholder": "Search for friends!",
+    "noResults": "There is no such user 😞"
+  },
+  "login": {
+    "introLine1": "Tune in to the voting!",
+    "introLine2": "Decide together with friends what would be the best for you!",
+    "noAccount": "Don't have an account?",
+    "getStarted": "Get Started!",
+    "read": "Read our",
+    "terms": "terms",
+    "and": "and",
+    "conditions": "conditions",
+    "title": "Login",
+    "email": {
+      "label": "Email address",
+      "placeholder": "Your email address",
+      "required": "Email address is required",
+      "invalid": "Please enter a valid email address"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Password",
+      "required": "Password is required",
+      "forgot": "Forgot Password?"
+    },
+    "remember": "Remember me",
+    "submit": "Log in",
+    "or": "or login with",
+    "github": "Sign in with GitHub"
+  },
+  "room": {
+    "name": "Room Name",
+    "code": "Connection Code",
+    "timeRemaining": "Remaining Time",
+    "participants": "Participants",
+    "questionLabel": "Question:",
+    "questionPlaceholder": "Enter your question",
+    "optionsLabel": "Options:",
+    "optionPlaceholder": "Enter an option",
+    "addOption": "Add another option",
+    "createPoll": "Create Poll",
+    "viewStats": "View Statistics",
+    "generateRoom": "Generate a room",
+    "roomCode": "Room Code",
+    "roomNameLabel": "Room's name",
+    "roomNamePlaceholder": "Name of the room",
+    "roomNameRequired": "You have to give a name for the room!",
+    "timeLimit": "Time limit (hr/hrs)",
+    "voteType": "Type of the vote",
+    "anonymous": "Anonymous:",
+    "inviteFriends": "Invite friends: (click)",
+    "generate": "Generate the room",
+    "joinRoom": "Join a room",
+    "joinWithCode": "Connect to a room by code:",
+    "roomCodePlaceholder": "Enter the room code...",
+    "join": "Join",
+    "yourRooms": "Your rooms",
+    "time": {
+      "60min": "60 min",
+      "6hour": "6 hours",
+      "12hour": "12 hours",
+      "24hour": "24 hours"
+    },
+    "voteTypeOptions": {
+      "picture": "Picture based",
+      "text": "Text based"
+    },
+    "error": {
+      "loginRequired": "You must be logged in to create a room.",
+      "roomNameRequired": "Please provide a room name.",
+      "addToProfile": "Failed to add room to your profile: {{ error }}",
+      "creationFailed": "Failed to create room: {{ error }}",
+      "codeRequired": "Please enter a room code.",
+      "loginRequiredJoin": "You must be logged in to join a room.",
+      "codeNotFound": "No such room code exists.",
+      "missingDocId": "Room data is incomplete. Missing document ID.",
+      "expired": "This room has already expired.",
+      "joinFailed": "There was an error joining the room: {{ error }}"
+    },
+    "info": {
+      "newCode": "Room ID already exists. Generated a new code: {{ code }}",
+      "alreadyMember": "You are already a member of this room."
+    },
+    "success": {
+      "created": "Room successfully created with code: {{ code }}",
+      "addedToProfile": "Room added to your profile successfully.",
+      "joined": "You have successfully joined the room."
+    }
+  },
+  "signup": {
+    "intro": "Sign up for a new account and join the community!",
+    "alreadyAccount": "Already have an account?",
+    "login": "Log In",
+    "read": "Read our",
+    "terms": "terms",
+    "and": "and",
+    "conditions": "conditions",
+    "title": "Sign Up",
+    "name": {
+      "label": "Nickname",
+      "placeholder": "Your nickname",
+      "required": "Name is required"
+    },
+    "email": {
+      "label": "Email address",
+      "placeholder": "Your email address",
+      "required": "Email address is required",
+      "invalid": "Please enter a valid email address"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Password",
+      "required": "Password is required"
+    },
+    "confirm": {
+      "label": "Confirm Password",
+      "placeholder": "Confirm your password",
+      "required": "Confirm Password is required"
+    },
+    "passwordsMismatch": "Passwords should match",
+    "submit": "Sign Up"
+  },
+  "home": {
+    "menu": {
+      "game": "Game",
+      "stats": "Statistics",
+      "profile": "Profile",
+      "settings": "Settings",
+      "logout": "Log out"
+    },
+    "hero": {
+      "welcome": "Welcome",
+      "name": "Dash",
+      "inbox": "Inbox",
+      "seeMessages": "See messages"
+    },
+    "stats": {
+      "card1": "Stats Card 1",
+      "card2": "Stats Card 2",
+      "card3": "Stats Card 3"
+    }
+  },
+  "landing": {
+    "hero": {
+      "title1": "Useful and fast",
+      "title2": "opportunity to make decisions",
+      "description": "It's never been so easy to easily create polls that you and your friends can use to make decisions on any topic!",
+      "try": "Try It!",
+      "more": "More"
+    },
+    "section2": {
+      "title": "Forging friendships",
+      "description": "Build an atmosphere that creates productivity in your organization and your company culture.",
+      "point1": "Maximize your decision",
+      "point2": "Take pictures",
+      "point3": "Find out the answers right away"
+    },
+    "section3": {
+      "title": "Collect opinions quickly",
+      "description": "Need instant feedback? Want to predict voter behavior? Looking for insights to inform your marketing strategy? Build a poll worth voting for—and get all the data you need.",
+      "point1": "Easy and quick",
+      "point2": "It can be made at any time",
+      "point3": "Entertaining and useful"
+    }
+  }
+}

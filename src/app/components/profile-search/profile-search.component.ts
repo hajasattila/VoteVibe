@@ -2,9 +2,9 @@ import { Component, HostListener, OnInit } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { Observable, of } from "rxjs";
 import { switchMap, startWith, take } from "rxjs/operators";
-import { UsersService } from "../../services/users.service";
-import { AuthService } from "../../services/auth.service"; // Feltételezve, hogy van AuthService-ed
-import { ProfileUser } from "../../models/user";
+import { UsersService } from "../../../api/services/users-service/users.service";
+import { AuthService } from "../../../api/services/auth-service/auth.service";
+import { ProfileUser } from "../../../api/models/user";
 import { HotToastService } from "@ngneat/hot-toast";
 
 @Component({
@@ -17,13 +17,13 @@ export class ProfileSearchComponent implements OnInit {
   filteredUsers$: Observable<ProfileUser[]>;
   currentUser?: ProfileUser;
   currentUserId: string | null = null;
-  showSuggestions = false; // New property to control the display of suggestions
-  isAuthenticated: boolean = false; // Track if the user is authenticated
+  showSuggestions = false;
+  isAuthenticated: boolean = false;
 
   constructor(
     private userService: UsersService,
-    private authService: AuthService, // Ensure AuthService is injected
-    private toast: HotToastService // Ensure HotToastService is injected
+    private authService: AuthService,
+    private toast: HotToastService
   ) {
     this.filteredUsers$ = this.searchControl.valueChanges.pipe(
       startWith(""),
@@ -35,8 +35,8 @@ export class ProfileSearchComponent implements OnInit {
     this.authService.getCurrentUser().subscribe((user) => {
       if (user) {
         this.isAuthenticated = true;
-        this.currentUserId = user.uid; // Ensure 'user.uid' exists and is not null
-        console.log("Authenticated user ID:", this.currentUserId); // Check the user ID
+        this.currentUserId = user.uid;
+        console.log("Authenticated user ID:", this.currentUserId);
       } else {
         this.isAuthenticated = false;
         this.currentUserId = null;
@@ -46,13 +46,10 @@ export class ProfileSearchComponent implements OnInit {
   }
 
   @HostListener("document:click", ["$event"]) onDocumentClick(event: MouseEvent) {
-    // Explicit type assertion for event.target
     const target = event.target as HTMLElement;
 
-    // Referencia a keresőmező konténerére
     const searchContainer = document.getElementById("searchContainer");
 
-    // Ellenőrizzük, hogy a kattintás a keresőmező konténerén belül történt-e
     this.showSuggestions = searchContainer?.contains(target) ?? false;
   }
 
@@ -67,7 +64,6 @@ export class ProfileSearchComponent implements OnInit {
       return;
     }
 
-    // Check if the selected user is already in the current user's friendList
     if (this.currentUser && this.currentUser.friendList) {
       const isAlreadyFriend = this.currentUser.friendList.some((friend) => friend.uid === user.uid);
       if (isAlreadyFriend) {
@@ -75,8 +71,6 @@ export class ProfileSearchComponent implements OnInit {
         return;
       }
     } else {
-      // Check if a friend request has already been sent
-      // Use take(1) to ensure the subscription is only triggered once
       this.userService
         .hasAlreadySentRequest(this.currentUserId!, user.uid)
         .pipe(take(1))
@@ -85,8 +79,6 @@ export class ProfileSearchComponent implements OnInit {
             this.toast.error(`You have already sent a friend request to ${user.displayName}`);
           } else {
             console.log("Adding friend:", user.displayName);
-            // Continue with sending friend request and updating the UI accordingly...
-            // Use take(1) here as well to ensure the subscription is only triggered once
             this.userService
               .sendFriendRequest(this.currentUserId!, user.uid)
               .pipe(

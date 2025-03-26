@@ -1,0 +1,137 @@
+<section
+        class="fixed top-0 left-0 right-0 z-50 w-full bg-indigo-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200 shadow-md px-4 sm:px-8">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between py-4">
+
+        <!-- Logo + Hamburger -->
+        <div class="flex justify-between w-full md:w-auto items-center">
+            <a routerLink="/" class="text-2xl font-extrabold tracking-tight text-indigo-600 dark:text-indigo-400">
+                VoteVibe.
+            </a>
+
+            <button (click)="toggleNavbar()" class="md:hidden text-gray-700 dark:text-gray-200 focus:outline-none">
+                <svg *ngIf="!navbarOpen" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+                <svg *ngIf="navbarOpen" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Menü -->
+        <div [ngClass]="{
+      'block': navbarOpen,
+      'hidden': !navbarOpen,
+      'w-full': true,
+      'md:flex': true,
+      'md:items-center': true,
+      'md:w-auto': true,
+      'space-y-4': navbarOpen,
+      'md:space-y-0': true,
+      'mt-4': navbarOpen,
+      'md:mt-0': true
+    }">
+            <nav class="flex flex-col md:flex-row md:space-x-6 items-center w-full md:w-auto">
+
+                <!-- Menü linkek -->
+                <div class="flex-row">
+                    <a routerLink="/game"
+                       class="text-base font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition mx-5">
+                        {{ 'nav.game' | translate }}
+                    </a>
+                    <a *ngIf="(user$ | async)" routerLink="/home"
+                       class="text-base font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                        {{ 'nav.home' | translate }}
+                    </a>
+                </div>
+
+                <app-profile-search class="w-full md:w-auto mt-2 md:mt-0"></app-profile-search>
+
+                <div class="flex md:hidden flex-col space-y-2 mt-4">
+                    <div class="flex flex-row justify-between gap-5 items-center">
+                        <ng-container *ngIf="user$ | async as user; else mobileLogin">
+                            <div class="relative self-start" (click)="toggleProfileDropdown()"
+                                 style="width: max-content">
+                                <img class="w-9 h-9 rounded-full cursor-pointer"
+                                     [src]="user?.photoURL ?? 'assets/images/image-placeholder.png'"
+                                     alt="Profile" loading="eager"/>
+
+                                <div *ngIf="profileDropdownOpen"
+                                     class="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md py-2 z-50">
+                                    <a routerLink="/profile"
+                                       class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                        {{ 'nav.profile' | translate }}
+                                    </a>
+                                    <button (click)="logout(); $event.stopPropagation()"
+                                            class="w-full text-left block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                        {{ 'nav.logout' | translate }}
+                                    </button>
+                                </div>
+                            </div>
+                        </ng-container>
+
+                        <ng-template #mobileLogin>
+                            <a routerLink="/login" class="text-base hover:text-indigo-600 dark:hover:text-indigo-400">
+                                {{ 'nav.login' | translate }}
+                            </a>
+                        </ng-template>
+
+                        <button (click)="themeService.toggleTheme()" class="text-xl items-center">
+                            <span *ngIf="themeService.isDark(); else light">🌞</span>
+                            <ng-template #light>🌙</ng-template>
+                        </button>
+
+                        <select class="bg-transparent border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm focus:outline-none"
+                                [value]="translate.currentLang"
+                                (change)="changeLanguage($event)">
+                            <option value="hu">HU</option>
+                            <option value="en">EN</option>
+                        </select>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="hidden md:flex items-center space-x-4 mt-4 md:mt-0">
+            <ng-container *ngIf="user$ | async as user; else loginButtons">
+                <div class="relative" (click)="toggleProfileDropdown()">
+                    <img class="w-9 h-9 rounded-full cursor-pointer"
+                         [src]="user?.photoURL ?? 'assets/images/image-placeholder.png'"
+                         alt="Profile" loading="eager"/>
+                    <div *ngIf="profileDropdownOpen"
+                         class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md py-2 z-50">
+                        <a routerLink="/profile"
+                           class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            {{ 'nav.profile' | translate }}
+                        </a>
+                        <button (click)="logout(); $event.stopPropagation()"
+                                class="w-full text-left block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            {{ 'nav.logout' | translate }}
+                        </button>
+                    </div>
+                </div>
+            </ng-container>
+
+            <button (click)="themeService.toggleTheme()" class="text-xl">
+                <span *ngIf="themeService.isDark(); else lightDesktop">🌞</span>
+                <ng-template #lightDesktop>🌙</ng-template>
+            </button>
+
+            <select class="bg-transparent border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm focus:outline-none"
+                    [value]="translate.currentLang"
+                    (change)="changeLanguage($event)">
+                <option value="hu">HU</option>
+                <option value="en">EN</option>
+            </select>
+
+            <ng-template #loginButtons>
+                <a routerLink="/login"
+                   class="text-base font-medium hover:text-indigo-600 dark:hover:text-indigo-600">
+                    {{ 'nav.login' | translate }}
+                </a>
+            </ng-template>
+        </div>
+    </div>
+</section>

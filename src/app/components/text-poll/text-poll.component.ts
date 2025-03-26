@@ -1,18 +1,18 @@
 // text-poll.component.ts
 import { Component, Input } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { DatabaseService } from "src/app/services/database.service";
+import { DatabaseService } from "src/api/services/database-service/database.service";
 
 @Component({
   selector: "app-text-poll",
   templateUrl: './text-poll.component.html'
 })
 export class TextPollComponent {
-  @Input() question!: string; // non-null assertion operátor
-  @Input() options!: string[]; // non-null assertion operátor
+  @Input() question!: string;
+  @Input() options!: string[];
 
-  selectedOption?: string; // opcionális, lehet undefined
-  remainingOptions: string[] = []; // kezdeti értékkel rendelkezik
+  selectedOption?: string;
+  remainingOptions: string[] = [];
 
   constructor(
     private dbService: DatabaseService,
@@ -27,7 +27,6 @@ export class TextPollComponent {
   }
 
   loadPollData(roomCode: string) {
-    // A szoba adatainak lekérdezése a kapott kód alapján
     this.dbService.getRoomByCode(roomCode).subscribe((room) => {
       if (room && room.poll) {
         this.question = room.poll.question;

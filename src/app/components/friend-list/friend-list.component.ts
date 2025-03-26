@@ -1,9 +1,8 @@
-// friend-list.component.ts
 import { Component, Input, OnInit } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { switchMap } from "rxjs/operators";
-import { ProfileUser } from "../../models/user";
-import { UsersService } from "../../services/users.service";
+import { ProfileUser } from "../../../api/models/user";
+import { UsersService } from "../../../api/services/users-service/users.service";
 import { HotToastService } from "@ngneat/hot-toast";
 
 @Component({
@@ -13,41 +12,57 @@ import { HotToastService } from "@ngneat/hot-toast";
 })
 export class FriendListComponent implements OnInit {
   @Input() friends: { uid: string }[] | undefined = undefined;
-  friendImages: { [uid: string]: Observable<string> } = {};
+  friendImages: { [uid: string]: string } = {};
+  loadedImages: { [uid: string]: boolean } = {};
 
   constructor(
     private userService: UsersService,
-    private toast: HotToastService // Ensure this is correctly typed and named
+    private toast: HotToastService
   ) {}
 
   ngOnInit() {
     if (this.friends) {
       for (let friend of this.friends) {
-        this.friendImages[friend.uid] = this.userService.getUserById(friend.uid).pipe(
-          switchMap((user: ProfileUser) => {
-            return of(user.photoURL || "/assets/images/image-placeholder.png");
-          })
-        );
+        this.userService.getUserById(friend.uid).pipe(
+            switchMap((user: ProfileUser) => {
+              const photoURL = user.photoURL || "/assets/images/image-placeholder.png";
+              this.friendImages[friend.uid] = photoURL;
+              return of(photoURL);
+            })
+        ).subscribe((photoURL) => {
+          // Create an Image object to test loading
+          const img = new Image();
+          img.onload = () => {
+            this.loadedImages[friend.uid] = true;
+          };
+          img.onerror = () => {
+            this.loadedImages[friend.uid] = false;
+            this.friendImages[friend.uid] = "/assets/images/image-placeholder.png";
+          };
+          img.src = photoURL;
+        });
       }
     }
   }
 
-  getFriendPhotoURL(uid: string): Observable<string> {
-    return this.friendImages[uid] || of("/assets/images/image-placeholder.png");
+  getFriendPhotoURL(uid: string): string {
+    if (this.loadedImages[uid]) {
+      return this.friendImages[uid];
+    }
+    return "/assets/images/image-placeholder.png";
   }
 
   getFriendDisplayName(friend: ProfileUser | undefined): string {
     if (friend && friend.displayName) {
-      return friend.displayName; // Return the friend's displayName if it exists
+      return friend.displayName;
     } else {
-      return "Unknown"; // Return a default value if displayName is not available
+      return "Unknown";
     }
   }
   removeFriend(friend: ProfileUser) {
     if (confirm(`Are you sure you want to remove ${friend.displayName}?`)) {
-      this.userService.removeFriend(friend).subscribe({  // Pass the whole 'friend' object
+      this.userService.removeFriend(friend).subscribe({
         next: () => {
-          // Update the local friends list
           this.friends = this.friends ? this.friends.filter(f => f.uid !== friend.uid) : [];
           this.toast.success(`${friend.displayName} has been removed successfully.`);
         },

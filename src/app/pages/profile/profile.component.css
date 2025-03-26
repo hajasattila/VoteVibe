@@ -1,0 +1,43 @@
+.friend-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    position: relative;
+    margin-right: 10px;
+  }
+  
+  .friend-list {
+    background-color: #fff;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  
+  @media (max-width: 767px) {
+    .friend-list-container {
+      align-items: stretch;
+      margin: 0;
+    }
+  
+    .friend-list {
+      position: static;
+      border: none;
+    }
+  }
+
+
+.friend-requests-animation {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.friend-requests-animation.ng-animate-active {
+  display: block;
+  opacity: 1;
+}
+  

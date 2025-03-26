@@ -1,0 +1,263 @@
+<div class="min-h-screen flex items-center justify-center py-16 px-4 mt-8                                                                 ">
+    <div class="bg-indigo-50 rounded-lg  shadow-lg w-full max-w-5xl animate-slide-up"
+         *ngIf="user$ | async as user">
+
+
+        <div class="relative flex flex-col lg:flex-row items-center gap-8 mb-6 overflow-hidden rounded-t-lg">
+            <div
+                    class="absolute inset-0
+                    bg-[url('https://img.freepik.com/premium-vector/modern-abstract-dark-blue-banner-background-vector-illustration-template-with-pattern-design-technology-business-corporate-institution-party-festive-seminar-talks_181182-31993.jpg')]
+                    bg-cover bg-center opacity-30 z-0">
+            </div>
+
+            <div class="p-0 pt-4 sm:p-4 ">
+                <div class="relative w-40 h-40 flex-shrink-0 ">
+                    <img
+                            class="rounded-full w-full h-full object-cover shadow-md absolute top-0 left-0 border-4 border-indigo-600"
+                            [src]="user?.photoURL ?? '/assets/images/image-placeholder.png'"
+                            alt="Profile Image"
+                    />
+
+                    <label
+                            for="fileUpload"
+                            class="bg-indigo-600 text-white hover:bg-indigo-700 p-2 rounded-full absolute top-0 right-0 shadow transition cursor-pointer"
+                            title="Upload new photo"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M17.414 2.586a2 2 0 00-2.828 0L6 11.172V14h2.828l8.586-8.586a2 2 0 000-2.828z" />
+                            <path fill-rule="evenodd" d="M4 16a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </label>
+
+
+
+
+                <input
+                        id="fileUpload"
+                        hidden
+                        type="file"
+                        (change)="uploadFile($event, user)"
+                        accept="image/*"
+                />
+            </div>
+            </div>
+
+
+            <div class="text-center lg:text-left">
+                <h1 class="!text-3xl !font-bold !text-indigo-700 !tracking-widest !drop-shadow-lg">
+                    {{ user?.displayName }}
+                </h1>
+
+                <div class="flex justify-center lg:justify-start gap-8 mt-4 text-indigo-800">
+                    <div class="flex flex-col items-center">
+                        <span class="material-icons-outlined text-2xl text-indigo-600 mb-1">how_to_vote</span>
+                        <div class="text-xl font-bold">{{ user?.polls || 0 }}</div>
+                        <div class="text-sm text-gray-600">{{ 'profile.polls' | translate }}</div>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <span class="material-icons-outlined text-2xl text-indigo-600 mb-1">sports_esports</span>
+                        <div class="text-xl font-bold">{{ user?.games || 0 }}</div>
+                        <div class="text-sm text-gray-600">{{ 'profile.games' | translate }}</div>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <span class="material-icons-outlined text-2xl text-indigo-600 mb-1">group</span>
+                        <div class="text-xl font-bold">{{ user?.friendList?.length || 0 }}</div>
+                        <div class="text-sm text-gray-600">{{ 'profile.friends' | translate }}</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="p-4 sm:px-6 sm:pb-6 sm:pt-0">
+            <div class="mb-3">
+                <h2 class="text-2xl font-semibold text-indigo-800 mb-3 flex items-center gap-2">
+                    <span class="material-icons-outlined text-indigo-600">group</span>
+                    {{ 'profile.friendList' | translate }}
+                </h2>
+                <app-friend-list [friends]="user?.friendList"></app-friend-list>
+            </div>
+
+
+            <div class="mb-3">
+                <h2 class="text-2xl font-semibold text-indigo-800 mb-3 flex items-center gap-2">
+                    <span class="material-icons-outlined text-indigo-600">person_add</span>
+                    {{ 'profile.friendRequests' | translate }}
+                </h2>
+                <ng-container *ngIf="user?.friendRequests?.length; else noRequests">
+                    <button
+                            class="mb-5 px-6 py-2 bg-indigo-600 text-white rounded-xl shadow-md hover:bg-indigo-700 transition-all duration-300 tracking-wide font-semibold"
+                            (click)="showFriendRequests = !showFriendRequests"
+                    >
+                        {{ showFriendRequests ? ('profile.hide' | translate) : ('profile.show' | translate) }}
+                    </button>
+
+                    <div
+                            [class.max-h-0]="!showFriendRequests"
+                            [class.max-h-[500px]]="showFriendRequests"
+                            class="overflow-hidden transition-all duration-700 ease-in-out"
+                    >
+                        <ul class="space-y-4">
+                            <li
+                                    *ngFor="let friendRequest of user?.friendRequests"
+                                    class="border border-indigo-100 p-5 rounded-xl shadow-md hover:shadow-lg transition duration-300 w-full sm:w-96"
+                            >
+                                <p class="text-indigo-800 text-lg">
+                                    {{ 'profile.requestFrom' | translate }}:
+                                    <span class="font-bold">{{ friendRequest | userName | async }}</span>
+                                </p>
+
+                                <div class="flex justify-center  gap-4 mt-4">
+                                    <button
+                                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg transition shadow-lg flex items-center gap-2"
+                                            (click)="acceptFriendRequest(friendRequest)"
+                                    >
+                                        <mat-icon>check_circle</mat-icon>
+                                        {{ 'profile.accept' | translate }}
+                                    </button>
+
+                                    <button
+                                            class="bg-pink-600 hover:bg-pink-700 text-white px-5 py-2 rounded-lg  transition shadow-lg flex items-center gap-2"
+                                            (click)="rejectFriendRequest(friendRequest)"
+                                    >
+                                        <mat-icon>cancel</mat-icon>
+                                        {{ 'profile.reject' | translate }}
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </ng-container>
+
+                <ng-template #noRequests>
+                    <p class="text-gray-500">{{ 'profile.noRequests' | translate }}</p>
+                </ng-template>
+            </div>
+
+            <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="space-y-6">
+                <h2 class="text-2xl font-semibold text-indigo-800 mb-3 flex items-center gap-2">
+                    <span class="material-icons-outlined text-indigo-600">edit</span>
+                    {{ 'profile.editProfile' | translate }}
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="w-full">
+                        <label for="firstName" class="block text-sm font-medium text-indigo-700 mb-1">
+                            {{ 'profile.firstName' | translate }}
+                        </label>
+                        <input
+                                id="firstName"
+                                type="text"
+                                maxlength="12"
+                                formControlName="firstName"
+                                [placeholder]="'profile.firstName' | translate"
+                                class="bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
+                        />
+                        <div class="text-sm text-gray-500 text-right mt-1">
+                            {{ profileForm.get('firstName')?.value?.length || 0 }} / 12
+                        </div>
+                    </div>
+
+
+                    <div class="w-full">
+                        <label for="lastName" class="block text-sm font-medium text-indigo-700 mb-1">
+                            {{ 'profile.lastName' | translate }}
+                        </label>
+                        <input
+                                id="lastName"
+                                type="text"
+                                formControlName="lastName"
+                                maxlength="12"
+                                [placeholder]="'profile.lastName' | translate"
+                                class="bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
+                        />
+                        <div class="text-sm text-gray-500 text-right mt-1">
+                            {{ profileForm.get('lastName')?.value?.length || 0 }} / 12
+                        </div>
+                    </div>
+
+                    <div class="w-full">
+                        <label for="displayName" class="block text-sm font-medium text-indigo-700 mb-1">
+                            {{ 'profile.nickname' | translate }}
+                        </label>
+                        <input
+                                id="displayName"
+                                type="text"
+                                formControlName="displayName"
+                                maxlength="12"
+                                [placeholder]="'profile.nickname' | translate"
+                                class="bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
+                        />
+                        <div class="text-sm text-gray-500 text-right mt-1">
+                            {{ profileForm.get('displayName')?.value?.length || 0 }} / 12
+                        </div>
+                    </div>
+
+                    <div class="w-full">
+                        <label for="phone" class="block text-sm font-medium text-indigo-700 mb-1">
+                            {{ 'profile.phone' | translate }}
+                        </label>
+                        <input
+                                id="phone"
+                                type="tel"
+                                maxlength="11"
+                                pattern="^06\\d{9}$"
+                                formControlName="phone"
+                                [placeholder]="'profile.phone' | translate"
+                                class="bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
+                        />
+                        <div *ngIf="profileForm.get('phone')?.hasError('pattern')" class="text-red-500 text-sm mt-1">
+                            06 az eleje és 11 szám a hossza!
+                        </div>
+                        <div class="text-sm text-gray-500 text-right mt-1">
+                            {{ profileForm.get('phone')?.value?.length || 0 }} / 11
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full">
+                    <label for="description" class="block text-sm font-medium text-indigo-700 mb-1">
+                        {{ 'profile.description' | translate }}
+                    </label>
+                    <textarea
+                            id="description"
+                            maxlength="100"
+                            formControlName="description"
+                            [placeholder]="'profile.description' | translate"
+                            class="bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition resize-none"
+                    ></textarea>
+
+                    <div class="text-sm text-gray-500 text-right mt-1">
+                        {{ profileForm.get('description')?.value?.length || 0 }} / 100
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3 -mt-4">
+                    <div class="w-full flex justify-between sm:justify-start">
+                        <button type="submit"
+                                class="bg-indigo-600 text-white py-2 px-6 rounded-lg  hover:bg-indigo-900 transition mr-6 flex items-center gap-2">
+                            <mat-icon>save</mat-icon>
+                            {{ 'profile.save' | translate }}
+                        </button>
+
+                        <button (click)="resetPassword()"
+                                class="bg-indigo-600 text-white py-2 px-6 rounded-lg  hover:bg-indigo-900 transition flex items-center gap-2">
+                            <mat-icon>lock_reset</mat-icon>
+                            {{ 'profile.resetPassword' | translate }}
+                        </button>
+                    </div>
+
+                    <div class="w-full flex justify-start">
+                        <button (click)="logout()"
+                                class="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-900 transition flex items-center gap-2">
+                            <mat-icon>logout</mat-icon>
+                            {{ 'profile.logout' | translate }}
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <input hidden type="file" (change)="uploadFile($event, user)"/>
+        </div>
+    </div>
+</div>

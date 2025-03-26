@@ -1,0 +1,243 @@
+{
+  "profile": {
+    "polls": "Szavazások",
+    "games": "Játékok",
+    "friends": "Barátok",
+    "friendList": "Barátlista",
+    "friendRequests": "Barátkérések",
+    "show": "Megjelenítés",
+    "hide": "Elrejtés",
+    "requestFrom": "Kérés tőle",
+    "accept": "Elfogadás",
+    "reject": "Elutasítás",
+    "noRequests": "Nincs függőben lévő barátkérés.",
+    "editProfile": "Profil szerkesztése",
+    "firstName": "Keresztnév",
+    "lastName": "Vezetéknév",
+    "nickname": "Becenév",
+    "phone": "Telefonszám (06)",
+    "phoneError": "06 az eleje és 11 szám a hossza!",
+    "description": "Leírás",
+    "save": "Mentés",
+    "resetPassword": "Jelszó visszaállítása",
+    "logout": "Kijelentkezés",
+    "uploadNewPhoto": "Új fotó feltöltése",
+    "success": {
+      "updated": "A profil sikeresen frissítve.",
+      "friendAccepted": "{{name}} barátfelkérése elfogadva!",
+      "friendRejected": "{{name}} barátfelkérése elutasítva!"
+    },
+    "error": {
+      "fetchUser": "Nem sikerült lekérni a felhasználó adatokat.",
+      "invalidForm": "Kérlek tölts ki minden mezőt helyesen!",
+      "nameTaken": "Ez a megjelenítendő név már foglalt.",
+      "updateFailed": "Hiba történt a profil frissítésekor.",
+      "noUser": "A művelethez be kell jelentkezned.",
+      "userNotFound": "A felhasználó nem található.",
+      "friendAcceptFailed": "Nem sikerült elfogadni a barátfelkérést.",
+      "friendRejectFailed": "Nem sikerült elutasítani a barátfelkérést."
+    },
+    "upload": {
+      "loading": "Profilkép feltöltése...",
+      "success": "A profilkép sikeresen feltöltve.",
+      "error": "Hiba történt a profilkép feltöltése során."
+    }
+  },
+  "nav": {
+    "game": "Játék",
+    "home": "Főoldal",
+    "profile": "Profil",
+    "logout": "Kijelentkezés",
+    "login": "Bejelentkezés"
+  },
+  "errorPage": {
+    "oops": "Hoppá!",
+    "roomNotFound": "A keresett szoba nem elérhető!",
+    "goHome": "Vissza a főoldalra"
+  },
+  "footer": {
+    "contact": {
+      "title": "Kapcsolat",
+      "subtitle": "Elérhető vagyunk ezeken a platformokon:"
+    },
+    "links": {
+      "title": "Hasznos linkek",
+      "home": "Főoldal",
+      "features": "Funkciók",
+      "examples": "Példák"
+    },
+    "more": {
+      "title": "Egyéb információ",
+      "privacy": "Adatkezelés",
+      "terms": "ÁSZF",
+      "contact": "Kapcsolat"
+    },
+    "copyright": "Minden jog fenntartva. Készítette:"
+  },
+  "search": {
+    "placeholder": "Keress barátokat!",
+    "noResults": "Nincs ilyen felhasználó 😞"
+  },
+  "login": {
+    "introLine1": "Kapcsolódj be a szavazásba!",
+    "introLine2": "Döntsetek együtt barátokkal, mi lenne a legjobb!",
+    "noAccount": "Nincs még fiókod?",
+    "getStarted": "Kezdd el most!",
+    "read": "Olvasd el a",
+    "terms": "felhasználási feltételeket",
+    "and": "és a",
+    "conditions": "adatvédelmi irányelveket",
+    "title": "Bejelentkezés",
+    "email": {
+      "label": "Email cím",
+      "placeholder": "Email címed",
+      "required": "Az email megadása kötelező",
+      "invalid": "Kérlek adj meg egy érvényes email címet"
+    },
+    "password": {
+      "label": "Jelszó",
+      "placeholder": "Jelszó",
+      "required": "A jelszó megadása kötelező",
+      "forgot": "Elfelejtett jelszó?"
+    },
+    "remember": "Emlékezz rám",
+    "submit": "Bejelentkezés",
+    "or": "vagy jelentkezz be",
+    "github": "GitHub fiókkal való belépés"
+  },
+  "room": {
+    "name": "Szoba neve",
+    "code": "Csatlakozási kód",
+    "voteType": "Szavazás típusa",
+    "timeRemaining": "Hátralévő idő",
+    "participants": "Résztvevők",
+    "questionLabel": "Kérdés:",
+    "questionPlaceholder": "Add meg a kérdésed",
+    "optionsLabel": "Válaszlehetőségek:",
+    "optionPlaceholder": "Adj meg egy opciót",
+    "addOption": "További opció hozzáadása",
+    "createPoll": "Szavazás létrehozása",
+    "viewStats": "Statisztikák megtekintése",
+    "generateRoom": "Szoba létrehozása",
+    "roomCode": "Szobakód",
+    "roomNameLabel": "Szoba neve",
+    "roomNamePlaceholder": "A szoba neve",
+    "roomNameRequired": "Meg kell adni a szoba nevét!",
+    "timeLimit": "Időkorlát (óra)",
+    "anonymous": "Névtelen:",
+    "inviteFriends": "Barátok meghívása: (kattints)",
+    "generate": "Szoba létrehozása",
+    "joinRoom": "Csatlakozás szobához",
+    "joinWithCode": "Csatlakozás kóddal:",
+    "roomCodePlaceholder": "Írd be a szobakódot...",
+    "join": "Csatlakozás",
+    "yourRooms": "Saját szobáid",
+    "time": {
+      "60min": "60 perc",
+      "6hour": "6 óra",
+      "12hour": "12 óra",
+      "24hour": "24 óra"
+    },
+    "voteTypeOptions": {
+      "picture": "Képalapú",
+      "text": "Szövegalapú"
+    },
+    "error": {
+      "loginRequired": "Be kell jelentkezned a szoba létrehozásához.",
+      "roomNameRequired": "Adj meg egy szobanevet!",
+      "addToProfile": "Nem sikerült a szobát hozzáadni a profilodhoz: {{ error }}",
+      "creationFailed": "Nem sikerült a szoba létrehozása: {{ error }}",
+      "codeRequired": "Kérlek, add meg a szoba kódját!",
+      "loginRequiredJoin": "Be kell jelentkezned, hogy csatlakozhass egy szobához.",
+      "codeNotFound": "Ilyen szoba kód nem létezik.",
+      "missingDocId": "A szoba adatai hiányosak (nincs dokumentum azonosító).",
+      "expired": "Ez a szoba már lejárt.",
+      "joinFailed": "Nem sikerült csatlakozni a szobához: {{ error }}"
+    },
+    "info": {
+      "newCode": "A szobaazonosító már létezik. Új kód generálva: {{ code }}",
+      "alreadyMember": "Már tagja vagy ennek a szobának."
+    },
+    "success": {
+      "created": "A szoba sikeresen létrehozva! Kód: {{ code }}",
+      "addedToProfile": "A szoba sikeresen hozzáadva a profilodhoz.",
+      "joined": "Sikeresen csatlakoztál a szobához."
+    }
+  },
+  "signup": {
+    "intro": "Regisztrálj új fiókot és csatlakozz a közösséghez!",
+    "alreadyAccount": "Már van fiókod?",
+    "login": "Bejelentkezés",
+    "read": "Olvasd el a",
+    "terms": "felhasználási feltételeket",
+    "and": "és a",
+    "conditions": "adatvédelmi irányelveket",
+    "title": "Regisztráció",
+    "name": {
+      "label": "Becenév",
+      "placeholder": "Add meg a beceneved",
+      "required": "A név megadása kötelező"
+    },
+    "email": {
+      "label": "Email cím",
+      "placeholder": "Add meg az email címed",
+      "required": "Az email cím megadása kötelező",
+      "invalid": "Kérlek érvényes email címet adj meg"
+    },
+    "password": {
+      "label": "Jelszó",
+      "placeholder": "Add meg a jelszót",
+      "required": "A jelszó megadása kötelező"
+    },
+    "confirm": {
+      "label": "Jelszó megerősítése",
+      "placeholder": "Ismételd meg a jelszót",
+      "required": "A jelszó megerősítése kötelező"
+    },
+    "passwordsMismatch": "A jelszavaknak egyezniük kell",
+    "submit": "Regisztráció"
+  },
+  "home": {
+    "menu": {
+      "game": "Játék",
+      "stats": "Statisztika",
+      "profile": "Profil",
+      "settings": "Beállítások",
+      "logout": "Kijelentkezés"
+    },
+    "hero": {
+      "welcome": "Üdvözlünk",
+      "name": "Dash",
+      "inbox": "Bejövő",
+      "seeMessages": "Üzenetek megtekintése"
+    },
+    "stats": {
+      "card1": "Statisztika 1",
+      "card2": "Statisztika 2",
+      "card3": "Statisztika 3"
+    }
+  },
+  "landing": {
+    "hero": {
+      "title1": "Hasznos és gyors",
+      "title2": "lehetőség döntéshozatalra",
+      "description": "Soha nem volt ilyen egyszerű szavazásokat létrehozni, amelyeket te és a barátaid könnyedén használhattok bármilyen döntéshez!",
+      "try": "Próbáld ki!",
+      "more": "Tovább"
+    },
+    "section2": {
+      "title": "Barátságok kovácsolása",
+      "description": "Alakíts ki olyan légkört, amely elősegíti a produktivitást a szervezetben és a céges kultúrában.",
+      "point1": "Hozd ki a legtöbbet a döntéseidből",
+      "point2": "Készíts képeket",
+      "point3": "Tudd meg azonnal az eredményt"
+    },
+    "section3": {
+      "title": "Gyors véleménygyűjtés",
+      "description": "Azonnali visszajelzés kell? Szeretnél előre látni szavazási mintákat? Kíváncsi vagy, mire számíthatsz marketing területen? Hozz létre egy szavazást, és szerezd meg az összes adatot!",
+      "point1": "Gyors és egyszerű",
+      "point2": "Bármikor létrehozható",
+      "point3": "Szórakoztató és hasznos"
+    }
+  }
+}

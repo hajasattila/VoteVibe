@@ -1,0 +1,23 @@
+# Node.js modulok
+node_modules/
+
+# Angular cache könyvtár (pl.: .angular/cache/14.1.1/)
+.angular/cache/
+
+# Angular környezeti fájlok (ha vannak)
+src/environments/
+
+# Build output
+dist/
+out-tsc/
+
+# IDE fájlok
+.vscode/
+.idea/
+
+# Log fájlok
+*.log
+
+# OS-specifikus fájlok
+.DS_Store
+Thumbs.db

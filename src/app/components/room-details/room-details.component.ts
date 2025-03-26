@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { DatabaseService } from "../../services/database.service";
-import { Room } from "../../models/room";
+import { DatabaseService } from "../../../api/services/database-service/database.service";
+import { Room } from "../../../api/models/room";
 import { interval, Subscription } from "rxjs";
 import { map } from "rxjs/operators";
 import { HotToastService } from "@ngneat/hot-toast";
@@ -32,8 +32,7 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
     this.dbService.getRoomByCode(roomCode).subscribe((room: Room | null) => {
       if (room && room.endTime) {
         this.room = room;
-        // Assuming room.endTime.seconds is the seconds since the Unix epoch
-        const endTime = new Date(room.endTime.seconds * 1000); // Convert seconds to milliseconds
+        const endTime = new Date(room.endTime.seconds * 1000);
         if (!isNaN(endTime.getTime())) {
           this.startTimer(endTime);
         } else {
@@ -41,13 +40,12 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
           this.remainingTime = "Invalid time format";
         }
       } else {
-        // Handle the case when room is null
         console.error("Room is null.");
         this.remainingTime = "Room data is not available";
       }
     });
     if (this.room?.pollCreated) {
-      this.pollCreated = true; // Ha már volt létrehozva szavazás, állítsd be a pollCreated-et true-ra
+      this.pollCreated = true;
     }
   }
 
@@ -120,7 +118,7 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         if (this.room && this.room.docId) {
           this.dbService.updateRoomPollState(this.room.docId, true).subscribe(() => {
             this.pollCreated = true;
-/*             this.cdr.detectChanges(); */
+             this.cdr.detectChanges();
           });
         } else {
           console.error("A szoba adatok nem érhetőek el az állapot frissítésekor.");

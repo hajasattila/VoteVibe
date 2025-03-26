@@ -1,0 +1,66 @@
+<div class="flex flex-col lg:flex-row h-screen">
+    <div class="w-full lg:w-60 bg-indigo-50 p-4 flex-shrink-0 sm:h-screen pt-24">
+        <div class="flex flex-col sm:h-full sm:justify-between">
+
+            <div class="bg-white rounded-md shadow-lg mb-6 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                <a routerLink="/game" class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
+                    <span class="material-icons-outlined mr-2">dashboard</span>
+                    {{ 'home.menu.game' | translate }}
+                    <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                </a>
+                <a href="#" class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
+                    <span class="material-icons-outlined mr-2">tune</span>
+                    {{ 'home.menu.stats' | translate }}
+                    <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                </a>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                <a routerLink="/profile" class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
+                    <span class="material-icons-outlined mr-2">face</span>
+                    {{ 'home.menu.profile' | translate }}
+                    <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                </a>
+                <a (click)="logout()" class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1 cursor-pointer">
+                    <span class="material-icons-outlined mr-2">power_settings_new</span>
+                    {{ 'home.menu.logout' | translate }}
+                    <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-1 p-6 max-w-7xl mx-auto pt-24">
+        <div class="flex flex-col lg:flex-row gap-4 mb-6">
+            <div class="flex-1 bg-indigo-100 border border-indigo-200 rounded-lg p-6 animate-fade-in">
+                <h2 class="text-4xl md:text-5xl text-blue-900">
+                    {{ 'home.hero.welcome' | translate }} <br><strong>{{ 'home.hero.name' | translate }}</strong>
+                </h2>
+                <span class="inline-block mt-8 px-8 py-2 rounded-lg text-xl font-bold text-white bg-indigo-800">
+          01:51
+        </span>
+            </div>
+
+            <div class="flex-1 bg-blue-100 border border-blue-200 rounded-xl p-6 animate-fade-in">
+                <h2 class="text-4xl md:text-5xl text-blue-900">
+                    {{ 'home.hero.inbox' | translate }} <br><strong>23</strong>
+                </h2>
+                <a href="#" class="inline-block mt-8 px-8 py-2 rounded-lg text-xl font-bold text-white bg-blue-800 hover:bg-blue-900 transition-transform duration-300 hover:scale-105">
+                    {{ 'home.hero.seeMessages' | translate }}
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="bg-white rounded-xl shadow-lg p-6 h-64 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-slide-up" style="animation-delay: 0.1s">
+                <h3 class="text-xl font-bold text-indigo-800">{{ 'home.stats.card1' | translate }}</h3>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg p-6 h-64 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-slide-up" style="animation-delay: 0.2s">
+                <h3 class="text-xl font-bold text-indigo-800">{{ 'home.stats.card2' | translate }}</h3>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg p-6 h-64 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-slide-up" style="animation-delay: 0.3s">
+                <h3 class="text-xl font-bold text-indigo-800">{{ 'home.stats.card3' | translate }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
