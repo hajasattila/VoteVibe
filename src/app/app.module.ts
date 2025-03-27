@@ -37,6 +37,7 @@ import {TranslateModule, TranslateLoader} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {NavBarComponent} from './components/nav-bar/nav-bar.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { StepsComponent } from './pages/steps/steps.component';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -62,7 +63,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         RoomDetailsComponent,
         PageNotFoundComponent,
         TextPollComponent,
-        NavBarComponent
+        NavBarComponent,
+        StepsComponent
     ],
     imports: [
         MatSnackBarModule,

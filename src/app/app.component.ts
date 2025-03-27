@@ -1,8 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {AuthService} from '../api/services/auth-service/auth.service';
-import {UsersService} from '../api/services/users-service/users.service';
-import {HttpClient} from "@angular/common/http";
+import {ThemeService} from "../api/services/theme-service/theme-service.service";
 
 @Component({
     selector: 'app-root',
@@ -10,12 +7,21 @@ import {HttpClient} from "@angular/common/http";
     styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
+    themeClass: 'light' | 'dark' = 'light';
 
-    constructor(private http: HttpClient) {
-        console.log('HttpClient működik!');
+    constructor(private themeService: ThemeService) {
     }
 
     ngOnInit(): void {
+        this.themeService.currentTheme$.subscribe((theme) => {
+            this.themeClass = theme;
+            console.log(`[AppComponent] Aktuális téma változott: ${theme}`);
+        });
+
+        this.generateBackgroundCircles();
+    }
+
+    generateBackgroundCircles(): void {
         const circles = document.querySelector('.circles');
         const numberOfCircles = 25;
 
@@ -37,6 +43,4 @@ export class AppComponent implements OnInit {
             }
         }
     }
-
-
 }

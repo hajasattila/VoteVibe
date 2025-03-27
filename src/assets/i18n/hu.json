@@ -45,10 +45,11 @@
   },
   "nav": {
     "game": "Játék",
-    "home": "Főoldal",
+    "home": "Kezdőlap",
     "profile": "Profil",
     "logout": "Kijelentkezés",
-    "login": "Bejelentkezés"
+    "login": "Bejelentkezés",
+    "steps": "Lépések"
   },
   "errorPage": {
     "oops": "Hoppá!",
@@ -238,6 +239,28 @@
       "point1": "Gyors és egyszerű",
       "point2": "Bármikor létrehozható",
       "point3": "Szórakoztató és hasznos"
+    }
+  },
+  "step": {
+    "1": {
+      "title": "Beregisztrálsz, megkeresed a barátaid",
+      "description": "Regisztráció után keresd meg a barátaid nevét vagy kódját!"
+    },
+    "2": {
+      "title": "Szobát hozol létre a neked szimpatikus játék móddal",
+      "description": "Válassz játékmódot és hozz létre egy szobát, ahol játszhattok."
+    },
+    "3": {
+      "title": "Meghívod a barátaid kód vagy bejelölés alapján",
+      "description": "Meghívhatod őket kóddal vagy listából kiválasztva."
+    },
+    "4": {
+      "title": "Szavaz mindenki arra, hogy melyik opció tetszik neki jobban",
+      "description": "A játék során mindenki szavaz a kedvenc opciójára."
+    },
+    "5": {
+      "title": "Statisztika alapján döntést hoztok!",
+      "description": "A rendszer mutatja az eredményeket, így egyszerű a döntés!"
     }
   }
 }

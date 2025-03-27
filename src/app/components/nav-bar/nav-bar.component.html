@@ -1,8 +1,6 @@
-<section
-        class="fixed top-0 left-0 right-0 z-50 w-full bg-indigo-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200 shadow-md px-4 sm:px-8">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between py-4">
+<section class="bg-white text-gray-800 dark:bg-black dark:text-gray-100 transition-colors duration-300">
+<div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between py-4">
 
-        <!-- Logo + Hamburger -->
         <div class="flex justify-between w-full md:w-auto items-center">
             <a routerLink="/" class="text-2xl font-extrabold tracking-tight text-indigo-600 dark:text-indigo-400">
                 VoteVibe.
@@ -20,41 +18,32 @@
             </button>
         </div>
 
-        <!-- Menü -->
-        <div [ngClass]="{
-      'block': navbarOpen,
-      'hidden': !navbarOpen,
-      'w-full': true,
-      'md:flex': true,
-      'md:items-center': true,
-      'md:w-auto': true,
-      'space-y-4': navbarOpen,
-      'md:space-y-0': true,
-      'mt-4': navbarOpen,
-      'md:mt-0': true
-    }">
+        <div [ngClass]="{  'block': navbarOpen,  'hidden': !navbarOpen,  'w-full': true,  'md:flex': true,  'md:items-center': true,  'md:w-auto': true,  'space-y-4': navbarOpen,  'md:space-y-0': true,  'mt-4': navbarOpen,  'md:mt-0': true}">
             <nav class="flex flex-col md:flex-row md:space-x-6 items-center w-full md:w-auto">
-
-                <!-- Menü linkek -->
-                <div class="flex-row">
-                    <a routerLink="/game"
-                       class="text-base font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition mx-5">
-                        {{ 'nav.game' | translate }}
-                    </a>
+                <div class="flex flex-row gap-5">
                     <a *ngIf="(user$ | async)" routerLink="/home"
                        class="text-base font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition">
                         {{ 'nav.home' | translate }}
                     </a>
+                    <a routerLink="/steps"
+                       class="text-base font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                        {{ 'nav.steps' | translate }}
+                    </a>
+                    <a routerLink="/game"
+                       class="text-base font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                        {{ 'nav.game' | translate }}
+                    </a>
                 </div>
 
-                <app-profile-search class="w-full md:w-auto mt-2 md:mt-0"></app-profile-search>
-
+                <div class="w-full flex justify-center md:block">
+                    <app-profile-search class="w-full max-w-sm md:w-auto mt-2 md:mt-0"></app-profile-search>
+                </div>
                 <div class="flex md:hidden flex-col space-y-2 mt-4">
                     <div class="flex flex-row justify-between gap-5 items-center">
                         <ng-container *ngIf="user$ | async as user; else mobileLogin">
                             <div class="relative self-start" (click)="toggleProfileDropdown()"
                                  style="width: max-content">
-                                <img class="w-9 h-9 rounded-full cursor-pointer"
+                                <img class="w-12 h-12 rounded-full cursor-pointer object-cover"
                                      [src]="user?.photoURL ?? 'assets/images/image-placeholder.png'"
                                      alt="Profile" loading="eager"/>
 
@@ -97,7 +86,7 @@
         <div class="hidden md:flex items-center space-x-4 mt-4 md:mt-0">
             <ng-container *ngIf="user$ | async as user; else loginButtons">
                 <div class="relative" (click)="toggleProfileDropdown()">
-                    <img class="w-9 h-9 rounded-full cursor-pointer"
+                    <img class="w-12 h-12 rounded-full cursor-pointer object-cover"
                          [src]="user?.photoURL ?? 'assets/images/image-placeholder.png'"
                          alt="Profile" loading="eager"/>
                     <div *ngIf="profileDropdownOpen"

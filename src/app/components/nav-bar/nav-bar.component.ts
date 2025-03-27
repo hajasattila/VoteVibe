@@ -27,6 +27,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
     private routerSubscription!: Subscription;
     private previousUrl: string = '';
+    protected navbarAnimating = false;
+
 
     constructor(
         private authService: AuthService,
@@ -81,7 +83,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
     toggleNavbar() {
         this.navbarOpen = !this.navbarOpen;
     }
-
 
     toggleProfileDropdown() {
         this.profileDropdownOpen = !this.profileDropdownOpen;

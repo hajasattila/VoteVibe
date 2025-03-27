@@ -1,10 +1,12 @@
-<div class="relative min-h-screen flex flex-col">
-    <div class="area -z-50"></div>
-    <ul class="circles -z-50"></ul>
-    <app-nav-bar></app-nav-bar>
-    <div class="flex-grow relative z-10">
-        <router-outlet></router-outlet>
+<div [ngClass]="themeClass">
+    <div class="relative min-h-screen flex flex-col">
+        <div class="area -z-50 dark:bg-gradient-to-l dark:from-gray-900 dark:to-gray-800"></div>
+        <ul class="circles -z-50"></ul>
+        <app-nav-bar></app-nav-bar>
+        <div class="flex-grow relative z-10">
+            <router-outlet></router-outlet>
+        </div>
+        <app-scroll-to-top></app-scroll-to-top>
+        <app-footer></app-footer>
     </div>
-    <app-scroll-to-top></app-scroll-to-top>
-    <app-footer></app-footer>
 </div>

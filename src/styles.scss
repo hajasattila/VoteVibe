@@ -40,6 +40,10 @@ body {
   background: -webkit-linear-gradient(to left, #b6b8ea, #666ab7);
 }
 
+.dark .area {
+  background: linear-gradient(to left, #1f2937, #111827);
+}
+
 .circles {
   position: fixed;
   top: 0;
@@ -163,38 +167,7 @@ body {
     border-radius: 50%;
   }
 }
-// Alkalmazzuk a snack-bar containerre
-::ng-deep .custom-snackbar {
-  background-color: #333 !important;
-  color: #fff !important;
-  font-weight: 500;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  animation: slide-in-right 0.4s ease-out;
-}
 
-::ng-deep .custom-snackbar {
-  color: #fff;
-  font-weight: 500;
-  border-radius: 8px;
-  padding: 16px 24px;
-  animation: slide-in-right 0.4s ease-out;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-::ng-deep .snackbar-success {
-  background-color: #4caf50 !important; // zöld
-}
-
-::ng-deep .snackbar-error {
-  background-color: #f44336 !important; // piros
-}
-
-::ng-deep .snackbar-info {
-  background-color: #2196f3 !important; // kék
-}
-
-// Becsúszás animáció
 @keyframes slide-in-right {
   from {
     transform: translateX(100%);

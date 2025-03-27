@@ -1,4 +1,5 @@
-import {Injectable, Renderer2, RendererFactory2} from '@angular/core';
+import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -7,6 +8,9 @@ export class ThemeService {
     private renderer: Renderer2;
     private themeKey = 'theme';
     private darkClass = 'dark';
+
+    private currentThemeSubject = new BehaviorSubject<'light' | 'dark'>('light');
+    currentTheme$ = this.currentThemeSubject.asObservable();
 
     constructor(rendererFactory: RendererFactory2) {
         this.renderer = rendererFactory.createRenderer(null, null);
@@ -35,10 +39,18 @@ export class ThemeService {
     setDarkTheme(): void {
         this.renderer.addClass(document.documentElement, this.darkClass);
         localStorage.setItem(this.themeKey, 'dark');
+        this.currentThemeSubject.next('dark');
+        console.log('[ThemeService] Dark téma aktív');
     }
 
     setLightTheme(): void {
         this.renderer.removeClass(document.documentElement, this.darkClass);
         localStorage.setItem(this.themeKey, 'light');
+        this.currentThemeSubject.next('light');
+        console.log('[ThemeService] Világos téma aktív');
+    }
+
+    getCurrentTheme(): 'light' | 'dark' {
+        return this.isDark() ? 'dark' : 'light';
     }
 }

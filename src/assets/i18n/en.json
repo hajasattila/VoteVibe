@@ -45,10 +45,11 @@
   },
   "nav": {
     "game": "Game",
-    "home": "Home",
+    "home": "Dashboard",
     "profile": "Profile",
     "logout": "Logout",
-    "login": "Login"
+    "login": "Login",
+    "steps": "Steps"
   },
   "errorPage": {
     "oops": "Oops!",
@@ -239,5 +240,28 @@
       "point2": "It can be made at any time",
       "point3": "Entertaining and useful"
     }
+  },
+  "step": {
+    "1": {
+      "title": "Register and find your friends",
+      "description": "After registration, look for your friends by name or code!"
+    },
+    "2": {
+      "title": "Create a room with your preferred game mode",
+      "description": "Choose a game mode and create a room where you can play together."
+    },
+    "3": {
+      "title": "Invite your friends by code or selection",
+      "description": "Invite them by using a room code or selecting from your friends list."
+    },
+    "4": {
+      "title": "Everyone votes for the option they like best",
+      "description": "During the game, each player votes for their favorite option."
+    },
+    "5": {
+      "title": "Make a decision based on statistics!",
+      "description": "The system shows the results so making a decision is easy!"
+    }
   }
 }
+
