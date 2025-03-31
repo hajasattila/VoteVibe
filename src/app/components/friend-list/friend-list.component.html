@@ -8,7 +8,7 @@
                                 class="w-10 h-10 rounded-full mb-2 cursor-pointer hover:opacity-75"
                                 [src]="getFriendPhotoURL(friend.uid)"
                                 alt="Profile Image"
-                                (click)="removeFriend(friend)"
+                                (click)="openConfirmModal(friend)"
                         />
                     </div>
                     <div class="friend-details text-center">
@@ -19,5 +19,35 @@
                 </div>
             </li>
         </ul>
+    </div>
+</div>
+
+<div *ngIf="showConfirmModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl w-full max-w-md transition-all transform scale-100 animate-fade-in">
+
+        <div *ngIf="!deletionSuccess" class="text-center">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+                {{ 'friends.confirmRemove' | translate:{name: selectedFriend?.displayName} }}
+            </h3>
+            <div class="flex justify-center gap-4 mt-6">
+                <button (click)="confirmDelete()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                    {{ 'friends.confirmYes' | translate }}
+                </button>
+                <button (click)="cancelDelete()" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">
+                    {{ 'friends.confirmNo' | translate }}
+                </button>
+            </div>
+        </div>
+
+        <div *ngIf="deletionSuccess" class="flex flex-col items-center justify-center">
+            <div class="animate-ping bg-green-100 rounded-full p-3 mb-4">
+                <svg class="h-8 w-8 text-green-600 animate-scale-in" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <p class="text-green-600 font-semibold">{{ 'friends.removed' | translate }}</p>
+        </div>
+
     </div>
 </div>

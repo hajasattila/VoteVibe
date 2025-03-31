@@ -17,7 +17,6 @@ import {initializeApp, provideFirebaseApp} from '@angular/fire/app';
 import {environment} from '../environments/environment';
 import {provideAuth, getAuth} from '@angular/fire/auth';
 import {provideFirestore, getFirestore} from '@angular/fire/firestore';
-import {HotToastModule} from '@ngneat/hot-toast';
 import {LandingComponent} from './pages/landing/landing.component';
 import {MatMenuModule} from '@angular/material/menu';
 import {ProfileComponent} from './pages/profile/profile.component';
@@ -29,7 +28,7 @@ import {UserNamePipe} from '../api/pipes/user-name-pipe/user-name.pipe';
 import {ScrollToTopComponent} from './components/scroll-to-top/scroll-to-top.component';
 import {GameComponent} from './pages/game/game.component';
 import {DatabaseService} from '../api/services/database-service/database.service';
-import {RoomDetailsComponent} from './pages/room-details/room-details.component';
+import {RoomDetailsComponent} from './components/room-details/room-details.component';
 import {PageNotFoundComponent} from './pages/page-not-found/page-not-found.component';
 import {TextPollComponent} from './components/text-poll/text-poll.component';
 import {HttpClientModule, HttpClient} from '@angular/common/http';
@@ -83,7 +82,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         provideAuth(() => getAuth()),
         provideFirestore(() => getFirestore()),
         provideStorage(() => getStorage()),
-        HotToastModule.forRoot(),
         MatMenuModule,
         MatButtonModule,
         FormsModule,

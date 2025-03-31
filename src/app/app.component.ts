@@ -15,7 +15,6 @@ export class AppComponent implements OnInit {
     ngOnInit(): void {
         this.themeService.currentTheme$.subscribe((theme) => {
             this.themeClass = theme;
-            console.log(`[AppComponent] Aktuális téma változott: ${theme}`);
         });
 
         this.generateBackgroundCircles();

@@ -1,8 +1,7 @@
 import {ChangeDetectorRef, Component, OnInit} from "@angular/core";
-import {FormControl, FormGroup, NonNullableFormBuilder, Validators} from "@angular/forms";
-import {HotToastService} from "@ngneat/hot-toast";
+import {NonNullableFormBuilder, Validators} from "@angular/forms";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
-import {filter, first, of, switchMap, take, tap} from "rxjs";
+import {first, switchMap, take, tap} from "rxjs";
 import {ProfileUser} from "src/api/models/user";
 import {ImageUploadService} from "src/api/services/image-upload-service/image-upload.service";
 import {UsersService} from "src/api/services/users-service/users.service";
@@ -148,7 +147,6 @@ export class ProfileComponent implements OnInit {
 
                     this.authService.resetPassword(email).subscribe(
                         () => {
-                            console.log("Password reset email sent successfully");
                         },
                         (error) => {
                             console.error("Error sending password reset email", error);

@@ -1,6 +1,5 @@
 import {Component, OnInit} from "@angular/core";
 import {Router} from "@angular/router";
-import {HotToastService} from "@ngneat/hot-toast";
 import {take} from "rxjs";
 import {Room} from "src/api/models/room";
 import {ProfileUser} from "src/api/models/user";
@@ -36,7 +35,7 @@ export class GameComponent implements OnInit {
     constructor(
         private snackbarService: SnackbarService, private router: Router,
         private authService: AuthService, private dbService: DatabaseService,
-        private userService: UsersService, private toast: HotToastService,
+        private userService: UsersService,
         private translate: TranslateService,
     ) {
         this.roomCode = this.generateRoomCode(6, 12);

@@ -11,11 +11,10 @@ import {
     arrayUnion,
     arrayRemove
 } from "@angular/fire/firestore";
-import {catchError, filter, from, map, Observable, of, shareReplay, switchMap, tap, throwError} from "rxjs";
+import {catchError, from, map, Observable, of, shareReplay, switchMap, tap, throwError} from "rxjs";
 import {ProfileUser} from "../../models/user";
 import {AuthService} from "../auth-service/auth.service";
 import {runTransaction} from "firebase/firestore";
-import {HotToastService} from "@ngneat/hot-toast";
 import {Room} from "../../models/room";
 import {startWith} from "rxjs/operators";
 
@@ -23,6 +22,11 @@ import {startWith} from "rxjs/operators";
     providedIn: "root",
 })
 export class UsersService {
+
+
+    constructor(private firestore: Firestore, private authService: AuthService) {
+    }
+
     getFriends(userId: string): Observable<ProfileUser[]> {
         const friendsRef = collection(this.firestore, `/users/${userId}/friendList`);
         return collectionData(friendsRef, {idField: "key"}).pipe(
@@ -32,9 +36,6 @@ export class UsersService {
                 }))
             )
         );
-    }
-
-    constructor(private firestore: Firestore, private authService: AuthService, private toast: HotToastService) {
     }
 
     private loadCachedUserProfile(): ProfileUser | null {
@@ -220,4 +221,39 @@ export class UsersService {
             })
         );
     }
+
+    //TODO: maybe future developments for bidirectional friend remove.
+
+    // removeFriendBidirectional(
+    //     currentUserId: string,
+    //     friendUid: string,
+    // ): Observable<void> {
+    //     const currentUserRef = doc(this.firestore, `users/${currentUserId}`);
+    //     const friendUserRef = doc(this.firestore, `users/${friendUid}`);
+    //
+    //     return from(
+    //         runTransaction(this.firestore, async (transaction) => {
+    //             const currentUserDoc = await transaction.get(currentUserRef);
+    //             const friendUserDoc = await transaction.get(friendUserRef);
+    //
+    //             if (!currentUserDoc.exists() || !friendUserDoc.exists()) {
+    //                 throw new Error("One of the user profiles does not exist.");
+    //             }
+    //
+    //             const currentFriendList = currentUserDoc.data()?.['friendList'] || [];
+    //             const friendFriendList = friendUserDoc.data()?.['friendList'] || [];
+    //
+    //             const updatedCurrentList = currentFriendList.filter((f: any) => f.uid !== friendUid);
+    //             const updatedFriendList = friendFriendList.filter((f: any) => f.uid !== currentUserId);
+    //
+    //             transaction.update(currentUserRef, {
+    //                 friendList: updatedCurrentList,
+    //             });
+    //
+    //             transaction.update(friendUserRef, {
+    //                 friendList: updatedFriendList,
+    //             });
+    //         })
+    //     );
+    // }
 }

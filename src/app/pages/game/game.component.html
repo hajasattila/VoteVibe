@@ -1,5 +1,5 @@
-<div class="min-h-screen overflow-y-auto flex flex-col items-center justify-start text-center transition-colors duration-300 px-4 pt-32 gap-10">
-    <!-- GENERATE ROOM -->
+<div class="min-h-screen overflow-y-auto flex flex-col items-center justify-center text-center transition-colors duration-300 px-4 pt-32 gap-10">
+
     <ng-container *ngIf="showRoomDetails">
         <div class="w-full flex justify-center relative">
             <div
@@ -99,7 +99,6 @@
         </div>
     </ng-container>
 
-    <!-- JOIN ROOM -->
     <ng-container *ngIf="showRoomForm">
         <div class="w-full flex justify-center relative">
             <div
@@ -151,7 +150,6 @@
         </div>
     </ng-container>
 
-    <!-- BOTTOM SELECT CARDS -->
     <div class="flex flex-col sm:flex-row gap-6 items-center justify-center">
         <label
                 *ngIf="!showRoomDetails"

@@ -1,8 +1,9 @@
 import {Component, OnInit} from "@angular/core";
 import {FormBuilder, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
-import {HotToastService} from "@ngneat/hot-toast";
 import {AuthService} from "src/api/services/auth-service/auth.service";
+import {TranslateService} from "@ngx-translate/core";
+import {SnackbarService} from "../../../api/services/snackbar-service/snackbar-service.service";
 
 @Component({
     selector: "app-login",
@@ -18,7 +19,13 @@ export class LoginComponent implements OnInit {
 
     public showPassword = false;
 
-    constructor(private authService: AuthService, private toast: HotToastService, private router: Router, private fb: FormBuilder) {
+    constructor(
+        private authService: AuthService,
+        private snackbar: SnackbarService,
+        private router: Router,
+        private fb: FormBuilder,
+        private translate: TranslateService
+    ) {
     }
 
     ngOnInit() {
@@ -36,7 +43,6 @@ export class LoginComponent implements OnInit {
             remember: remember
         });
     }
-
 
     saveCredentials(email: string, password: string, remember: boolean) {
         if (remember) {
@@ -70,51 +76,56 @@ export class LoginComponent implements OnInit {
 
         this.saveCredentials(email, password, Boolean(remember));
 
-        this.authService
-            .login(email, password)
-            .pipe(
-                this.toast.observe({
-                    success: 'Logged in successfully',
-                    loading: 'Logging in...',
-                    error: ({message}) => `There was an error: ${message}`,
-                })
-            )
-            .subscribe(() => {
+        this.authService.login(email, password).subscribe({
+            next: () => {
+                this.translate.get('login.success').subscribe(msg =>
+                    this.snackbar.success(msg)
+                );
                 this.router.navigate(['/home']);
-            });
+            },
+            error: (err) => {
+                this.translate.get('login.error').subscribe(msg =>
+                    this.snackbar.error(msg + ': ' + err.message)
+                );
+            }
+        });
     }
 
     resetPassword() {
         const email = this.loginForm.get("email")?.value;
-        if (email) {
-            this.authService.resetPassword(email);
-        }
+
         if (!email) {
-            console.error("Invalid email address");
+            this.translate.get('login.invalidEmail').subscribe(msg =>
+                this.snackbar.error(msg)
+            );
             return;
         }
 
-        this.authService
-            .resetPassword(email)
-            .pipe(
-                this.toast.observe({
-                    success: "Password reset email sent successfully",
-                    loading: "Sending password reset email...",
-                    error: ({message}) => `There was an error: ${message}`,
-                })
-            )
-            .subscribe(() => {
-                console.log("Password reset email sent successfully");
-            });
+        this.authService.resetPassword(email).subscribe({
+            next: () => {
+                this.translate.get('login.resetSuccess').subscribe(msg =>
+                    this.snackbar.success(msg)
+                );
+            },
+            error: (err) => {
+                this.translate.get('login.resetError').subscribe(msg =>
+                    this.snackbar.error(msg + ': ' + err.message)
+                );
+            }
+        });
     }
 
     async loginGitHub() {
         try {
-            const credential = await this.authService.loginWithGithub().toPromise();
-            this.toast.success('Logged in successfully with GitHub');
+            await this.authService.loginWithGithub().toPromise();
+            this.translate.get('login.githubSuccess').subscribe(msg =>
+                this.snackbar.success(msg)
+            );
             this.router.navigate(['/home']);
-        } catch (error) {
-            this.toast.error(`Login failed: ${onmessage}`);
+        } catch (error: any) {
+            this.translate.get('login.githubError').subscribe(msg =>
+                this.snackbar.error(msg + ': ' + (error?.message || ''))
+            );
             console.error('GitHub Login Error:', error);
         }
     }

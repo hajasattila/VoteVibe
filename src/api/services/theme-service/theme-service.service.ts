@@ -40,17 +40,12 @@ export class ThemeService {
         this.renderer.addClass(document.documentElement, this.darkClass);
         localStorage.setItem(this.themeKey, 'dark');
         this.currentThemeSubject.next('dark');
-        console.log('[ThemeService] Dark téma aktív');
     }
 
     setLightTheme(): void {
         this.renderer.removeClass(document.documentElement, this.darkClass);
         localStorage.setItem(this.themeKey, 'light');
         this.currentThemeSubject.next('light');
-        console.log('[ThemeService] Világos téma aktív');
     }
 
-    getCurrentTheme(): 'light' | 'dark' {
-        return this.isDark() ? 'dark' : 'light';
-    }
 }

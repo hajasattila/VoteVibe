@@ -1,5 +1,5 @@
 <div class="w-full mx-auto relative z-[9999]" id="searchContainer">
-<div class="relative group">
+    <div class="relative group">
         <div>
             <svg
                     class="transition duration-500 ease-in-out hover:shadow-lg absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-gray-400 z-10"
@@ -24,7 +24,8 @@
         <div *ngIf="filteredUsers$ | async as users" id="suggestionsList"
              class="absolute w-full bg-white dark:bg-gray-900 rounded-md z-[9999] border-gray-200 dark:border-gray-700 mt-1">
             <ul *ngIf="searchControl.value && users.length > 0; else noResults">
-                <li *ngFor="let user of users" class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 border border-indigo-800">
+                <li *ngFor="let user of users"
+                    class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 border border-indigo-800">
                     <img class="w-10 h-10 rounded-full mr-3"
                          [src]="user.photoURL ?? 'assets/images/image-placeholder.png'" alt="{{ user.displayName }}"/>
                     <div class="flex-grow">

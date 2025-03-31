@@ -79,9 +79,23 @@
   },
   "search": {
     "placeholder": "Search for friends!",
-    "noResults": "There is no such user 😞"
+    "noResults": "There is no such user 😞",
+    "errorNotLoggedIn": "You need to login to add a friend!",
+    "errorSelfFriend": "You can't add yourself as a friend!",
+    "errorAlreadyFriend": "This user is already your friend!",
+    "errorAlreadySent": "You have already sent a friend request to {{name}}",
+    "loadingSendingRequest": "Sending friend request...",
+    "successRequestSent": "Friend request has been sent to {{name}}",
+    "errorSendFailed": "{{name}} is already your friend or removed from your list!"
   },
   "login": {
+    "success": "Logged in successfully!",
+    "error": "An error occurred during login",
+    "invalidEmail": "Please enter a valid email address!",
+    "resetSuccess": "Password reset email sent successfully.",
+    "resetError": "Failed to send password reset email",
+    "githubSuccess": "Successfully logged in with GitHub!",
+    "githubError": "GitHub login failed",
     "introLine1": "Tune in to the voting!",
     "introLine2": "Decide together with friends what would be the best for you!",
     "noAccount": "Don't have an account?",
@@ -109,6 +123,15 @@
     "github": "Sign in with GitHub"
   },
   "room": {
+    "errorMissingRoom": "Room details are missing.",
+    "errorMissingQuestion": "The question is required.",
+    "errorMissingOption": "All options must be filled out.",
+    "pollSuccess": "Poll added successfully.",
+    "errorUpdateRoom": "Failed to update room state.",
+    "errorPollCreation": "Failed to add poll.",
+    "errorLoadRoom": "Failed to load room data.",
+    "back": "Back",
+    "expired": "Expired",
     "name": "Room Name",
     "code": "Connection Code",
     "timeRemaining": "Remaining Time",
@@ -168,6 +191,9 @@
     }
   },
   "signup": {
+    "success": "Congrats! You are all signed up",
+    "error": "Sign-up failed",
+    "loading": "Signing up...",
     "intro": "Sign up for a new account and join the community!",
     "alreadyAccount": "Already have an account?",
     "login": "Log In",
@@ -264,6 +290,14 @@
       "title": "Make a decision based on statistics!",
       "description": "The system shows the results so making a decision is easy!"
     }
+  },
+  "friends": {
+    "confirmRemove": "Are you sure you want to remove {{name}} from your friends?",
+    "confirmYes": "Yes",
+    "confirmNo": "Cancel",
+    "removeSuccess": "{{name}} has been removed successfully.",
+    "removeError": "Failed to remove {{name}}.",
+    "removed": "Removed!"
   }
 }
 

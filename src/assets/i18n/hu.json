@@ -79,9 +79,23 @@
   },
   "search": {
     "placeholder": "Keress barátokat!",
-    "noResults": "Nincs ilyen felhasználó 😞"
+    "noResults": "Nincs ilyen felhasználó 😞",
+    "errorNotLoggedIn": "Be kell jelentkezned, hogy barátot adhass hozzá!",
+    "errorSelfFriend": "Nem adhatsz hozzá saját magadat barátnak!",
+    "errorAlreadyFriend": "Ez a felhasználó már a barátod!",
+    "errorAlreadySent": "Már küldtél barátfelkérést neki: {{name}}",
+    "loadingSendingRequest": "Barátfelkérés küldése folyamatban...",
+    "successRequestSent": "Barátfelkérés elküldve neki: {{name}}",
+    "errorSendFailed": "{{name}} már a barátod, vagy törölted a barátlistádról!"
   },
   "login": {
+    "success": "Sikeres bejelentkezés!",
+    "error": "Hiba történt a bejelentkezés során",
+    "invalidEmail": "Adj meg egy érvényes e-mail címet!",
+    "resetSuccess": "A jelszó-visszaállító e-mailt elküldtük.",
+    "resetError": "Nem sikerült elküldeni a jelszó-visszaállító e-mailt",
+    "githubSuccess": "Sikeresen bejelentkeztél GitHubbal!",
+    "githubError": "GitHub bejelentkezés sikertelen",
     "introLine1": "Kapcsolódj be a szavazásba!",
     "introLine2": "Döntsetek együtt barátokkal, mi lenne a legjobb!",
     "noAccount": "Nincs még fiókod?",
@@ -106,9 +120,18 @@
     "remember": "Emlékezz rám",
     "submit": "Bejelentkezés",
     "or": "vagy jelentkezz be",
-    "github": "GitHub fiókkal való belépés"
+    "github": "GitHub belépés"
   },
   "room": {
+    "errorMissingRoom": "A szoba adatai hiányoznak.",
+    "errorMissingQuestion": "A kérdés megadása kötelező.",
+    "errorMissingOption": "Minden opció kitöltése kötelező.",
+    "pollSuccess": "A szavazás sikeresen létrehozva.",
+    "errorUpdateRoom": "Nem sikerült frissíteni a szoba állapotát.",
+    "errorPollCreation": "Nem sikerült létrehozni a szavazást.",
+    "errorLoadRoom": "Nem sikerült betölteni a szoba adatait.",
+    "back": "Vissza",
+    "expired": "Lejárt",
     "name": "Szoba neve",
     "code": "Csatlakozási kód",
     "voteType": "Szavazás típusa",
@@ -120,7 +143,7 @@
     "optionPlaceholder": "Adj meg egy opciót",
     "addOption": "További opció hozzáadása",
     "createPoll": "Szavazás létrehozása",
-    "viewStats": "Statisztikák megtekintése",
+    "viewStats": "Statisztikák",
     "generateRoom": "Szoba létrehozása",
     "roomCode": "Szobakód",
     "roomNameLabel": "Szoba neve",
@@ -168,6 +191,9 @@
     }
   },
   "signup": {
+    "success": "Sikeres regisztráció! Üdv a rendszerben!",
+    "error": "Nem sikerült a regisztráció",
+    "loading": "Regisztráció folyamatban...",
     "intro": "Regisztrálj új fiókot és csatlakozz a közösséghez!",
     "alreadyAccount": "Már van fiókod?",
     "login": "Bejelentkezés",
@@ -264,5 +290,13 @@
       "title": "Statisztika alapján döntést hoztok!",
       "description": "A rendszer mutatja az eredményeket, így egyszerű a döntés!"
     }
+  },
+  "friends": {
+    "confirmRemove": "Biztosan törölni szeretnéd {{name}} felhasználót a barátaid közül?",
+    "confirmYes": "Igen",
+    "confirmNo": "Mégse",
+    "removeSuccess": "{{name}} sikeresen eltávolítva.",
+    "removeError": "Nem sikerült eltávolítani: {{name}}.",
+    "removed": "Törölve!"
   }
 }

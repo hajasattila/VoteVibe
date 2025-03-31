@@ -31,7 +31,10 @@
 
                     <p class=" text-gray-800 dark:text-gray-200">
                         {{ 'room.timeRemaining' | translate }}:<br/>
-                        <span [ngClass]="{ 'text-red-600': remainingTime === 'Expired', 'text-gray-700 dark:text-gray-300': remainingTime !== 'Expired' }">
+                        <span [ngClass]="{
+  'text-red-600': remainingTime === 'Expired' || remainingTime === 'Lejárt',
+  'text-gray-700 dark:text-gray-300': remainingTime !== 'Expired' && remainingTime !== 'Lejárt'
+}">
               <strong class="text-m">{{ remainingTime }}</strong>
             </span>
                     </p>
@@ -49,7 +52,7 @@
 
             <div *ngIf="room?.voteType === 'Text based'">
 
-                <div *ngIf="remainingTime !== 'Expired'">
+                <div *ngIf="remainingTime !== 'Expired' && remainingTime !== 'Lejárt'">
                     <form (ngSubmit)="createPoll()" class="space-y-6 animate-fade-in-up">
                         <div>
                             <label for="question"
@@ -117,16 +120,25 @@
                     </form>
                 </div>
 
-                <div *ngIf="remainingTime === 'Expired'" class=" flex mx-auto justify-center items-center mt-0">
-                    <button type="button"
-                            class="mx-auto justify-center items-center w-full text-white bg-indigo-500 rounded-md py-2 text-lg hover:bg-indigo-600 ">
+                <div *ngIf="remainingTime === 'Expired' || remainingTime === 'Lejárt'" class="flex justify-between items-center mt-4 gap-4">
+                    <button
+                            (click)="goBack()"
+                            type="button"
+                            class="flex-1 text-white bg-gray-500 hover:bg-gray-600 rounded-md py-2 text-lg shadow-sm transition duration-150 ease-in-out">
+                        ← {{ 'room.back' | translate }}
+                    </button>
+
+                    <button
+                            type="button"
+                            class="flex-1 text-white bg-indigo-500 hover:bg-indigo-600 rounded-md py-2 text-lg shadow-sm transition duration-150 ease-in-out">
                         {{ 'room.viewStats' | translate }}
                     </button>
                 </div>
+
             </div>
         </div>
 
-        <div *ngIf="room?.pollCreated && remainingTime !== 'Expired'"
+        <div *ngIf="room?.pollCreated && remainingTime !== 'Expired' && remainingTime !== 'Lejárt'"
              class="fixed inset-0 bg-gray-200 dark:bg-gray-900 z-10">
             <app-text-poll [question]="question" [options]="options"></app-text-poll>
         </div>
