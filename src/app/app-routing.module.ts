@@ -7,7 +7,7 @@ import {SignUpComponent} from "./pages/sign-up/sign-up.component";
 import {canActivate, redirectLoggedInTo, redirectUnauthorizedTo} from "@angular/fire/auth-guard";
 import {ProfileComponent} from "./pages/profile/profile.component";
 import {GameComponent} from "./pages/game/game.component";
-import {RoomDetailsComponent} from "./components/room-details/room-details.component";
+import {RoomDetailsComponent} from "./pages/room-details/room-details.component";
 import {RoomMemberGuard} from "../api/services/room-member-service/roommemberguard.service";
 import {PageNotFoundComponent} from "./pages/page-not-found/page-not-found.component";
 import {StepsComponent} from "./pages/steps/steps.component";

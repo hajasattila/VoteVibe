@@ -1,5 +1,5 @@
-<div class="min-h-screen flex items-center justify-center py-16 px-4 mt-8                                                                 ">
-    <div class="bg-indigo-50 rounded-lg  shadow-lg w-full max-w-5xl animate-slide-up"
+<div class="min-h-screen flex items-center justify-center p-4 mt-16 sm:mt-24 mb-0 sm:mb-6">
+    <div class="bg-indigo-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded-lg shadow-lg w-full max-w-5xl animate-slide-up transition-colors duration-300"
          *ngIf="user$ | async as user">
 
 
@@ -24,47 +24,38 @@
                             title="Upload new photo"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M17.414 2.586a2 2 0 00-2.828 0L6 11.172V14h2.828l8.586-8.586a2 2 0 000-2.828z" />
-                            <path fill-rule="evenodd" d="M4 16a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z" clip-rule="evenodd" />
+                            <path d="M17.414 2.586a2 2 0 00-2.828 0L6 11.172V14h2.828l8.586-8.586a2 2 0 000-2.828z"/>
+                            <path fill-rule="evenodd" d="M4 16a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z"
+                                  clip-rule="evenodd"/>
                         </svg>
                     </label>
-
-
-
-
-                <input
-                        id="fileUpload"
-                        hidden
-                        type="file"
-                        (change)="uploadFile($event, user)"
-                        accept="image/*"
-                />
-            </div>
+                    <input id="fileUpload" hidden type="file" (change)="uploadFile($event, user)" accept="image/*"/>
+                </div>
             </div>
 
 
             <div class="text-center lg:text-left">
-                <h1 class="!text-3xl !font-bold !text-indigo-700 !tracking-widest !drop-shadow-lg">
+                <h1 class="!text-3xl !font-bold text-indigo-700 dark:text-indigo-400 tracking-widest drop-shadow-lg">
                     {{ user?.displayName }}
                 </h1>
 
                 <div class="flex justify-center lg:justify-start gap-8 mt-4 text-indigo-800">
                     <div class="flex flex-col items-center">
-                        <span class="material-icons-outlined text-2xl text-indigo-600 mb-1">how_to_vote</span>
-                        <div class="text-xl font-bold">{{ user?.polls || 0 }}</div>
-                        <div class="text-sm text-gray-600">{{ 'profile.polls' | translate }}</div>
+                        <span class="material-icons-outlined text-2xl text-indigo-600 mb-1 ">how_to_vote</span>
+                        <div class="text-xl font-bold dark:text-white">{{ user?.polls || 0 }}</div>
+                        <div class="text-sm text-gray-600 dark:text-white">{{ 'profile.polls' | translate }}</div>
                     </div>
 
                     <div class="flex flex-col items-center">
                         <span class="material-icons-outlined text-2xl text-indigo-600 mb-1">sports_esports</span>
-                        <div class="text-xl font-bold">{{ user?.games || 0 }}</div>
-                        <div class="text-sm text-gray-600">{{ 'profile.games' | translate }}</div>
+                        <div class="text-xl font-bold dark:text-white">{{ user?.games || 0 }}</div>
+                        <div class="text-sm text-gray-600 dark:text-white">{{ 'profile.games' | translate }}</div>
                     </div>
 
                     <div class="flex flex-col items-center">
                         <span class="material-icons-outlined text-2xl text-indigo-600 mb-1">group</span>
-                        <div class="text-xl font-bold">{{ user?.friendList?.length || 0 }}</div>
-                        <div class="text-sm text-gray-600">{{ 'profile.friends' | translate }}</div>
+                        <div class="text-xl font-bold dark:text-white">{{ user?.friendList?.length || 0 }}</div>
+                        <div class="text-sm text-gray-600 dark:text-white">{{ 'profile.friends' | translate }}</div>
                     </div>
                 </div>
 
@@ -102,7 +93,7 @@
                         <ul class="space-y-4">
                             <li
                                     *ngFor="let friendRequest of user?.friendRequests"
-                                    class="border border-indigo-100 p-5 rounded-xl shadow-md hover:shadow-lg transition duration-300 w-full sm:w-96"
+                                    class="border border-indigo-100 dark:border-indigo-700 p-5 rounded-xl shadow-md hover:shadow-lg transition duration-300 w-full sm:w-96 bg-white dark:bg-gray-800"
                             >
                                 <p class="text-indigo-800 text-lg">
                                     {{ 'profile.requestFrom' | translate }}:
@@ -146,19 +137,32 @@
                         <label for="firstName" class="block text-sm font-medium text-indigo-700 mb-1">
                             {{ 'profile.firstName' | translate }}
                         </label>
+
                         <input
                                 id="firstName"
                                 type="text"
                                 maxlength="12"
                                 formControlName="firstName"
                                 [placeholder]="'profile.firstName' | translate"
-                                class="bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
+                                class="dark:bg-gray-800 text-gray-800 dark:text-gray-100 dark:border-indigo-600 bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
                         />
+
+                        <!-- ⚠️ Hibaüzenet -->
+                        <div class="text-sm text-red-500 mt-1"
+                             *ngIf="profileForm.get('firstName')?.touched && profileForm.get('firstName')?.invalid">
+                            <div *ngIf="profileForm.get('firstName')?.hasError('required')">
+                                {{ 'profile.error.required' | translate }}
+                            </div>
+                            <div *ngIf="profileForm.get('firstName')?.hasError('maxlength')">
+                                {{ 'profile.error.maxLength' | translate:{ max: 12 } }}
+                            </div>
+                        </div>
+
+                        <!-- 🧮 Karakter számláló -->
                         <div class="text-sm text-gray-500 text-right mt-1">
                             {{ profileForm.get('firstName')?.value?.length || 0 }} / 12
                         </div>
                     </div>
-
 
                     <div class="w-full">
                         <label for="lastName" class="block text-sm font-medium text-indigo-700 mb-1">
@@ -170,12 +174,22 @@
                                 formControlName="lastName"
                                 maxlength="12"
                                 [placeholder]="'profile.lastName' | translate"
-                                class="bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
+                                class="dark:bg-gray-800 text-gray-800 dark:text-gray-100 dark:border-indigo-600 bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
                         />
+                        <div class="text-sm text-red-500 mt-1"
+                             *ngIf="profileForm.get('lastName')?.touched && profileForm.get('lastName')?.invalid">
+                            <div *ngIf="profileForm.get('lastName')?.hasError('required')">
+                                {{ 'profile.error.required' | translate }}
+                            </div>
+                            <div *ngIf="profileForm.get('lastName')?.hasError('maxlength')">
+                                {{ 'profile.error.maxLength' | translate:{ max: 12 } }}
+                            </div>
+                        </div>
                         <div class="text-sm text-gray-500 text-right mt-1">
                             {{ profileForm.get('lastName')?.value?.length || 0 }} / 12
                         </div>
                     </div>
+
 
                     <div class="w-full">
                         <label for="displayName" class="block text-sm font-medium text-indigo-700 mb-1">
@@ -187,12 +201,22 @@
                                 formControlName="displayName"
                                 maxlength="12"
                                 [placeholder]="'profile.nickname' | translate"
-                                class="bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
+                                class="dark:bg-gray-800 text-gray-800 dark:text-gray-100 dark:border-indigo-600 bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
                         />
+                        <div class="text-sm text-red-500 mt-1"
+                             *ngIf="profileForm.get('displayName')?.touched && profileForm.get('displayName')?.invalid">
+                            <div *ngIf="profileForm.get('displayName')?.hasError('required')">
+                                {{ 'profile.error.required' | translate }}
+                            </div>
+                            <div *ngIf="profileForm.get('displayName')?.hasError('maxlength')">
+                                {{ 'profile.error.maxLength' | translate:{ max: 12 } }}
+                            </div>
+                        </div>
                         <div class="text-sm text-gray-500 text-right mt-1">
                             {{ profileForm.get('displayName')?.value?.length || 0 }} / 12
                         </div>
                     </div>
+
 
                     <div class="w-full">
                         <label for="phone" class="block text-sm font-medium text-indigo-700 mb-1">
@@ -202,18 +226,24 @@
                                 id="phone"
                                 type="tel"
                                 maxlength="11"
-                                pattern="^06\\d{9}$"
                                 formControlName="phone"
                                 [placeholder]="'profile.phone' | translate"
-                                class="bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
+                                class="dark:bg-gray-800 text-gray-800 dark:text-gray-100 dark:border-indigo-600 bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
                         />
-                        <div *ngIf="profileForm.get('phone')?.hasError('pattern')" class="text-red-500 text-sm mt-1">
-                            06 az eleje és 11 szám a hossza!
+                        <div class="text-sm text-red-500 mt-1"
+                             *ngIf="profileForm.get('phone')?.touched && profileForm.get('phone')?.invalid">
+                            <div *ngIf="profileForm.get('phone')?.hasError('required')">
+                                {{ 'profile.error.required' | translate }}
+                            </div>
+                            <div *ngIf="profileForm.get('phone')?.hasError('pattern')">
+                                {{ 'profile.phoneError' | translate }}
+                            </div>
                         </div>
                         <div class="text-sm text-gray-500 text-right mt-1">
                             {{ profileForm.get('phone')?.value?.length || 0 }} / 11
                         </div>
                     </div>
+
                 </div>
 
                 <div class="w-full">
@@ -225,7 +255,7 @@
                             maxlength="100"
                             formControlName="description"
                             [placeholder]="'profile.description' | translate"
-                            class="bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition resize-none"
+                            class="bg-transparent dark:bg-gray-800 text-gray-800 dark:text-gray-100  dark:border-indigo-600  w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition resize-none"
                     ></textarea>
 
                     <div class="text-sm text-gray-500 text-right mt-1">

@@ -1,83 +1,85 @@
-<div class="min-h-screen px-4 pb-10 overflow-y-auto flex items-center justify-center text-center">
-    <div *ngIf="showGenerateText; else roomDetails" class="flex flex-col md:flex-row justify-center items-center gap-12 sm:gap-48 p-6 sm:p-10">
-
-        <label class="animate-slideIn w-[260px] h-[140px] flex justify-center items-center cursor-pointer bg-white rounded-lg shadow-lg hover:bg-gray-300 transition duration-300 ease-in-out text-center" (click)="toggleRoomDetails()">
-                <span class="text-xl sm:text-2xl font-bold text-gray-700">
-                  {{ 'room.generateRoom' | translate }}
-                </span>
-        </label>
-
-        <label class="animate-slideIn w-[260px] h-[140px] flex justify-center items-center cursor-pointer bg-white rounded-lg shadow-lg hover:bg-gray-300 transition duration-300 ease-in-out text-center" (click)="toggleRoomForm()">
-            <span class="text-xl sm:text-2xl font-bold text-gray-700">
-              {{ 'room.joinRoom' | translate }}
-            </span>
-        </label>
-    </div>
-
-    <ng-template #roomDetails>
-        <div class="w-full flex justify-center" [class.hidden]="!showRoomDetails">
-            <div class="w-full max-w-md bg-white shadow-xl rounded-xl p-6 sm:p-8 sm:mx-4 transition-all hover:-translate-y-1 hover:shadow-2xl">
+<div class="min-h-screen overflow-y-auto flex flex-col items-center justify-start text-center transition-colors duration-300 px-4 pt-32 gap-10">
+    <!-- GENERATE ROOM -->
+    <ng-container *ngIf="showRoomDetails">
+        <div class="w-full flex justify-center relative">
+            <div
+                    class="w-full max-w-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-100 shadow-xl rounded-xl p-6 sm:p-8 transition-all hover:-translate-y-1 hover:shadow-2xl"
+            >
                 <div class="text-center mb-6">
-        <span class="block text-gray-700 text-2xl font-bold mb-2">{{ 'room.roomCode' | translate }}:
-          <strong>{{ roomCode }}</strong></span>
+          <span class="block text-gray-700 dark:text-gray-100 text-2xl font-bold mb-2">
+            {{ 'room.roomCode' | translate }}:
+            <strong>{{ roomCode }}</strong>
+          </span>
                 </div>
+
                 <form>
                     <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">
+                        <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
                             {{ 'room.roomNameLabel' | translate }}
                         </label>
-                        <input [(ngModel)]="roomName"
-                               name="roomName"
-                               type="text"
-                               required
-                               maxlength="12"
-                               placeholder="{{ 'room.roomNamePlaceholder' | translate }}"
-                               #roomNameField="ngModel"
-                               class="w-full py-2 px-4 border-2 rounded-lg focus:ring-2 focus:ring-indigo-300"
+                        <input
+                                [(ngModel)]="roomName"
+                                name="roomName"
+                                type="text"
+                                required
+                                maxlength="12"
+                                placeholder="{{ 'room.roomNamePlaceholder' | translate }}"
+                                #roomNameField="ngModel"
+                                class="w-full py-2 px-4 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500"
                         />
-                        <div *ngIf="roomNameField.errors?.['required'] && roomNameField.dirty"
-                             class="text-red-500 text-sm mt-2">
+                        <div *ngIf="roomNameField.errors?.['required'] && roomNameField.dirty" class="text-red-500 text-sm mt-2">
                             {{ 'room.roomNameRequired' | translate }}
                         </div>
                     </div>
 
                     <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">
+                        <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
                             {{ 'room.timeLimit' | translate }}
                         </label>
-                        <select [(ngModel)]="selectedTimeLimit" name="selectedTimeLimit"
-                                class="w-full px-4 py-2 border-2 rounded-lg">
+                        <select
+                                [(ngModel)]="selectedTimeLimit"
+                                name="selectedTimeLimit"
+                                class="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg"
+                        >
                             <option value="1">{{ 'room.time.60min' | translate }}</option>
                             <option value="6">{{ 'room.time.6hour' | translate }}</option>
                             <option value="12">{{ 'room.time.12hour' | translate }}</option>
                             <option value="24">{{ 'room.time.24hour' | translate }}</option>
                         </select>
-
                     </div>
 
                     <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">
+                        <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
                             {{ 'room.voteType' | translate }}
                         </label>
-                        <select [(ngModel)]="selectedVoteType" name="selectedVoteType"
-                                class="w-full px-4 py-2 border-2 rounded-lg">
+                        <select
+                                [(ngModel)]="selectedVoteType"
+                                name="selectedVoteType"
+                                class="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg"
+                        >
                             <option value="picture">{{ 'room.voteTypeOptions.picture' | translate }}</option>
                             <option value="text">{{ 'room.voteTypeOptions.text' | translate }}</option>
                         </select>
                     </div>
 
                     <div class="flex items-center justify-center mb-6">
-                        <label for="anonymousCheckbox" class="text-lg font-medium text-gray-800 mr-2">
+                        <label for="anonymousCheckbox" class="text-lg font-medium text-gray-800 dark:text-gray-200 mr-2">
                             {{ 'room.anonymous' | translate }}
                         </label>
-                        <input type="checkbox" id="anonymousCheckbox" [(ngModel)]="isAnonymous"
-                               [ngModelOptions]="{ standalone: true }"
-                               class="rounded border-gray-300 text-indigo-600 shadow focus:ring-indigo-200"/>
+                        <input
+                                type="checkbox"
+                                id="anonymousCheckbox"
+                                [(ngModel)]="isAnonymous"
+                                [ngModelOptions]="{ standalone: true }"
+                                class="rounded border-gray-300 dark:border-gray-600 text-indigo-600 shadow focus:ring-indigo-200 dark:focus:ring-indigo-400"
+                        />
                     </div>
 
                     <ng-container *ngIf="currentUser">
-                        <h2 class="text-indigo-700 font-bold cursor-pointer hover:text-indigo-900"
-                            (click)="toggleFriendList()">
+                        <h2
+                                class="text-indigo-700 dark:text-indigo-300 font-bold cursor-pointer hover:text-indigo-900 dark:hover:text-indigo-400"
+                                (click)="toggleFriendList()"
+                        >
                             {{ 'room.inviteFriends' | translate }}
                         </h2>
                         <div *ngIf="showFriendList">
@@ -85,24 +87,30 @@
                         </div>
                     </ng-container>
 
-                    <div class="flex justify-center mt-6">
-                        <button (click)="createRoom()" type="button"
-                                class="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition">
-                            {{ 'room.generate' | translate }}
-                        </button>
-                    </div>
+                    <button
+                            (click)="createRoom()"
+                            type="button"
+                            class="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition mt-6"
+                    >
+                        {{ 'room.generate' | translate }}
+                    </button>
                 </form>
             </div>
         </div>
-    </ng-template>
+    </ng-container>
 
-
+    <!-- JOIN ROOM -->
     <ng-container *ngIf="showRoomForm">
-        <div class="w-full flex justify-center px-2 sm:px-4">
-            <div class="w-full max-w-md bg-white shadow-xl rounded-xl p-6 sm:p-8 mx-2 sm:mx-4 transition-all hover:-translate-y-1 hover:shadow-2xl">
+        <div class="w-full flex justify-center relative">
+            <div
+                    class="w-full max-w-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-100 shadow-xl rounded-xl p-6 sm:p-8 transition-all hover:-translate-y-1 hover:shadow-2xl"
+            >
                 <form>
                     <div class="mb-6">
-                        <label class="block text-gray-700 text-2xl font-bold mb-2" for="roomCode">
+                        <label
+                                class="block text-gray-700 dark:text-gray-300 text-2xl font-bold mb-2"
+                                for="roomCode"
+                        >
                             {{ 'room.joinWithCode' | translate }}
                         </label>
                         <input
@@ -111,27 +119,28 @@
                                 id="roomCode"
                                 type="text"
                                 placeholder="{{ 'room.roomCodePlaceholder' | translate }}"
-                                class="w-full py-2 px-4 border-2 rounded-md focus:ring-2 focus:ring-indigo-300"
+                                class="w-full py-2 px-4 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500"
                         />
                     </div>
 
-                    <div class="flex justify-center mt-6">
-                        <button
-                                (click)="joinRoom()"
-                                type="button"
-                                class="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition">
-                            {{ 'room.join' | translate }}
-                        </button>
-                    </div>
+                    <button
+                            (click)="joinRoom()"
+                            type="button"
+                            class="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition"
+                    >
+                        {{ 'room.join' | translate }}
+                    </button>
 
-                    <div *ngIf="userRooms.length > 0" class="mt-8">
-                        <h3 class="text-lg font-medium text-gray-700 mb-4">
+                    <div *ngIf="userRooms.length > 0" class="mt-4">
+                        <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-4">
                             {{ 'room.yourRooms' | translate }}
                         </h3>
                         <ul class="list-none pl-5 text-start mx-2 sm:mx-6">
                             <li *ngFor="let room of userRooms" class="mb-2">
-                                <a [routerLink]="['/room', room.roomId]"
-                                   class="text-indigo-600 hover:text-indigo-800 cursor-pointer">
+                                <a
+                                        [routerLink]="['/room', room.roomId]"
+                                        class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 cursor-pointer"
+                                >
                                     {{ room.roomName }} (Code: {{ room.roomId }})
                                 </a>
                             </li>
@@ -142,4 +151,26 @@
         </div>
     </ng-container>
 
+    <!-- BOTTOM SELECT CARDS -->
+    <div class="flex flex-col sm:flex-row gap-6 items-center justify-center">
+        <label
+                *ngIf="!showRoomDetails"
+                class="animate-slideIn w-[260px] h-[140px] flex justify-center items-center cursor-pointer bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition duration-300 ease-in-out text-center"
+                (click)="toggleRoomDetails()"
+        >
+      <span class="text-xl sm:text-2xl font-bold text-gray-700 dark:text-gray-100">
+        {{ 'room.generateRoom' | translate }}
+      </span>
+        </label>
+
+        <label
+                *ngIf="!showRoomForm"
+                class="animate-slideOut w-[260px] h-[140px] flex justify-center items-center cursor-pointer bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition duration-300 ease-in-out text-center"
+                (click)="toggleRoomForm()"
+        >
+      <span class="text-xl sm:text-2xl font-bold text-gray-700 dark:text-gray-100">
+        {{ 'room.joinRoom' | translate }}
+      </span>
+        </label>
+    </div>
 </div>

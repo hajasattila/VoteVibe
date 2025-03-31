@@ -16,7 +16,6 @@
     "lastName": "Vezetéknév",
     "nickname": "Becenév",
     "phone": "Telefonszám (06)",
-    "phoneError": "06 az eleje és 11 szám a hossza!",
     "description": "Leírás",
     "save": "Mentés",
     "resetPassword": "Jelszó visszaállítása",
@@ -35,8 +34,11 @@
       "noUser": "A művelethez be kell jelentkezned.",
       "userNotFound": "A felhasználó nem található.",
       "friendAcceptFailed": "Nem sikerült elfogadni a barátfelkérést.",
-      "friendRejectFailed": "Nem sikerült elutasítani a barátfelkérést."
+      "friendRejectFailed": "Nem sikerült elutasítani a barátfelkérést.",
+      "required": "Ez a mező kötelező.",
+      "maxLength": "Legfeljebb {{max}} karakter lehet."
     },
+    "phoneError": "A telefonszám formátuma érvénytelen. Pl: 06123456789",
     "upload": {
       "loading": "Profilkép feltöltése...",
       "success": "A profilkép sikeresen feltöltve.",

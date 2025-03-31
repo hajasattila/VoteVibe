@@ -1,5 +1,6 @@
-<section class="bg-white text-gray-800 dark:bg-black dark:text-gray-100 transition-colors duration-300">
-<div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between py-4">
+<div class="fixed top-0 left-0 right-0 z-[9999] bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between p-4">
+
 
         <div class="flex justify-between w-full md:w-auto items-center">
             <a routerLink="/" class="text-2xl font-extrabold tracking-tight text-indigo-600 dark:text-indigo-400">
@@ -43,9 +44,13 @@
                         <ng-container *ngIf="user$ | async as user; else mobileLogin">
                             <div class="relative self-start" (click)="toggleProfileDropdown()"
                                  style="width: max-content">
-                                <img class="w-12 h-12 rounded-full cursor-pointer object-cover"
-                                     [src]="user?.photoURL ?? 'assets/images/image-placeholder.png'"
-                                     alt="Profile" loading="eager"/>
+                                <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-indigo-600 cursor-pointer">
+                                    <img width="48" height="48"
+                                         class="w-full h-full object-cover"
+                                         [src]="user?.photoURL ?? 'assets/images/image-placeholder.png'"
+                                         alt="Profile" loading="eager"/>
+                                </div>
+
 
                                 <div *ngIf="profileDropdownOpen"
                                      class="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md py-2 z-50">
@@ -72,11 +77,11 @@
                             <ng-template #light>🌙</ng-template>
                         </button>
 
-                        <select class="bg-transparent border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm focus:outline-none"
+                        <select class="bg-transparent border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm focus:outline-none "
                                 [value]="translate.currentLang"
                                 (change)="changeLanguage($event)">
-                            <option value="hu">HU</option>
-                            <option value="en">EN</option>
+                            <option value="hu" class="dark:bg-gray-900" >HU</option>
+                            <option value="en" class="dark:bg-gray-900">EN</option>
                         </select>
                     </div>
                 </div>
@@ -86,9 +91,14 @@
         <div class="hidden md:flex items-center space-x-4 mt-4 md:mt-0">
             <ng-container *ngIf="user$ | async as user; else loginButtons">
                 <div class="relative" (click)="toggleProfileDropdown()">
-                    <img class="w-12 h-12 rounded-full cursor-pointer object-cover"
-                         [src]="user?.photoURL ?? 'assets/images/image-placeholder.png'"
-                         alt="Profile" loading="eager"/>
+                    <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-indigo-600 cursor-pointer">
+                        <img width="48" height="48"
+                             class="w-full h-full object-cover"
+                             [src]="user?.photoURL ?? 'assets/images/image-placeholder.png'"
+                             alt="Profile" loading="eager"/>
+                    </div>
+
+
                     <div *ngIf="profileDropdownOpen"
                          class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md py-2 z-50">
                         <a routerLink="/profile"
@@ -111,8 +121,8 @@
             <select class="bg-transparent border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm focus:outline-none"
                     [value]="translate.currentLang"
                     (change)="changeLanguage($event)">
-                <option value="hu">HU</option>
-                <option value="en">EN</option>
+                <option value="hu" class="dark:bg-gray-900">HU</option>
+                <option value="en" class="dark:bg-gray-900">EN</option>
             </select>
 
             <ng-template #loginButtons>
@@ -123,4 +133,4 @@
             </ng-template>
         </div>
     </div>
-</section>
+</div>

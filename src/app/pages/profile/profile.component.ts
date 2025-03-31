@@ -24,12 +24,13 @@ export class ProfileComponent implements OnInit {
 
     profileForm = this.fb.group({
         uid: [""],
-        displayName: [""],
-        firstName: [""],
-        lastName: [""],
-        phone: ["", Validators.pattern(/^06\d{9}$/)],
-        description: [""],
+        displayName: ["", [Validators.required, Validators.maxLength(12)]],
+        firstName: ["", [Validators.required, Validators.maxLength(12)]],
+        lastName: ["", [Validators.required, Validators.maxLength(12)]],
+        phone: ["", [Validators.required, Validators.pattern(/^06\d{9}$/)]],
+        description: ["", [Validators.maxLength(100)]],
     });
+
 
     constructor(
         private imageUploadService: ImageUploadService,

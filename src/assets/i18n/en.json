@@ -16,7 +16,6 @@
     "lastName": "Last Name",
     "nickname": "Nickname",
     "phone": "Phone (06)",
-    "phoneError": "Must start with 06 and be 11 digits long!",
     "description": "Description",
     "save": "Save",
     "resetPassword": "Reset Password",
@@ -28,15 +27,18 @@
       "friendRejected": "Friend request from {{name}} rejected successfully!"
     },
     "error": {
-      "fetchUser": "Error fetching user data.",
-      "invalidForm": "Please ensure all fields are filled out correctly.",
+      "fetchUser": "Failed to retrieve user data.",
+      "invalidForm": "Please fill in all fields correctly!",
       "nameTaken": "This display name is already taken.",
-      "updateFailed": "There was an error in updating the profile.",
+      "updateFailed": "An error occurred while updating the profile.",
       "noUser": "You need to be logged in to perform this action.",
       "userNotFound": "User not found.",
-      "friendAcceptFailed": "Failed to accept friend request.",
-      "friendRejectFailed": "Failed to reject friend request."
+      "friendAcceptFailed": "Failed to accept the friend request.",
+      "friendRejectFailed": "Failed to reject the friend request.",
+      "required": "This field is required.",
+      "maxLength": "Maximum {{max}} characters allowed."
     },
+    "phoneError": "Invalid phone number format. E.g.: 06123456789",
     "upload": {
       "loading": "Uploading profile image...",
       "success": "Image uploaded successfully.",
