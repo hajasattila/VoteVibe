@@ -5,7 +5,7 @@ import {
   Storage,
   uploadBytes,
 } from '@angular/fire/storage';
-import { finalize, from, map, Observable, switchMap } from 'rxjs';
+import {  from, Observable, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',

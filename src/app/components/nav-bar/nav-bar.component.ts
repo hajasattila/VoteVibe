@@ -26,8 +26,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
     protected profileDropdownOpen = false;
 
     private routerSubscription!: Subscription;
-    private previousUrl: string = '';
-    protected navbarAnimating = false;
+    protected previousUrl: string = '';
 
 
     constructor(

@@ -29,7 +29,7 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
     isLoading = true;
 
     private timerSubscription?: Subscription;
-    private initTimestamp = 0;
+    protected initTimestamp = 0;
 
     constructor(
         private cdr: ChangeDetectorRef,
