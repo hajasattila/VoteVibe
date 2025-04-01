@@ -123,6 +123,9 @@
     "github": "Sign in with GitHub"
   },
   "room": {
+    "waitingForPoll": "The owner has not yet entered a question!",
+    "addedQuestions": "Added Questions",
+    "option": "Option",
     "errorMissingRoom": "Room details are missing.",
     "errorMissingQuestion": "The question is required.",
     "errorMissingOption": "All options must be filled out.",

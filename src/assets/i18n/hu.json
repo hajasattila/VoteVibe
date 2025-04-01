@@ -123,6 +123,9 @@
     "github": "GitHub belépés"
   },
   "room": {
+    "waitingForPoll": "A létrehozó még nem adott meg kérdést!",
+    "addedQuestions": "Hozzáadott kérdések",
+    "option": "Opció",
     "errorMissingRoom": "A szoba adatai hiányoznak.",
     "errorMissingQuestion": "A kérdés megadása kötelező.",
     "errorMissingOption": "Minden opció kitöltése kötelező.",

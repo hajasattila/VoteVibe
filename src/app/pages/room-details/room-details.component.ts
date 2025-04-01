@@ -13,6 +13,7 @@ import {map} from 'rxjs/operators';
 import {TranslateService} from '@ngx-translate/core';
 import {Location} from '@angular/common';
 import {SnackbarService} from "../../../api/services/snackbar-service/snackbar-service.service";
+import {AuthService} from "../../../api/services/auth-service/auth.service";
 
 @Component({
     selector: 'app-room-details',
@@ -31,13 +32,17 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
     private timerSubscription?: Subscription;
     protected initTimestamp = 0;
 
+    showWaitingMessage = false;
+    isCreator = false;
+
     constructor(
         private cdr: ChangeDetectorRef,
         private route: ActivatedRoute,
         private dbService: DatabaseService,
         private snackbar: SnackbarService,
         private translate: TranslateService,
-        private location: Location
+        private location: Location,
+        private authService: AuthService
     ) {
     }
 
@@ -67,6 +72,17 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
                         this.remainingTime = this.convertMsToTime(diff);
                         this.startTimer(endTime);
                     }
+
+                    // 💡 Meghatározzuk, hogy a felhasználó-e a creator
+                    this.authService.getCurrentUser().subscribe(currentUser => {
+                        this.isCreator = currentUser?.uid === room.creator?.uid;
+
+                        const hasNoPollYet = !room.poll?.options || room.poll?.options.length === 0;
+                        this.showWaitingMessage = !this.isCreator && hasNoPollYet && !room.pollCreated;
+
+                        console.log(`[Room Check] Is creator?`, this.isCreator);
+                        this.cdr.markForCheck();
+                    });
                 } else {
                     this.remainingTime = 'Room data is not available';
                 }
@@ -118,7 +134,10 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
     }
 
     addOption(): void {
-        this.options.push('');
+        if (this.options.length < 10) {
+            this.options.push('');
+            this.cdr.markForCheck();
+        }
     }
 
     removeOption(index: number): void {
@@ -162,19 +181,18 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
                     this.snackbar.success(msg)
                 );
 
-                if (this.room?.docId) {
-                    this.dbService.updateRoomPollState(this.room.docId, true).subscribe({
-                        next: () => {
-                            this.pollCreated = true;
-                            this.cdr.markForCheck();
-                        },
-                        error: () => {
-                            this.translate.get('room.errorUpdateRoom').subscribe(msg =>
-                                this.snackbar.error(msg)
-                            );
-                        },
-                    });
-                }
+                this.dbService.updateRoomPollState(this.room!.docId!, true).subscribe({
+                    next: () => {
+                        this.pollCreated = true;
+                        this.cdr.markForCheck();
+                    },
+                    error: () => {
+                        this.translate.get('room.errorUpdateRoom').subscribe(msg =>
+                            this.snackbar.error(msg)
+                        );
+                    },
+                });
+
             },
             error: () => {
                 this.translate.get('room.errorPollCreation').subscribe(msg =>
