@@ -146,7 +146,7 @@ export class GameComponent implements OnInit {
             .subscribe((exists: boolean) => {
                 if (exists) {
                     this.roomCode = this.generateRoomCode(6, 12);
-                    this.translate.get('room.info.newCode', {code: this.roomCode}).subscribe(res => {
+                    this.translate.get('room.info.newCode', { code: this.roomCode }).subscribe(res => {
                         this.snackbarService.info(res);
                     });
                     newRoom.roomId = this.roomCode;
@@ -155,18 +155,21 @@ export class GameComponent implements OnInit {
 
                 this.dbService.createRoom(newRoom).subscribe({
                     next: () => {
-                        this.translate.get('room.success.created', {code: this.roomCode}).subscribe(res => {
+                        console.log('Room successfully created:', newRoom);
+
+                        this.translate.get('room.success.created', { code: this.roomCode }).subscribe(res => {
                             this.snackbarService.success(res);
                         });
                         if (this.currentUser?.uid) {
                             this.userService.addRoomToUser(this.currentUser.uid, newRoom).subscribe({
                                 next: () => {
+                                    console.log('Updated user rooms:', this.userRooms);
                                     this.translate.get('room.success.addedToProfile').subscribe(res => {
                                         this.snackbarService.success(res);
                                     });
                                 },
                                 error: (error) => {
-                                    this.translate.get('room.error.addToProfile', {error: error.message}).subscribe(res => {
+                                    this.translate.get('room.error.addToProfile', { error: error.message }).subscribe(res => {
                                         this.snackbarService.error(res);
                                     });
                                 },
@@ -175,13 +178,14 @@ export class GameComponent implements OnInit {
                         this.router.navigate(["/room", this.roomCode]);
                     },
                     error: (error) => {
-                        this.translate.get('room.error.creationFailed', {error: error.message}).subscribe(res => {
+                        this.translate.get('room.error.creationFailed', { error: error.message }).subscribe(res => {
                             this.snackbarService.error(res);
                         });
                     }
                 });
             });
     }
+
 
     joinRoom() {
         if (!this.enteredRoomCode) {

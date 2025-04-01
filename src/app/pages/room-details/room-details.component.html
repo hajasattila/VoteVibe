@@ -57,7 +57,7 @@
 
             <div *ngIf="room?.voteType?.toLowerCase() === 'text'">
 
-                <div *ngIf="showWaitingMessage"
+                <div *ngIf="showWaitingMessage && (remainingTime !== 'Expired' && remainingTime !== 'Lejárt')"
                      class="text-center bg-yellow-100 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-100 p-4 rounded-lg shadow-md mb-4">
                     ⚠️ {{ 'room.waitingForPoll' | translate }}
                 </div>

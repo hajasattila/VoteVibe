@@ -8,12 +8,15 @@ import {
 import {ActivatedRoute} from '@angular/router';
 import {DatabaseService} from '../../../api/services/database-service/database.service';
 import {Room} from '../../../api/models/room';
-import {interval, Subscription} from 'rxjs';
+import {interval, Subscription, switchMap} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {TranslateService} from '@ngx-translate/core';
 import {Location} from '@angular/common';
 import {SnackbarService} from "../../../api/services/snackbar-service/snackbar-service.service";
 import {AuthService} from "../../../api/services/auth-service/auth.service";
+import {DocumentReference, onSnapshot} from "@angular/fire/firestore";
+import firebase from "firebase/compat";
+import DocumentData = firebase.firestore.DocumentData;
 
 @Component({
     selector: 'app-room-details',
@@ -35,6 +38,9 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
     showWaitingMessage = false;
     isCreator = false;
 
+    private unsubscribeSnapshot?: () => void;
+
+
     constructor(
         private cdr: ChangeDetectorRef,
         private route: ActivatedRoute,
@@ -52,43 +58,49 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         if (roomCode) this.loadRoomDetails(roomCode);
     }
 
+    ngOnDestroy(): void {
+        this.unsubscribeSnapshot?.();
+        this.timerSubscription?.unsubscribe();
+    }
+
+
     loadRoomDetails(roomCode: string): void {
-        this.dbService.getRoomByCode(roomCode).subscribe({
-            next: (room) => {
-                if (room && room.endTime) {
-                    this.room = room;
-                    this.pollCreated = !!room.pollCreated;
+        this.dbService.getRoomDocRefByCode(roomCode).subscribe({
+            next: (roomRef: DocumentReference<DocumentData>) => {
+                this.unsubscribeSnapshot?.();
 
-                    const endTime = new Date(room.endTime.seconds * 1000);
-                    const now = Date.now();
-                    const diff = endTime.getTime() - now;
+                this.unsubscribeSnapshot = onSnapshot(roomRef, (snapshot) => {
+                    const room = snapshot.data() as Room;
 
-                    if (diff <= 0) {
-                        this.translate.get('room.expired').subscribe((translated) => {
-                            this.remainingTime = translated;
+                    if (room && room.endTime) {
+                        this.room = {...room, docId: roomRef.id};
+                        this.pollCreated = !!room.pollCreated;
+
+                        const endTime = new Date(room.endTime.seconds * 1000);
+                        const now = Date.now();
+                        const diff = endTime.getTime() - now;
+
+                        if (diff <= 0) {
+                            this.translate.get('room.expired').subscribe((translated) => {
+                                this.remainingTime = translated;
+                                this.cdr.markForCheck();
+                            });
+                        } else {
+                            this.remainingTime = this.convertMsToTime(diff);
+                            this.startTimer(endTime);
+                        }
+
+                        this.authService.getCurrentUser().subscribe(currentUser => {
+                            this.isCreator = currentUser?.uid === room.creator?.uid;
+                            const hasNoPollYet = !room.poll?.options || room.poll?.options.length === 0;
+                            this.showWaitingMessage = !this.isCreator && hasNoPollYet && !room.pollCreated;
                             this.cdr.markForCheck();
                         });
-                    } else {
-                        this.remainingTime = this.convertMsToTime(diff);
-                        this.startTimer(endTime);
                     }
 
-                    // 💡 Meghatározzuk, hogy a felhasználó-e a creator
-                    this.authService.getCurrentUser().subscribe(currentUser => {
-                        this.isCreator = currentUser?.uid === room.creator?.uid;
-
-                        const hasNoPollYet = !room.poll?.options || room.poll?.options.length === 0;
-                        this.showWaitingMessage = !this.isCreator && hasNoPollYet && !room.pollCreated;
-
-                        console.log(`[Room Check] Is creator?`, this.isCreator);
-                        this.cdr.markForCheck();
-                    });
-                } else {
-                    this.remainingTime = 'Room data is not available';
-                }
-
-                this.isLoading = false;
-                this.cdr.markForCheck();
+                    this.isLoading = false;
+                    this.cdr.markForCheck();
+                });
             },
             error: () => {
                 this.translate.get('room.errorLoadRoom').subscribe(msg =>
@@ -129,9 +141,6 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         return `${hrs} h, ${min} m, ${sec} s`;
     }
 
-    ngOnDestroy(): void {
-        this.timerSubscription?.unsubscribe();
-    }
 
     addOption(): void {
         if (this.options.length < 10) {

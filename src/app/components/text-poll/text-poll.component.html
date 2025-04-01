@@ -3,18 +3,26 @@
         {{ question }}
     </h1>
 
-    <div class="absolute inset-0 z-10 bg-gradient-to-b from-black to-transparent"></div>
-    <div class="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black to-transparent h-1/4"></div>
+    <div class="absolute inset-0 z-10 "></div>
+    <div class="absolute inset-x-0 bottom-0 z-10 h-1/4"></div>
 
-    <ng-container *ngFor="let option of remainingOptions.slice(0, 2); let i = index">
-        <label class="flex flex-col bg-center bg-cover cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group"
-               (click)="onOptionSelected(option)">
-      <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl">
-        {{ option }}
-      </span>
-            <div class="percentage text-white font-bold m-auto relative z-30 text-4xl lg:text-6xl xl:text-7xl hidden"></div>
-            <div class="absolute inset-0 bg-black/80 z-20"></div>
-            <div class="absolute inset-0 z-20 bg-gradient-to-b from-black/50 to-transparent group-hover:bg-gray-800 transition duration-150 ease-out"></div>
-        </label>
-    </ng-container>
+    <label *ngIf="leftOption"
+           class="flex flex-col bg-center bg-cover cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group"
+           (click)="onOptionSelected(leftOption, 'left')">
+    <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl">
+      {{ leftOption }}
+    </span>
+        <div class="absolute inset-0 bg-black/80 z-20"></div>
+        <div class="absolute inset-0 z-20 bg-gradient-to-b from-black/50 to-transparent group-hover:bg-gray-800 transition duration-150 ease-out"></div>
+    </label>
+
+    <label *ngIf="rightOption"
+           class="flex flex-col bg-center bg-cover cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group"
+           (click)="onOptionSelected(rightOption, 'right')">
+    <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl">
+      {{ rightOption }}
+    </span>
+        <div class="absolute inset-0 bg-black/80 z-20"></div>
+        <div class="absolute inset-0 z-20 bg-gradient-to-b from-black/50 to-transparent group-hover:bg-gray-800 transition duration-150 ease-out"></div>
+    </label>
 </div>
