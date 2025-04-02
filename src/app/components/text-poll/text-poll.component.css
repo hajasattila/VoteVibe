@@ -1,0 +1,12 @@
+.bg-animated {
+    animation: colorCycleVibrant 15s linear infinite;
+}
+
+.option-hover-overlay {
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.option-hover-overlay:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.15);
+}

@@ -301,6 +301,11 @@
     "removeSuccess": "{{name}} has been removed successfully.",
     "removeError": "Failed to remove {{name}}.",
     "removed": "Removed!"
+  },
+  "poll": {
+    "winnerTitle": "🏆 Winning Option!",
+    "winnerIs": "The winner is: {{ option }}",
+    "close": "Close"
   }
 }
 

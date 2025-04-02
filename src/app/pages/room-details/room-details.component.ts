@@ -8,7 +8,7 @@ import {
 import {ActivatedRoute} from '@angular/router';
 import {DatabaseService} from '../../../api/services/database-service/database.service';
 import {Room} from '../../../api/models/room';
-import {interval, Subscription, switchMap} from 'rxjs';
+import {interval, Subscription} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {TranslateService} from '@ngx-translate/core';
 import {Location} from '@angular/common';
@@ -37,6 +37,7 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
 
     showWaitingMessage = false;
     isCreator = false;
+    isDarkMode = false;
 
     private unsubscribeSnapshot?: () => void;
 
@@ -56,6 +57,14 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         this.initTimestamp = performance.now();
         const roomCode = this.route.snapshot.paramMap.get('code');
         if (roomCode) this.loadRoomDetails(roomCode);
+
+
+        this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            this.isDarkMode = e.matches;
+            this.cdr.markForCheck();
+        });
     }
 
     ngOnDestroy(): void {

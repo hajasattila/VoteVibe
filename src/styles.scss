@@ -182,3 +182,155 @@ body {
 img {
   object-fit: cover !important;
 }
+
+@layer utilities {
+  @keyframes bgLightCycle {
+    0% {
+      background-color: #1c4c8a;
+    }
+    25% {
+      background-color: #3a2277;
+    }
+    50% {
+      background-color: #37abd5;
+    }
+    75% {
+      background-color: #62627c;
+    }
+    100% {
+      background-color: #0e3571;
+    }
+  }
+
+  @keyframes bgDarkCycle {
+    0% {
+      background-color: #4c4ca1;
+    }
+    25% {
+      background-color: #9226c1;
+    }
+    50% {
+      background-color: #2c598a;
+    }
+    75% {
+      background-color: #432da8;
+    }
+    100% {
+      background-color: #2727c1;
+    }
+  }
+
+  .bg-animated-light {
+    @apply animate-[bgLightCycle_15s_linear_infinite];
+  }
+
+  .dark .bg-animated-dark {
+    @apply animate-[bgDarkCycle_15s_linear_infinite];
+  }
+}
+
+@layer utilities {
+  @keyframes bounceOnce {
+    0% {
+      transform: scale(1);
+    }
+    30% {
+      transform: scale(1.1);
+    }
+    60% {
+      transform: scale(0.95);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slideOutLeft {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(-100%) scale(0.9);
+      opacity: 0;
+    }
+  }
+
+  @keyframes slideOutRight {
+    0% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(100%) scale(0.9);
+      opacity: 0;
+    }
+  }
+
+  @keyframes slideInLeft {
+    0% {
+      transform: translateX(-100%) scale(0.9);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0) scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInRight {
+    0% {
+      transform: translateX(100%) scale(0.9);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0) scale(1);
+      opacity: 1;
+    }
+  }
+
+  .animate-bounce-once {
+    animation: bounceOnce 0.6s ease-in-out;
+  }
+
+  .animate-slide-out-left {
+    animation: slideOutLeft 0.5s ease-out forwards;
+  }
+
+  .animate-slide-out-right {
+    animation: slideOutRight 0.5s ease-out forwards;
+  }
+
+  .animate-slide-in-left {
+    animation: slideInLeft 0.4s ease-out;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.4s ease-out;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(2.5);
+      opacity: 0;
+    }
+  }
+
+  .firework {
+    @apply absolute w-10 h-10 z-50 rounded-full;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 20%, transparent 60%);
+    animation: pulse 0.6s ease-out forwards;
+    pointer-events: none;
+  }
+
+  .progress-ring {
+    @apply absolute top-2 left-2 w-12 h-12 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin z-40;
+  }
+}
+
+
+

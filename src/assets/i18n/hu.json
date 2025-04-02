@@ -301,5 +301,10 @@
     "removeSuccess": "{{name}} sikeresen eltávolítva.",
     "removeError": "Nem sikerült eltávolítani: {{name}}.",
     "removed": "Törölve!"
+  },
+  "poll": {
+    "winnerTitle": "🏆 A győztes opció!",
+    "winnerIs": "A győztes: {{ option }}",
+    "close": "Bezárás"
   }
 }

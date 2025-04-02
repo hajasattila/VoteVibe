@@ -1,11 +1,11 @@
-import { Component, HostListener, OnInit } from "@angular/core";
-import { FormControl } from "@angular/forms";
-import { Observable, of } from "rxjs";
-import { switchMap, startWith, take } from "rxjs/operators";
-import { UsersService } from "../../../api/services/users-service/users.service";
-import { AuthService } from "../../../api/services/auth-service/auth.service";
-import { ProfileUser } from "../../../api/models/user";
-import { TranslateService } from "@ngx-translate/core";
+import {Component, ElementRef, HostListener, OnInit, ViewChild} from "@angular/core";
+import {FormControl} from "@angular/forms";
+import {Observable, of} from "rxjs";
+import {switchMap, startWith, take} from "rxjs/operators";
+import {UsersService} from "../../../api/services/users-service/users.service";
+import {AuthService} from "../../../api/services/auth-service/auth.service";
+import {ProfileUser} from "../../../api/models/user";
+import {TranslateService} from "@ngx-translate/core";
 import {SnackbarService} from "../../../api/services/snackbar-service/snackbar-service.service";
 
 @Component({
@@ -14,6 +14,8 @@ import {SnackbarService} from "../../../api/services/snackbar-service/snackbar-s
     styleUrls: ["./profile-search.component.css"],
 })
 export class ProfileSearchComponent implements OnInit {
+    @ViewChild('searchContainer') searchContainer!: ElementRef;
+
     searchControl = new FormControl();
     filteredUsers$: Observable<ProfileUser[]>;
     currentUser?: ProfileUser;
@@ -45,10 +47,16 @@ export class ProfileSearchComponent implements OnInit {
         });
     }
 
-    @HostListener("document:click", ["$event"]) onDocumentClick(event: MouseEvent) {
+    @HostListener("document:click", ["$event"])
+    onDocumentClick(event: MouseEvent) {
         const target = event.target as HTMLElement;
-        const searchContainer = document.getElementById("searchContainer");
-        this.showSuggestions = searchContainer?.contains(target) ?? false;
+        if (this.searchContainer && !this.searchContainer.nativeElement.contains(target)) {
+            this.showSuggestions = false;
+        }
+    }
+
+    onFocusSearch() {
+        this.showSuggestions = true;
     }
 
     onAddFriend(user: ProfileUser) {
@@ -80,7 +88,7 @@ export class ProfileSearchComponent implements OnInit {
             .pipe(take(1))
             .subscribe((hasSent) => {
                 if (hasSent) {
-                    this.translate.get('search.errorAlreadySent', { name: user.displayName }).subscribe(msg =>
+                    this.translate.get('search.errorAlreadySent', {name: user.displayName}).subscribe(msg =>
                         this.snackbar.error(msg)
                     );
                 } else {
@@ -92,12 +100,12 @@ export class ProfileSearchComponent implements OnInit {
                         .pipe(take(1))
                         .subscribe({
                             next: () => {
-                                this.translate.get('search.successRequestSent', { name: user.displayName }).subscribe(msg =>
+                                this.translate.get('search.successRequestSent', {name: user.displayName}).subscribe(msg =>
                                     this.snackbar.success(msg)
                                 );
                             },
                             error: () => {
-                                this.translate.get('search.errorSendFailed', { name: user.displayName }).subscribe(msg =>
+                                this.translate.get('search.errorSendFailed', {name: user.displayName}).subscribe(msg =>
                                     this.snackbar.error(msg)
                                 );
                             }

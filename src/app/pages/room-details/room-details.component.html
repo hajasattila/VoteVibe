@@ -151,10 +151,17 @@
                 </button>
             </div>
 
-            <div *ngIf="room?.pollCreated && remainingTime !== 'Expired' && remainingTime !== 'Lejárt'"
-                 class="fixed inset-0 bg-gray-200 dark:bg-gray-900 z-10">
+            <div
+                    *ngIf="room?.pollCreated && remainingTime !== 'Expired' && remainingTime !== 'Lejárt'"
+                    class="fixed inset-0 z-10 bg-animated-light dark:bg-animated-dark"
+            >
                 <app-text-poll [question]="question" [options]="options"></app-text-poll>
             </div>
+
+
+
+
+
         </div>
     </div>
 </div>

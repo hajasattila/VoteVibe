@@ -3,26 +3,79 @@
         {{ question }}
     </h1>
 
-    <div class="absolute inset-0 z-10 "></div>
-    <div class="absolute inset-x-0 bottom-0 z-10 h-1/4"></div>
+    <div class="absolute inset-0 z-10"></div>
+    <div class="absolute inset-x-0 bottom-0 z-10  h-1/4"></div>
 
-    <label *ngIf="leftOption"
-           class="flex flex-col bg-center bg-cover cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group"
-           (click)="onOptionSelected(leftOption, 'left')">
-    <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl">
-      {{ leftOption }}
-    </span>
-        <div class="absolute inset-0 bg-black/80 z-20"></div>
-        <div class="absolute inset-0 z-20 bg-gradient-to-b from-black/50 to-transparent group-hover:bg-gray-800 transition duration-150 ease-out"></div>
+    <label *ngIf="leftOption && !rightOption"
+           class="flex flex-col h-full w-full justify-center items-center text-center cursor-default group">
+        asd
+        <span class="text-white text-3xl font-bold z-30 px-8 py-4 lg:text-5xl xl:text-6xl">
+          {{ leftOption }}
+        </span>
     </label>
 
-    <label *ngIf="rightOption"
-           class="flex flex-col bg-center bg-cover cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group"
-           (click)="onOptionSelected(rightOption, 'right')">
-    <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl">
-      {{ rightOption }}
-    </span>
-        <div class="absolute inset-0 bg-black/80 z-20"></div>
-        <div class="absolute inset-0 z-20 bg-gradient-to-b from-black/50 to-transparent group-hover:bg-gray-800 transition duration-150 ease-out"></div>
-    </label>
+    <!-- LEFT OPTION -->
+    <div *ngIf="leftOption && rightOption"
+         class="flex flex-col cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group option-hover-overlay"
+         (click)="onOptionSelected(leftOption, 'left', $event)"
+         [ngClass]="{'animate-bounce-once': selectedSide === 'left','animate-slide-out-left': selectedSide === 'right','animate-slide-in-left': animateIncoming === 'left'}">
+          <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl">
+            {{ leftOption }}
+          </span>
+        <div class="absolute inset-0 z-20"></div>
+        <div *ngIf="selectedSide === 'left'"
+             class="firework left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+    </div>
+
+
+    <!-- RIGHT OPTION -->
+    <div *ngIf="leftOption && rightOption"
+         class="flex flex-col cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group option-hover-overlay"
+         (click)="onOptionSelected(rightOption, 'right', $event)"
+         [ngClass]="{'animate-bounce-once': selectedSide === 'right','animate-slide-out-right': selectedSide === 'left','animate-slide-in-right': animateIncoming === 'right'}">
+          <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl ">
+            {{ rightOption }}
+          </span>
+        <div class="absolute inset-0 z-20"></div>
+        <div *ngIf="selectedSide === 'right'"
+             class="firework left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+    </div>
 </div>
+
+
+<div *ngIf="showWinnerModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+     (click)="closeWinnerModal()">
+    <div class="firework-modal bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl w-full max-w-md transform transition-all duration-300 text-center relative overflow-hidden"
+         (click)="$event.stopPropagation()">
+        <div class="firework-sparkle"></div>
+        <div class="mb-4">
+            <h2 class="text-2xl font-bold text-indigo-600 dark:text-indigo-300 mb-2">
+                {{ 'poll.winnerTitle' | translate }}
+            </h2>
+            <p class="text-lg text-gray-700 dark:text-gray-200">
+                {{ 'poll.winnerIs' | translate:{option: winnerOption} }}
+            </p>
+        </div>
+        <div class="flex justify-center">
+            <button
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg shadow transition"
+                    (click)="closeWinnerModal()"
+            >
+                {{ 'poll.close' | translate }}
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="winnerOption" class="fixed inset-0 z-40 flex items-center justify-center pointer-events-none p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl w-full max-w-md transform transition-all duration-300 animate-fade-in-up text-center">
+        <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-300 my-0 pb-0  pt-3">
+            🏆 {{ 'poll.winnerIs' | translate:{option: winnerOption} }}
+        </p>
+    </div>
+</div>
+
+
+<canvas class="fireworks pointer-events-none fixed inset-0 z-50"></canvas>
+
