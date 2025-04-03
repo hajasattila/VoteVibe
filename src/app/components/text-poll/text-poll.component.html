@@ -9,7 +9,6 @@
 
     <label *ngIf="leftOption && !rightOption"
            class="flex flex-col h-full w-full justify-center items-center text-center cursor-default group">
-        asd
         <span class="text-white text-3xl font-bold z-30 px-8 py-4 lg:text-5xl xl:text-6xl">
           {{ leftOption }}
         </span>
@@ -22,13 +21,7 @@
             (click)="onOptionSelected(leftOption, 'left', $event)"
             (touchstart)="onTouchStart($event, 'left')"
             (touchend)="onTouchEnd(leftOption, $event)"
-            [ngClass]="{
-  'animate-slide-out-right': selectedSide === 'right' && swipeDirection === 'left',
-  'animate-slide-out-left': selectedSide === 'right' && swipeDirection === 'right'
-}"
-    >
-
-
+            [ngClass]="{'animate-slide-out-left': disappearSide === 'left' && disappearDirection === 'left', 'animate-slide-out-right': disappearSide === 'left' && disappearDirection === 'right'}">
           <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl">
             {{ leftOption }}
           </span>
@@ -45,16 +38,10 @@
             (click)="onOptionSelected(rightOption, 'right', $event)"
             (touchstart)="onTouchStart($event, 'right')"
             (touchend)="onTouchEnd(rightOption, $event)"
-            [ngClass]="{
-  'animate-slide-out-left': selectedSide === 'left' && swipeDirection === 'left',
-  'animate-slide-out-right': selectedSide === 'left' && swipeDirection === 'right'
-}"
-    >
-
-
-          <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl ">
-            {{ rightOption }}
-          </span>
+            [ngClass]="{'animate-slide-out-left': disappearSide === 'right' && disappearDirection === 'left','animate-slide-out-right': disappearSide === 'right' && disappearDirection === 'right'}">
+              <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl ">
+                {{ rightOption }}
+              </span>
         <div class="absolute inset-0 z-20"></div>
         <div *ngIf="selectedSide === 'right'"
              class="firework left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
@@ -76,10 +63,8 @@
             </p>
         </div>
         <div class="flex justify-center">
-            <button
-                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg shadow transition"
-                    (click)="closeWinnerModal()"
-            >
+            <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg shadow transition"
+                    (click)="closeWinnerModal()">
                 {{ 'poll.close' | translate }}
             </button>
         </div>

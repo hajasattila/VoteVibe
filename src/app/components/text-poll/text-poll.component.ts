@@ -97,24 +97,43 @@ export class TextPollComponent implements OnInit {
         });
     }
 
-    onOptionSelected(option: string, side: 'left' | 'right', event: MouseEvent | TouchEvent): void {
-        this.clickSound.volume = 0.05;
-        this.clickSound.currentTime = 0;
-        this.clickSound.play().catch(err => console.warn('Hanghiba:', err));
+    // handleSwipeOptionSelected(option: string, side: 'left' | 'right', direction: 'left' | 'right'): void {
+    //     this.swipeDirection = direction;
+    //     this.swipedOptionSide = side;
+    //     this.onOptionSelected(option, side,"left");
+    // }
 
-        if (!this.swipeDirection) {
-            this.swipeDirection = side === 'left' ? 'right': "right"
-        }
+    disappearSide: 'left' | 'right' | null = null;
+    disappearDirection: 'left' | 'right' | null = null;
 
+
+    onOptionSelected(option: string, side: 'left' | 'right', event: MouseEvent): void
+    {
+
+        console.log(`[CLICK] "${option}" opció lett kiválasztva (${side} oldal).`);
 
         const staticOption = side === 'left' ? this.leftOption : this.rightOption;
         if (!staticOption || option !== staticOption) return;
         if (this.selectedSide) return;
 
+        if (!(event instanceof MouseEvent)) return;
+
+        this.disappearSide = side === 'left' ? 'right' : 'left';
+        this.disappearDirection = this.disappearSide === 'left' ? 'left' : 'right';
+
         this.selectedSide = side;
         this.voteCounts[option] = (this.voteCounts[option] || 0) + 1;
 
-        this.fireworkService.trigger((event as MouseEvent).clientX, (event as MouseEvent).clientY);
+
+
+        this.selectedSide = side;
+        this.voteCounts[option] = (this.voteCounts[option] || 0) + 1;
+
+        this.clickSound.volume = 0.05;
+        this.clickSound.currentTime = 0;
+        this.clickSound.play().catch(err => console.warn('Hanghiba:', err));
+
+        this.fireworkService.trigger(event.clientX, event.clientY);
 
         const newOption = this.getUncomparedOptionFor(option);
 
@@ -135,8 +154,8 @@ export class TextPollComponent implements OnInit {
                 console.log(`[Új összehasonlítás] "${this.leftOption}" vs "${this.rightOption}"`);
 
                 this.selectedSide = null;
-                this.swipeDirection = null;
-                this.swipedOptionSide = null;
+                this.disappearSide = null;
+                this.disappearDirection = null;
 
                 setTimeout(() => {
                     this.animateIncoming = null;
@@ -163,6 +182,7 @@ export class TextPollComponent implements OnInit {
 
         this.cdr.markForCheck();
     }
+
 
     printTop3Votes(): void {
         if (!this.winnerOption) return;
@@ -196,15 +216,83 @@ export class TextPollComponent implements OnInit {
         this.swipedOptionSide = side;
     }
 
+    swipeHandled = false;
+
     onTouchEnd(option: string, event: TouchEvent) {
         const touchEndX = event.changedTouches[0].clientX;
         const deltaX = touchEndX - this.touchStartX;
 
-        if (Math.abs(deltaX) > 40) {
-            this.swipeDirection = deltaX > 0 ? 'right' : 'left';
-            if (this.swipedOptionSide) {
-                this.onOptionSelected(option, this.swipedOptionSide, event as any);
+        if (Math.abs(deltaX) > 40 && this.swipedOptionSide) {
+            const direction = deltaX > 0 ? 'right' : 'left';
+            const disappearSide = this.swipedOptionSide;
+            const disappearDirection = direction;
+
+            // választott opció az ellenkező
+            const chosenSide = disappearSide === 'left' ? 'right' : 'left';
+            const chosenOption = chosenSide === 'left' ? this.leftOption! : this.rightOption!;
+
+            this.disappearSide = disappearSide;
+            this.disappearDirection = disappearDirection;
+            this.selectedSide = chosenSide;
+
+            this.voteCounts[chosenOption] = (this.voteCounts[chosenOption] || 0) + 1;
+
+            // 🎆 Firework középre
+            const element = document.querySelector(`.option-${chosenSide}`) as HTMLElement;
+            if (element) {
+                const rect = element.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                this.fireworkService.trigger(centerX, centerY);
             }
+
+            const newOption = this.getUncomparedOptionFor(chosenOption);
+
+            if (newOption) {
+                this.addComparedPair(chosenOption, newOption);
+                setTimeout(() => {
+                    if (chosenSide === 'left') {
+                        this.leftOption = chosenOption;
+                        this.rightOption = newOption;
+                        this.animateIncoming = 'right';
+                    } else {
+                        this.rightOption = chosenOption;
+                        this.leftOption = newOption;
+                        this.animateIncoming = 'left';
+                    }
+
+                    this.selectedSide = null;
+                    this.disappearSide = null;
+                    this.disappearDirection = null;
+                    this.swipedOptionSide = null;
+                    this.swipeDirection = null;
+
+                    setTimeout(() => {
+                        this.animateIncoming = null;
+                        this.cdr.markForCheck();
+                    }, 400);
+
+                    this.cdr.markForCheck();
+                }, 700);
+            } else {
+                this.winnerOption = chosenOption;
+                this.showWinnerModal = true;
+
+                if (chosenSide === 'left') {
+                    this.leftOption = chosenOption;
+                    this.rightOption = undefined;
+                } else {
+                    this.rightOption = chosenOption;
+                    this.leftOption = undefined;
+                }
+
+                this.printTop3Votes();
+            }
+
+            this.cdr.markForCheck();
         }
     }
+
+
+
 }
