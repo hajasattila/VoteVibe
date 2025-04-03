@@ -41,6 +41,8 @@ export class GameComponent implements OnInit {
         this.roomCode = this.generateRoomCode(6, 12);
     }
 
+
+
     ngOnInit() {
         this.loadUserRooms();
         this.loadFriends();
@@ -119,11 +121,14 @@ export class GameComponent implements OnInit {
         let timeLimitInMilliseconds = timeLimitInHours * 3600000;
         let futureTime = Date.now() + timeLimitInMilliseconds;
 
+        // 🔧 ÚJ: csak a menthető adatokat tesszük bele a room-ba
+        const sanitizedUser = this.sanitizeUser(this.currentUser);
+
         let newRoom: Room = {
             roomId: this.roomCode,
             roomName: this.roomName,
-            creator: this.currentUser,
-            members: [this.currentUser],
+            creator: sanitizedUser,
+            members: [sanitizedUser],
             voteType: this.selectedVoteType,
             connectionCode: this.roomCode,
             timeLimit: this.selectedTimeLimit,
@@ -146,7 +151,7 @@ export class GameComponent implements OnInit {
             .subscribe((exists: boolean) => {
                 if (exists) {
                     this.roomCode = this.generateRoomCode(6, 12);
-                    this.translate.get('room.info.newCode', { code: this.roomCode }).subscribe(res => {
+                    this.translate.get('room.info.newCode', {code: this.roomCode}).subscribe(res => {
                         this.snackbarService.info(res);
                     });
                     newRoom.roomId = this.roomCode;
@@ -157,9 +162,10 @@ export class GameComponent implements OnInit {
                     next: () => {
                         console.log('Room successfully created:', newRoom);
 
-                        this.translate.get('room.success.created', { code: this.roomCode }).subscribe(res => {
+                        this.translate.get('room.success.created', {code: this.roomCode}).subscribe(res => {
                             this.snackbarService.success(res);
                         });
+
                         if (this.currentUser?.uid) {
                             this.userService.addRoomToUser(this.currentUser.uid, newRoom).subscribe({
                                 next: () => {
@@ -169,16 +175,17 @@ export class GameComponent implements OnInit {
                                     });
                                 },
                                 error: (error) => {
-                                    this.translate.get('room.error.addToProfile', { error: error.message }).subscribe(res => {
+                                    this.translate.get('room.error.addToProfile', {error: error.message}).subscribe(res => {
                                         this.snackbarService.error(res);
                                     });
+                                    console.error(error)
                                 },
                             });
                         }
                         this.router.navigate(["/room", this.roomCode]);
                     },
                     error: (error) => {
-                        this.translate.get('room.error.creationFailed', { error: error.message }).subscribe(res => {
+                        this.translate.get('room.error.creationFailed', {error: error.message}).subscribe(res => {
                             this.snackbarService.error(res);
                         });
                     }
@@ -270,4 +277,14 @@ export class GameComponent implements OnInit {
         }
         return result;
     }
+
+    private sanitizeUser(user: ProfileUser): any {
+        return {
+            uid: user.uid,
+            displayName: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+        };
+    }
+
 }

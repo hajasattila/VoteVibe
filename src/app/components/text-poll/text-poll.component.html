@@ -1,4 +1,5 @@
 <div class="result h-full relative">
+
     <h1 class="text-white text-2xl lg:text-4xl xl:text-5xl text-center absolute inset-x-0 top-12 z-30">
         {{ question }}
     </h1>
@@ -14,11 +15,20 @@
         </span>
     </label>
 
-    <!-- LEFT OPTION -->
-    <div *ngIf="leftOption && rightOption"
-         class="flex flex-col cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group option-hover-overlay"
-         (click)="onOptionSelected(leftOption, 'left', $event)"
-         [ngClass]="{'animate-bounce-once': selectedSide === 'left','animate-slide-out-left': selectedSide === 'right','animate-slide-in-left': animateIncoming === 'left'}">
+    <!-- BAL OPCIÓ -->
+    <div
+            *ngIf="leftOption && rightOption"
+            class="flex flex-col cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group option-hover-overlay"
+            (click)="onOptionSelected(leftOption, 'left', $event)"
+            (touchstart)="onTouchStart($event, 'left')"
+            (touchend)="onTouchEnd(leftOption, $event)"
+            [ngClass]="{
+  'animate-slide-out-right': selectedSide === 'right' && swipeDirection === 'left',
+  'animate-slide-out-left': selectedSide === 'right' && swipeDirection === 'right'
+}"
+    >
+
+
           <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl">
             {{ leftOption }}
           </span>
@@ -28,11 +38,20 @@
     </div>
 
 
-    <!-- RIGHT OPTION -->
-    <div *ngIf="leftOption && rightOption"
-         class="flex flex-col cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group option-hover-overlay"
-         (click)="onOptionSelected(rightOption, 'right', $event)"
-         [ngClass]="{'animate-bounce-once': selectedSide === 'right','animate-slide-out-right': selectedSide === 'left','animate-slide-in-right': animateIncoming === 'right'}">
+    <!-- JOBB OPCIÓ -->
+    <div
+            *ngIf="leftOption && rightOption"
+            class="flex flex-col cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group option-hover-overlay"
+            (click)="onOptionSelected(rightOption, 'right', $event)"
+            (touchstart)="onTouchStart($event, 'right')"
+            (touchend)="onTouchEnd(rightOption, $event)"
+            [ngClass]="{
+  'animate-slide-out-left': selectedSide === 'left' && swipeDirection === 'left',
+  'animate-slide-out-right': selectedSide === 'left' && swipeDirection === 'right'
+}"
+    >
+
+
           <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl ">
             {{ rightOption }}
           </span>

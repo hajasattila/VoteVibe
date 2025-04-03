@@ -95,14 +95,16 @@
                                 </label>
 
                                 <input
-                                        maxlength="22"
-                                        autocomplete="off"
-                                        [(ngModel)]="options[i]"
-                                        [id]="'option-' + i"
-                                        [name]="'option-' + i"
-                                        class="transition duration-500 ease-in-out transform border-2 border-gray-300 dark:border-gray-600 focus:border-blue-500 rounded-lg w-full py-2 px-4 text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-800 leading-tight focus:outline-none"
-                                        [placeholder]="'room.optionPlaceholder' | translate"
+                                    #optionInput
+                                    maxlength="22"
+                                    autocomplete="off"
+                                    [(ngModel)]="options[i]"
+                                    [id]="'option-' + i"
+                                    [name]="'option-' + i"
+                                    class="transition duration-500 ease-in-out transform border-2 border-gray-300 dark:border-gray-600 focus:border-blue-500 rounded-lg w-full py-2 px-4 text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-800 leading-tight focus:outline-none"
+                                    [placeholder]="'room.optionPlaceholder' | translate"
                                 />
+
 
                                 <button
                                         *ngIf="options.length > 2"

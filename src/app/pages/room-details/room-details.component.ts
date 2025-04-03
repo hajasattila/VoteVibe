@@ -3,7 +3,7 @@ import {
     OnInit,
     OnDestroy,
     ChangeDetectorRef,
-    ChangeDetectionStrategy,
+    ChangeDetectionStrategy, ViewChildren, QueryList, ElementRef,
 } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {DatabaseService} from '../../../api/services/database-service/database.service';
@@ -25,6 +25,8 @@ import DocumentData = firebase.firestore.DocumentData;
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoomDetailsComponent implements OnInit, OnDestroy {
+    @ViewChildren('optionInput') optionInputs!: QueryList<ElementRef<HTMLInputElement>>;
+
     room: Room | null = null;
     remainingTime = '';
     options: string[] = ['', ''];
@@ -38,6 +40,8 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
     showWaitingMessage = false;
     isCreator = false;
     isDarkMode = false;
+
+
 
     private unsubscribeSnapshot?: () => void;
 
@@ -154,9 +158,15 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
     addOption(): void {
         if (this.options.length < 10) {
             this.options.push('');
-            this.cdr.markForCheck();
+
+            this.cdr.detectChanges();
+            setTimeout(() => {
+                const lastInput = this.optionInputs.last;
+                lastInput?.nativeElement.focus();
+            });
         }
     }
+
 
     removeOption(index: number): void {
         if (this.options.length > 2) this.options.splice(index, 1);

@@ -10,3 +10,23 @@
     background-color: rgba(0, 0, 0, 0.1);
     box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.15);
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .animate-slide-out-left {
+        @apply transition-transform duration-700 ease-in-out;
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+
+    .animate-slide-out-right {
+        @apply transition-transform duration-700 ease-in-out;
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+
