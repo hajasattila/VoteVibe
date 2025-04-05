@@ -1,7 +1,6 @@
-import {ChangeDetectorRef, Component, ElementRef, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from 'src/api/services/auth-service/auth.service';
 import {Router} from "@angular/router";
-import {UsersService} from "../../../api/services/users-service/users.service";
 import {ThemeService} from "../../../api/services/theme-service/theme-service.service";
 import {TranslateService} from "@ngx-translate/core";
 
@@ -46,8 +45,6 @@ export class HomeComponent implements OnInit {
         this.translate.setDefaultLang('hu');
         this.translate.use(savedLang);
     }
-
-    public isLargeScreen = window.innerWidth >= 1024;
 
     toggleSideMenu() {
         this.menuOpen = !this.menuOpen;
