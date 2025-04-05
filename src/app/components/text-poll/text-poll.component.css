@@ -33,3 +33,75 @@
     }
 }
 
+.option-hover-overlay {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.option-dragged {
+    background-color: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 1rem;
+    transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.animate-slide-in-left {
+    animation: slideInLeft 0.4s ease;
+}
+
+.animate-slide-in-right {
+    animation: slideInRight 0.4s ease;
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.option-dragged {
+    transition: transform 0.1s ease-out, opacity 0.1s ease-out;
+}
+
+@keyframes swipe {
+    0% {
+        transform: translateX(0) rotate(0deg);
+    }
+    100% {
+        transform: translateX(20px) rotate(-5deg);
+    }
+}
+
+.handswipe-top,
+.handswipe-bottom {
+    animation: swipe 0.8s alternate infinite ease;
+    position: absolute;
+    right: 50%;
+    transform: translateX(50%);
+    z-index: 40;
+}
+
+.handswipe-top {
+    top: 25%;
+}
+
+.handswipe-bottom {
+    bottom: 10%;
+    right: 10%;
+}
+

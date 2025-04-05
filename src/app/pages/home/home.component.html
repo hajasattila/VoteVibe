@@ -1,14 +1,21 @@
 <div class="flex flex-col lg:flex-row h-screen text-gray-800 dark:text-gray-100 transition-colors duration-300 mt-4">
-    <div class="w-full lg:w-60 bg-transparent md:bg-indigo-50 md:dark:bg-gray-800 p-4 flex-shrink-0 md:h-screen pt-16 md:pt-24 pb-0">
-        <div class="flex flex-row md:flex-col md:h-full md:justify-between gap-4 justify-between">
+    <div class="w-full lg:w-60 bg-transparent md:bg-indigo-50 md:dark:bg-gray-800 p-4 flex-shrink-0 lg:h-screen pt-16 md:pt-24 pb-0 hidden xl:block">
+        <div class="flex flex-col gap-4 lg:flex-col lg:h-full lg:justify-between">
 
-            <div class="flex flex-col gap-4 flex-1 md:flex-none  bg-white dark:bg-gray-900 rounded-md shadow-lg mb-0 md:mb-6 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl  md:border-none px-6 md:px-4">
+            <div class="flex flex-col gap-4 flex-1 md:flex-none bg-white dark:bg-gray-900 rounded-md shadow-lg mb-0 md:mb-6 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl md:border-none px-6 md:px-4">
                 <a routerLink="/game"
                    class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-4 transition-all duration-300 hover:translate-x-1">
                     <span class="material-icons-outlined mr-2">dashboard</span>
                     {{ 'home.menu.game' | translate }}
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
+                <a routerLink="/rooms"
+                   class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-4 transition-all duration-300 hover:translate-x-1">
+                    <span class="material-icons-outlined mr-2">meeting_room</span>
+                    {{ 'home.menu.rooms' | translate }}
+                    <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                </a>
+
                 <a href="#"
                    class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-4 transition-all duration-300 hover:translate-x-1">
                     <span class="material-icons-outlined mr-2">tune</span>
@@ -16,8 +23,7 @@
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
             </div>
-
-            <div class="flex flex-col gap-4 flex-1 md:flex-none bg-white dark:bg-gray-900 rounded-md shadow-lg mb-0 md:mb-6 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl  md:border-none px-6 md:px-4">
+            <div class="flex flex-col gap-4 flex-1 md:flex-none bg-white dark:bg-gray-900 rounded-md shadow-lg mb-0 md:mb-6 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl md:border-none px-6 md:px-4">
                 <a routerLink="/profile"
                    class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-4 transition-all duration-300 hover:translate-x-1">
                     <span class="material-icons-outlined mr-2">face</span>
@@ -30,11 +36,31 @@
                     {{ 'home.menu.logout' | translate }}
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
+
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                    <div class="flex items-center justify-between">
+                        <button (click)="toggleTheme()"
+                                class="text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 transition-transform hover:scale-110">
+                            <span class="material-icons-outlined text-[24px]">
+                                {{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}
+                            </span>
+                        </button>
+
+
+                        <select
+                                class="bg-white dark:bg-gray-800 text-sm rounded px-2 py-1 border border-gray-300 dark:border-gray-600 focus:outline-none transition w-24 text-center"
+                                [value]="translate.currentLang"
+                                (change)="changeLanguage($event)">
+                            <option value="hu">HU</option>
+                            <option value="en">EN</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="flex-1 p-4 max-w-7xl md:mx-auto md:pt-24">
+    <div class="flex-1 p-4 max-w-7xl lg:mx-auto px-4 pt-16 lg:pt-24">
         <div class="flex flex-col lg:flex-row gap-4 mb-4">
             <div class="flex-1 bg-indigo-100 dark:bg-indigo-900 border border-indigo-200 dark:border-indigo-700 rounded-lg p-4 animate-fade-in">
                 <h2 class="text-4xl md:text-5xl text-blue-900 dark:text-indigo-200">
@@ -57,16 +83,104 @@
             </div>
         </div>
 
+        <!-- Mobil nyitó gomb – oldalhoz simuló -->
+        <div class="block xl:hidden">
+            <!-- Mobil + tablet oldalsó menü nyitó/csukó gomb -->
+            <button
+                    class="fixed top-24 left-0 z-50 bg-indigo-600 dark:bg-gray-800 text-white px-2 py-3 rounded-r-md shadow-md block md:block xl:hidden transition-transform duration-300"
+                    (click)="toggleSideMenu()"
+                    aria-label="Menü nyitása/zárása">
+        <span class="material-icons-outlined text-xl">
+            {{ menuOpen ? 'chevron_left' : 'chevron_right' }}
+        </span>
+            </button>
+
+            <!-- Overlay háttér ha nyitva -->
+            <div
+                    class="fixed inset-0 z-30 bg-black bg-opacity-40 transition-opacity md:block xl:hidden"
+                    *ngIf="menuOpen"
+                    (click)="toggleSideMenu()">
+            </div>
+
+            <div
+                    class="fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-900 shadow-lg transform transition-transform duration-300 ease-in-out
+               xl:static xl:translate-x-0 xl:w-60 md:shadow-none"
+                    [ngClass]="{ '-translate-x-full': !menuOpen, 'translate-x-0': menuOpen }">
+
+
+                <div class="flex flex-col gap-4 h-full justify-between p-2 pt-24">
+                    <!-- Menüelemek -->
+                    <div class="flex flex-col gap-4 bg-white dark:bg-gray-900 rounded-md shadow-md p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        <a routerLink="/game"
+                           class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-2 transition-all duration-300 hover:translate-x-1 pl-6">
+                            <span class="material-icons-outlined mr-2">dashboard</span>
+                            {{ 'home.menu.game' | translate }}
+                            <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                        </a>
+                        <a routerLink="/rooms"
+                           class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-2 transition-all duration-300 hover:translate-x-1">
+                            <span class="material-icons-outlined mr-2">meeting_room</span>
+                            {{ 'home.menu.rooms' | translate }}
+                            <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                        </a>
+                        <a href="#"
+                           class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-2 transition-all duration-300 hover:translate-x-1">
+                            <span class="material-icons-outlined mr-2">tune</span>
+                            {{ 'home.menu.stats' | translate }}
+                            <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                        </a>
+                    </div>
+
+                    <!-- Profil és beállítások -->
+                    <div class="flex flex-col gap-4 bg-white dark:bg-gray-900 rounded-md shadow-md p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        <a routerLink="/profile"
+                           class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-2 transition-all duration-300 hover:translate-x-1">
+                            <span class="material-icons-outlined mr-2">face</span>
+                            {{ 'home.menu.profile' | translate }}
+                            <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                        </a>
+                        <a (click)="logout()"
+                           class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-2 transition-all duration-300 hover:translate-x-1 cursor-pointer">
+                            <span class="material-icons-outlined mr-2">power_settings_new</span>
+                            {{ 'home.menu.logout' | translate }}
+                            <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                        </a>
+
+                        <!-- Téma és nyelv -->
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                            <div class="flex items-center justify-between">
+                                <button (click)="toggleTheme()" class="text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 transition-transform hover:scale-110">
+                            <span class="material-icons-outlined text-[24px]">
+                                {{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}
+                            </span>
+                                </button>
+                                <select class="bg-white dark:bg-gray-800 text-sm rounded px-2 py-1 border border-gray-300 dark:border-gray-600 focus:outline-none transition w-24 text-center"
+                                        [value]="translate.currentLang"
+                                        (change)="changeLanguage($event)">
+                                    <option value="hu">HU</option>
+                                    <option value="en">EN</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 h-64 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-slide-up" style="animation-delay: 0.1s">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 h-64 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-slide-up"
+                 style="animation-delay: 0.1s">
                 <h3 class="text-xl font-bold text-indigo-800 dark:text-indigo-400">{{ 'home.stats.card1' | translate }}</h3>
             </div>
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 h-64 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-slide-up" style="animation-delay: 0.2s">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 h-64 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-slide-up"
+                 style="animation-delay: 0.2s">
                 <h3 class="text-xl font-bold text-indigo-800 dark:text-indigo-400">{{ 'home.stats.card2' | translate }}</h3>
             </div>
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 h-64 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-slide-up" style="animation-delay: 0.3s">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 h-64 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-slide-up"
+                 style="animation-delay: 0.3s">
                 <h3 class="text-xl font-bold text-indigo-800 dark:text-indigo-400">{{ 'home.stats.card3' | translate }}</h3>
             </div>
         </div>
+
     </div>
 </div>

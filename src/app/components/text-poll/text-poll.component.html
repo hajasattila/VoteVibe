@@ -17,11 +17,19 @@
     <!-- BAL OPCIÓ -->
     <div
             *ngIf="leftOption && rightOption"
-            class="flex flex-col cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group option-hover-overlay"
+            class="flex flex-col cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group option-hover-overlay option-left border-b sm:border-r"
+            [class.option-dragged]="activeDragSide === 'left'"
             (click)="onOptionSelected(leftOption, 'left', $event)"
             (touchstart)="onTouchStart($event, 'left')"
+            (touchmove)="onTouchMove($event)"
             (touchend)="onTouchEnd(leftOption, $event)"
-            [ngClass]="{'animate-slide-out-left': disappearSide === 'left' && disappearDirection === 'left', 'animate-slide-out-right': disappearSide === 'left' && disappearDirection === 'right'}">
+            [ngClass]="{
+                      'animate-slide-out-left': disappearSide === 'left' && disappearDirection === 'left',
+                      'animate-slide-out-right': disappearSide === 'left' && disappearDirection === 'right',
+                      'animate-slide-in-left': animateIncomingLeft
+            }"
+            [ngStyle]="activeDragSide === 'left' ? { transform: 'translateX(' + dragOffsetX + 'px)', opacity: dragOpacity } : {}">
+
           <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl">
             {{ leftOption }}
           </span>
@@ -30,16 +38,23 @@
              class="firework left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
     </div>
 
-
     <!-- JOBB OPCIÓ -->
     <div
             *ngIf="leftOption && rightOption"
-            class="flex flex-col cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group option-hover-overlay"
+            class="flex flex-col cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group option-hover-overlay option-right border-t sm:border-l"
+            [class.option-dragged]="activeDragSide === 'right'"
             (click)="onOptionSelected(rightOption, 'right', $event)"
             (touchstart)="onTouchStart($event, 'right')"
+            (touchmove)="onTouchMove($event)"
             (touchend)="onTouchEnd(rightOption, $event)"
-            [ngClass]="{'animate-slide-out-left': disappearSide === 'right' && disappearDirection === 'left','animate-slide-out-right': disappearSide === 'right' && disappearDirection === 'right'}">
-              <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl ">
+            [ngClass]="{
+                      'animate-slide-out-left': disappearSide === 'right' && disappearDirection === 'left',
+                      'animate-slide-out-right': disappearSide === 'right' && disappearDirection === 'right',
+                      'animate-slide-in-right': animateIncomingRight
+            }"
+            [ngStyle]="activeDragSide === 'right' ? { transform: 'translateX(' + dragOffsetX + 'px)', opacity: dragOpacity } : {}">
+
+        <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl ">
                 {{ rightOption }}
               </span>
         <div class="absolute inset-0 z-20"></div>
@@ -82,4 +97,13 @@
 
 
 <canvas class="fireworks pointer-events-none fixed inset-0 z-50"></canvas>
+<ng-container *ngIf="showHandHint">
+    <div class="handswipe-top md:hidden">
+        <img src="../../../assets/images/swipe2.png" alt="Swipe gesture top icon" class="w-32 h-32"/>
+    </div>
+
+    <div class="handswipe-bottom md:hidden">
+        <img src="../../../assets/images/swipe2.png" alt="Swipe gesture bottom icon" class="w-32 h-32"/>
+    </div>
+</ng-container>
 

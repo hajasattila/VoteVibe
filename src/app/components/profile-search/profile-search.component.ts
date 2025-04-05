@@ -1,7 +1,7 @@
 import {Component, ElementRef, HostListener, OnInit, ViewChild} from "@angular/core";
 import {FormControl} from "@angular/forms";
 import {Observable, of} from "rxjs";
-import {switchMap, startWith, take} from "rxjs/operators";
+import {switchMap, startWith, take, map} from "rxjs/operators";
 import {UsersService} from "../../../api/services/users-service/users.service";
 import {AuthService} from "../../../api/services/auth-service/auth.service";
 import {ProfileUser} from "../../../api/models/user";
@@ -17,7 +17,7 @@ export class ProfileSearchComponent implements OnInit {
     @ViewChild('searchContainer') searchContainer!: ElementRef;
 
     searchControl = new FormControl();
-    filteredUsers$: Observable<ProfileUser[]>;
+    filteredUsers$!: Observable<ProfileUser[]>;
     currentUser?: ProfileUser;
     currentUserId: string | null = null;
     showSuggestions = false;
@@ -29,10 +29,8 @@ export class ProfileSearchComponent implements OnInit {
         private snackbar: SnackbarService,
         private translate: TranslateService
     ) {
-        this.filteredUsers$ = this.searchControl.valueChanges.pipe(
-            startWith(""),
-            switchMap((text) => (text ? this.userService.getFilteredUsers(text) : of([])))
-        );
+
+
     }
 
     ngOnInit() {
@@ -40,12 +38,31 @@ export class ProfileSearchComponent implements OnInit {
             if (user) {
                 this.isAuthenticated = true;
                 this.currentUserId = user.uid;
+
+                this.filteredUsers$ = this.searchControl.valueChanges.pipe(
+                    startWith(""),
+                    switchMap((text) =>
+                        text
+                            ? this.userService.getFilteredUsers(text).pipe(
+                                map(users =>
+                                    users.filter(
+                                        user =>
+                                            user.uid !== this.currentUserId && user.displayName !== 'Nati'
+                                    )
+                                )
+                            )
+                            : of([])
+                    )
+                );
+
             } else {
                 this.isAuthenticated = false;
                 this.currentUserId = null;
+                this.filteredUsers$ = of([]);
             }
         });
     }
+
 
     @HostListener("document:click", ["$event"])
     onDocumentClick(event: MouseEvent) {

@@ -4,14 +4,14 @@ import {
     HostListener,
     ElementRef,
     OnInit,
-    OnDestroy, ChangeDetectorRef
+    OnDestroy, ChangeDetectorRef, ViewChildren, QueryList
 } from '@angular/core';
 import {AuthService} from "../../../api/services/auth-service/auth.service";
 import {UsersService} from "../../../api/services/users-service/users.service";
 import {Router, NavigationEnd} from "@angular/router";
 import {ThemeService} from "../../../api/services/theme-service/theme-service.service";
-import {Subscription} from "rxjs";
-import {filter} from "rxjs/operators";
+import {Observable, Subscription} from "rxjs";
+import {filter, map} from "rxjs/operators";
 import {TranslateService} from "@ngx-translate/core";
 
 @Component({
@@ -21,12 +21,19 @@ import {TranslateService} from "@ngx-translate/core";
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavBarComponent implements OnInit, OnDestroy {
+    @ViewChildren('friendDropdownRef, friendDropdownReff') friendDropdownRefs!: QueryList<ElementRef>;
+
+
     protected user$ = this.usersService.currentUserProfile$;
     protected navbarOpen = false;
     protected profileDropdownOpen = false;
 
     private routerSubscription!: Subscription;
     protected previousUrl: string = '';
+
+    protected hasFriendRequests$!: Observable<boolean>;
+    protected friendRequestDropdownOpen = false;
+    protected incomingFriendNames: string[] = [];
 
 
     constructor(
@@ -45,6 +52,16 @@ export class NavBarComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.previousUrl = this.router.url;
 
+        this.hasFriendRequests$ = this.usersService.currentUserProfile$.pipe(
+            map(user => {
+                if (!!user && Array.isArray(user.friendRequests) && user.friendRequests.length > 0) {
+                    this.loadFriendRequestNames(user.friendRequests);
+                    return true;
+                }
+                return false;
+            })
+        );
+
         this.routerSubscription = this.router.events
             .pipe(filter(event => event instanceof NavigationEnd))
             .subscribe((event) => {
@@ -55,16 +72,24 @@ export class NavBarComponent implements OnInit, OnDestroy {
                     this.cdr.detectChanges();
                 }
                 this.profileDropdownOpen = false;
+                this.friendRequestDropdownOpen = false;
                 this.previousUrl = navigation.urlAfterRedirects;
             });
-
-
     }
 
-    changeLanguage(event: Event) {
-        const lang = (event.target as HTMLSelectElement).value;
-        this.translate.use(lang);
-        localStorage.setItem('lang', lang);
+    loadFriendRequestNames(requestIds: string[]): void {
+        const uniqueNames = new Set<string>();
+        this.incomingFriendNames = [];
+
+        requestIds.forEach(id => {
+            this.usersService.getUserById(id).subscribe(requester => {
+                if (requester?.displayName && !uniqueNames.has(requester.displayName)) {
+                    uniqueNames.add(requester.displayName);
+                    this.incomingFriendNames.push(requester.displayName);
+                    this.cdr.markForCheck();
+                }
+            });
+        });
     }
 
     initLanguage() {
@@ -96,11 +121,21 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
     @HostListener('document:click', ['$event'])
     handleClickOutside(event: Event): void {
+        const clickTarget = event.target as HTMLElement;
+
         if (
             this.profileDropdownOpen &&
-            !this.eRef.nativeElement.contains(event.target)
+            !this.eRef.nativeElement.contains(clickTarget)
         ) {
             this.profileDropdownOpen = false;
+        }
+
+        if (
+            this.friendRequestDropdownOpen &&
+            this.friendDropdownRefs &&
+            !this.friendDropdownRefs.some(ref => ref.nativeElement.contains(clickTarget))
+        ) {
+            this.friendRequestDropdownOpen = false;
         }
     }
 }

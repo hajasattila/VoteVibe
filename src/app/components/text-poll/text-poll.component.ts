@@ -16,7 +16,7 @@ import {FireworkService} from "../../../api/services/firework-service/firework.s
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TextPollComponent implements OnInit {
-    private clickSound = new Audio('asdhttps://www.soundjay.com/buttons/sounds/button-4.mp3');
+    private clickSound = new Audio('https://www.soundjay.com/buttons/sounds/button-4.mp3');
 
     @Input() question!: string;
     @Input() options!: string[];
@@ -38,7 +38,12 @@ export class TextPollComponent implements OnInit {
 
     touchStartX = 0;
     swipeDirection: 'left' | 'right' | null = null;
-    swipedOptionSide: 'left' | 'right' | null = null;
+    showHandHint: boolean = true;
+
+    dragOffsetX: number = 0;
+    activeDragSide: 'left' | 'right' | null = null;
+    isDragging: boolean = false;
+
 
     constructor(
         private dbService: DatabaseService,
@@ -97,18 +102,13 @@ export class TextPollComponent implements OnInit {
         });
     }
 
-    // handleSwipeOptionSelected(option: string, side: 'left' | 'right', direction: 'left' | 'right'): void {
-    //     this.swipeDirection = direction;
-    //     this.swipedOptionSide = side;
-    //     this.onOptionSelected(option, side,"left");
-    // }
 
     disappearSide: 'left' | 'right' | null = null;
     disappearDirection: 'left' | 'right' | null = null;
 
 
-    onOptionSelected(option: string, side: 'left' | 'right', event: MouseEvent): void
-    {
+    onOptionSelected(option: string, side: 'left' | 'right', event: MouseEvent): void {
+        this.showHandHint = false;
 
         console.log(`[CLICK] "${option}" opció lett kiválasztva (${side} oldal).`);
 
@@ -123,7 +123,6 @@ export class TextPollComponent implements OnInit {
 
         this.selectedSide = side;
         this.voteCounts[option] = (this.voteCounts[option] || 0) + 1;
-
 
 
         this.selectedSide = side;
@@ -212,33 +211,49 @@ export class TextPollComponent implements OnInit {
     }
 
     onTouchStart(event: TouchEvent, side: 'left' | 'right') {
+        this.showHandHint = false;
         this.touchStartX = event.touches[0].clientX;
-        this.swipedOptionSide = side;
+        this.activeDragSide = side;
+        this.dragOffsetX = 0;
+        this.isDragging = true;
     }
 
-    swipeHandled = false;
+    onTouchMove(event: TouchEvent) {
+        if (!this.isDragging) return;
+        const currentX = event.touches[0].clientX;
+        this.dragOffsetX = currentX - this.touchStartX;
+    }
+
+    animateIncomingLeft: boolean = false;
+    animateIncomingRight: boolean = false;
+
 
     onTouchEnd(option: string, event: TouchEvent) {
         const touchEndX = event.changedTouches[0].clientX;
         const deltaX = touchEndX - this.touchStartX;
 
-        if (Math.abs(deltaX) > 40 && this.swipedOptionSide) {
+        if (!this.activeDragSide) return;
+
+        const element = document.querySelector(`.option-${this.activeDragSide}`) as HTMLElement;
+        const elementWidth = element?.offsetWidth || 0;
+
+        const swipeThreshold = elementWidth / 2;
+
+        const chosenSide = this.activeDragSide === 'left' ? 'right' : 'left';
+        const chosenOption = chosenSide === 'left' ? this.leftOption! : this.rightOption!;
+
+        if (Math.abs(deltaX) > swipeThreshold) {
             const direction = deltaX > 0 ? 'right' : 'left';
-            const disappearSide = this.swipedOptionSide;
-            const disappearDirection = direction;
-
-            // választott opció az ellenkező
-            const chosenSide = disappearSide === 'left' ? 'right' : 'left';
-            const chosenOption = chosenSide === 'left' ? this.leftOption! : this.rightOption!;
-
-            this.disappearSide = disappearSide;
-            this.disappearDirection = disappearDirection;
+            this.disappearSide = this.activeDragSide;
+            this.disappearDirection = direction;
             this.selectedSide = chosenSide;
 
             this.voteCounts[chosenOption] = (this.voteCounts[chosenOption] || 0) + 1;
 
-            // 🎆 Firework középre
-            const element = document.querySelector(`.option-${chosenSide}`) as HTMLElement;
+            this.clickSound.volume = 0.05;
+            this.clickSound.currentTime = 0;
+            this.clickSound.play().catch(err => console.warn('Hanghiba:', err));
+
             if (element) {
                 const rect = element.getBoundingClientRect();
                 const centerX = rect.left + rect.width / 2;
@@ -254,25 +269,21 @@ export class TextPollComponent implements OnInit {
                     if (chosenSide === 'left') {
                         this.leftOption = chosenOption;
                         this.rightOption = newOption;
-                        this.animateIncoming = 'right';
+                        this.animateIncomingRight = true;
                     } else {
                         this.rightOption = chosenOption;
                         this.leftOption = newOption;
-                        this.animateIncoming = 'left';
+                        this.animateIncomingLeft = true;
                     }
 
-                    this.selectedSide = null;
-                    this.disappearSide = null;
-                    this.disappearDirection = null;
-                    this.swipedOptionSide = null;
-                    this.swipeDirection = null;
-
                     setTimeout(() => {
-                        this.animateIncoming = null;
+                        this.animateIncomingLeft = false;
+                        this.animateIncomingRight = false;
+                        this.resetSwipeState();
                         this.cdr.markForCheck();
                     }, 400);
 
-                    this.cdr.markForCheck();
+                    this.resetSwipeState();
                 }, 700);
             } else {
                 this.winnerOption = chosenOption;
@@ -290,9 +301,36 @@ export class TextPollComponent implements OnInit {
             }
 
             this.cdr.markForCheck();
+        } else {
+            this.resetSwipeState();
+            this.cdr.markForCheck();
         }
     }
 
+    get dragOpacity(): number {
+        const distance = Math.abs(this.dragOffsetX);
+        return Math.max(1 - distance / 200, 0.5);
+    }
+
+    resetSwipeState(side?: 'left' | 'right'): void {
+        if (!side || side === 'left') {
+            if (this.activeDragSide === 'left') this.activeDragSide = null;
+            this.dragOffsetX = 0;
+        }
+        if (!side || side === 'right') {
+            if (this.activeDragSide === 'right') this.activeDragSide = null;
+            this.dragOffsetX = 0;
+        }
+
+        if (!side) {
+            this.swipeDirection = null;
+            this.disappearSide = null;
+            this.disappearDirection = null;
+            this.selectedSide = null;
+            this.isDragging = false;
+            setTimeout(() => this.animateIncoming = null, 400);
+        }
+    }
 
 
 }

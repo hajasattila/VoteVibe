@@ -51,7 +51,9 @@
     "profile": "Profile",
     "logout": "Logout",
     "login": "Login",
-    "steps": "Steps"
+    "steps": "Steps",
+    "friendRequestMessage": " added as a friend!",
+    "noFriendRequests": "You have no new friend requests"
   },
   "errorPage": {
     "oops": "Oops!",
@@ -235,7 +237,9 @@
       "stats": "Statistics",
       "profile": "Profile",
       "settings": "Settings",
-      "logout": "Log out"
+      "logout": "Log out",
+      "rooms": "My rooms"
+
     },
     "hero": {
       "welcome": "Welcome",
