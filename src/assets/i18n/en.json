@@ -239,7 +239,6 @@
       "settings": "Settings",
       "logout": "Log out",
       "rooms": "My rooms"
-
     },
     "hero": {
       "welcome": "Welcome",
@@ -309,7 +308,11 @@
   "poll": {
     "winnerTitle": "🏆 Winning Option!",
     "winnerIs": "The winner is: {{ option }}",
-    "close": "Close"
+    "close": "Close",
+    "revote": "Revote",
+    "revoteInfo": "Not happy with the result? You have a chance to vote again.",
+    "timeLeft": "Time remaining: {{time}}",
+    "revoteDisabled": "You have already re-voted once."
   }
 }
 

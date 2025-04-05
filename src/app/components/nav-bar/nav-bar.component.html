@@ -22,9 +22,11 @@
         <div
                 class="transform transition-all duration-500 ease-in-out xl:flex xl:items-center xl:w-auto xl:space-y-0 xl:mt-0"
                 [ngClass]="{
-    'max-h-[1000px] opacity-100 translate-y-0 pointer-events-auto mt-4 w-full space-y-4': navbarOpen,
-    'max-h-0 opacity-0 -translate-y-4 pointer-events-none overflow-hidden': !navbarOpen
-  }"
+  'xl:flex xl:items-center xl:w-auto xl:space-y-0 xl:mt-0': true,
+  'max-h-[1000px] opacity-100 translate-y-0 pointer-events-auto mt-4 w-full space-y-4 xl:max-h-none xl:opacity-100 xl:translate-y-0 xl:pointer-events-auto xl:mt-0 xl:space-y-0': navbarOpen,
+  'max-h-0 opacity-0 -translate-y-4 pointer-events-none overflow-hidden xl:max-h-none xl:opacity-100 xl:translate-y-0 xl:pointer-events-auto xl:overflow-visible xl:space-y-0 xl:mt-0': !navbarOpen
+}"
+
         >
 
 

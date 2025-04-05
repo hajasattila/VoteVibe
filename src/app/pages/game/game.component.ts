@@ -121,7 +121,6 @@ export class GameComponent implements OnInit {
         let timeLimitInMilliseconds = timeLimitInHours * 3600000;
         let futureTime = Date.now() + timeLimitInMilliseconds;
 
-        // 🔧 ÚJ: csak a menthető adatokat tesszük bele a room-ba
         const sanitizedUser = this.sanitizeUser(this.currentUser);
 
         let newRoom: Room = {

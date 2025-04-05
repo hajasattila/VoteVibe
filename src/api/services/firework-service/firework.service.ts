@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import anime from 'animejs/lib/anime.es.js'; // működik, ha jól kezeljük a típusokat
+import anime from 'animejs/lib/anime.es.js';
 
 @Injectable({
     providedIn: 'root'
@@ -29,7 +29,6 @@ export class FireworkService {
         const circle = this.createCircle(x, y);
         const particules = Array.from({ length: this.numberOfParticules }, () => this.createParticule(x, y));
 
-        // 🎆 Partikulák animációja (tűzijáték)
         anime.timeline().add({
             targets: particules,
             x: (p: any) => p.endPos.x,
@@ -40,7 +39,6 @@ export class FireworkService {
             update: this.renderParticule.bind(this)
         });
 
-        // ⭕ Fehér kör animáció – külön, azonnal indul
         anime({
             targets: circle,
             radius: anime.random(80, 160),

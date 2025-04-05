@@ -1,8 +1,17 @@
 <div class="result h-full relative">
 
-    <h1 class="text-white text-2xl lg:text-4xl xl:text-5xl text-center absolute inset-x-0 top-12 z-30">
-        {{ question }}
-    </h1>
+    <div *ngIf="!showWinnerModal" class="absolute inset-x-0 top-16 z-30 flex flex-col items-center px-4">
+
+        <h1 class="mt-4 text-3xl md:text-4xl xl:text-5xl font-bold text-gray-800 dark:text-gray-100 drop-shadow-sm bg-white dark:bg-gray-900 bg-opacity-70 dark:bg-opacity-70 rounded-lg inline-block px-6 py-3 shadow-lg transition-all duration-300">
+            {{ question }}
+        </h1>
+
+        <p *ngIf="remainingTime"
+           class="hidden lg:flex mt-4 px-4 py-1 text-center text-xl text-gray-800 dark:text-gray-100 drop-shadow-sm bg-white dark:bg-gray-900 bg-opacity-70 dark:bg-opacity-70 rounded-lg shadow-md transition-all duration-300">
+            ⏳ {{ remainingTime }} ⏳
+        </p>
+    </div>
+
 
     <div class="absolute inset-0 z-10"></div>
     <div class="absolute inset-x-0 bottom-0 z-10  h-1/4"></div>
@@ -17,7 +26,7 @@
     <!-- BAL OPCIÓ -->
     <div
             *ngIf="leftOption && rightOption"
-            class="flex flex-col cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group option-hover-overlay option-left border-b sm:border-r"
+            class="flex flex-col cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group option-hover-overlay option-left border-b lg:border-r"
             [class.option-dragged]="activeDragSide === 'left'"
             (click)="onOptionSelected(leftOption, 'left', $event)"
             (touchstart)="onTouchStart($event, 'left')"
@@ -37,11 +46,15 @@
         <div *ngIf="selectedSide === 'left'"
              class="firework left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
     </div>
-
+    <p *ngIf="remainingTime"
+       class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30  font-bold py-2 lg:hidden w-48
+        text-center text-xl text-gray-800 dark:text-gray-100 drop-shadow-sm bg-white dark:bg-gray-900 bg-opacity-70 dark:bg-opacity-70 rounded-lg shadow-md transition-all duration-300">
+        ⏳ {{ remainingTime }} ⏳
+    </p>
     <!-- JOBB OPCIÓ -->
     <div
             *ngIf="leftOption && rightOption"
-            class="flex flex-col cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group option-hover-overlay option-right border-t sm:border-l"
+            class="flex flex-col cursor-pointer h-1/2 relative text-center w-full lg:float-left lg:h-full lg:w-1/2 group option-hover-overlay option-right border-t lg:border-l"
             [class.option-dragged]="activeDragSide === 'right'"
             (click)="onOptionSelected(rightOption, 'right', $event)"
             (touchstart)="onTouchStart($event, 'right')"
@@ -64,7 +77,8 @@
 </div>
 
 
-<div *ngIf="showWinnerModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+<div *ngIf="showWinnerModal && !hasAlreadyVoted"
+     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
      (click)="closeWinnerModal()">
     <div class="firework-modal bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl w-full max-w-md transform transition-all duration-300 text-center relative overflow-hidden"
          (click)="$event.stopPropagation()">
@@ -82,28 +96,52 @@
                     (click)="closeWinnerModal()">
                 {{ 'poll.close' | translate }}
             </button>
+
         </div>
     </div>
 </div>
 
 
 <div *ngIf="winnerOption" class="fixed inset-0 z-40 flex items-center justify-center pointer-events-none p-4">
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl w-full max-w-md transform transition-all duration-300 animate-fade-in-up text-center">
-        <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-300 my-0 pb-0  pt-3">
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl w-full max-w-md transform transition-all duration-300 animate-fade-in-up text-center pointer-events-auto">
+        <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-300 my-0 pb-0 pt-3">
             🏆 {{ 'poll.winnerIs' | translate:{option: winnerOption} }}
         </p>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+            {{ 'poll.revoteInfo' | translate }}
+        </p>
+        <div class="text-center mt-6">
+            <button
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-6 rounded-lg shadow transition"
+                    (click)="resetPollForUser()">
+                {{ 'poll.revote' | translate }}
+            </button>
+        </div>
     </div>
 </div>
 
 
 <canvas class="fireworks pointer-events-none fixed inset-0 z-50"></canvas>
-<ng-container *ngIf="showHandHint">
-    <div class="handswipe-top md:hidden">
+<ng-container *ngIf="showHandHint && !hasAlreadyVoted && !loading">
+    <div class="handswipe-top lg:hidden">
         <img src="../../../assets/images/swipe2.png" alt="Swipe gesture top icon" class="w-32 h-32"/>
     </div>
 
-    <div class="handswipe-bottom md:hidden">
+    <div class="handswipe-bottom lg:hidden">
         <img src="../../../assets/images/swipe2.png" alt="Swipe gesture bottom icon" class="w-32 h-32"/>
     </div>
 </ng-container>
+
+
+<div *ngIf="isResettingVote"
+     class="fixed inset-0 z-40 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center">
+    <div class="relative w-16 h-16">
+        <div class="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+
+
+
 

@@ -83,4 +83,23 @@ export class DatabaseService {
         const roomRef = doc(this.firestore, "rooms", docId);
         return from(updateDoc(roomRef, {pollCreated}));
     }
+
+    async savePollResultToRoom(roomDocId: string, result: Record<string, Record<string, number>>): Promise<void> {
+        const roomRef = doc(this.firestore, 'rooms', roomDocId);
+        const userKey = Object.keys(result)[0];
+        const userVotes = result[userKey];
+
+        await updateDoc(roomRef, {
+            [`pollResults.${userKey}`]: userVotes
+        });
+    }
+
+    async removePollResultFromRoom(roomDocId: string, userKey: string): Promise<void> {
+        const roomRef = doc(this.firestore, 'rooms', roomDocId);
+        await updateDoc(roomRef, {
+            [`pollResults.${userKey}`]: null
+        });
+    }
+
+
 }

@@ -308,6 +308,10 @@
   "poll": {
     "winnerTitle": "🏆 A győztes opció!",
     "winnerIs": "A győztes: {{ option }}",
-    "close": "Bezárás"
+    "close": "Bezárás",
+    "revote": "Újraszavazás",
+    "revoteInfo": "Nem tetszik az eredmény? Új lehetőséged van újraszavazni.",
+    "timeLeft": "Hátralévő idő: {{time}}",
+    "revoteDisabled": "Egyszer már újraszavaztál"
   }
 }
