@@ -125,6 +125,8 @@
     "github": "Sign in with GitHub"
   },
   "room": {
+    "selectToJoin": "Select a room to join",
+    "noRooms": "You don't have any rooms yet",
     "waitingForPoll": "The owner has not yet entered a question!",
     "addedQuestions": "Added Questions",
     "option": "Option",
@@ -277,26 +279,32 @@
   },
   "step": {
     "1": {
-      "title": "Register and find your friends",
-      "description": "After registration, look for your friends by name or code!"
+      "title": "Register and connect with your friends",
+      "description": "Join the VoteVibe community with a quick sign-up, then search for your friends by name or unique code to start playing together!",
+      "icon": "person_add"
     },
     "2": {
-      "title": "Create a room with your preferred game mode",
-      "description": "Choose a game mode and create a room where you can play together."
+      "title": "Create a room with your favorite game mode",
+      "description": "Choose the game mode that suits you best – whether it's a fun comparison, decision-making tool, or a poll – and set up a room to play.",
+      "icon": "meeting_room"
     },
     "3": {
-      "title": "Invite your friends by code or selection",
-      "description": "Invite them by using a room code or selecting from your friends list."
+      "title": "Invite your friends by name or room code",
+      "description": "Easily invite your friends by selecting them from your list or sharing the unique room code so they can join instantly.",
+      "icon": "group_add"
     },
     "4": {
-      "title": "Everyone votes for the option they like best",
-      "description": "During the game, each player votes for their favorite option."
+      "title": "Vote for the option you like more",
+      "description": "Let the game begin! Each player chooses between two options based on their personal preference – quick, engaging, and fun.",
+      "icon": "thumbs_up_down"
     },
     "5": {
-      "title": "Make a decision based on statistics!",
-      "description": "The system shows the results so making a decision is easy!"
+      "title": "Make a decision based on the results",
+      "description": "Once everyone has voted, the system will show the final statistics – helping you make fair and data-driven group decisions.",
+      "icon": "insights"
     }
   },
+
   "friends": {
     "confirmRemove": "Are you sure you want to remove {{name}} from your friends?",
     "confirmYes": "Yes",
@@ -313,6 +321,9 @@
     "revoteInfo": "Not happy with the result? You have a chance to vote again.",
     "timeLeft": "Time remaining: {{time}}",
     "revoteDisabled": "You have already re-voted once."
+  },
+  "common": {
+    "close": "Close"
   }
 }
 

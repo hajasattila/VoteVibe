@@ -9,12 +9,13 @@
                     {{ 'home.menu.game' | translate }}
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
-                <a routerLink="/rooms"
-                   class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-4 transition-all duration-300 hover:translate-x-1">
+                <a (click)="openRoomModal()"
+                   class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-4 transition-all duration-300 hover:translate-x-1 cursor-pointer">
                     <span class="material-icons-outlined mr-2">meeting_room</span>
                     {{ 'home.menu.rooms' | translate }}
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
+
 
                 <a href="#"
                    class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-4 transition-all duration-300 hover:translate-x-1">
@@ -113,8 +114,8 @@
                             {{ 'home.menu.game' | translate }}
                             <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                         </a>
-                        <a routerLink="/rooms"
-                           class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-2 transition-all duration-300 hover:translate-x-1">
+                        <a (click)="openRoomModal()"
+                           class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-4 transition-all duration-300 hover:translate-x-1 cursor-pointer">
                             <span class="material-icons-outlined mr-2">meeting_room</span>
                             {{ 'home.menu.rooms' | translate }}
                             <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
@@ -179,3 +180,46 @@
 
     </div>
 </div>
+
+<!-- ROOM LIST MODAL -->
+<div *ngIf="showRoomModal"
+     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm"
+     (click)="closeRoomModal()">
+
+    <div class="relative w-[80%] lg:max-w-md max-h-[80vh] overflow-y-auto rounded-lg shadow-2xl bg-white dark:bg-gray-800 p-4 animate-slide-in-up mt-16"
+         (click)="$event.stopPropagation()">
+
+        <button (click)="closeRoomModal()"
+                class="sticky top-0 right-0 float-right z-10 text-gray-500 dark:text-gray-300
+               hover:text-indigo-800 dark:hover:text-indigo-600
+               text-2xl leading-none transition-colors duration-200 ease-in-out">
+            &times;
+        </button>
+
+
+        <div class="text-center mb-4 mt-2">
+            <h2 class="text-2xl font-bold text-indigo-600 dark:text-indigo-300">
+                {{ 'room.yourRooms' | translate }}
+            </h2>
+            <p class="text-gray-600 dark:text-gray-300 mt-2">
+                {{ 'room.selectToJoin' | translate }}
+            </p>
+        </div>
+
+        <ul *ngIf="userRooms.length > 0; else noRooms" class="list-none text-start space-y-2">
+            <li *ngFor="let room of userRooms">
+                <a (click)="navigateToRoom(room)"
+                   class="block w-full text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 cursor-pointer underline px-2 py-1 break-words">
+                    {{ room.roomName }} ({{ 'room.code' | translate }}: {{ room.roomId }})
+                </a>
+            </li>
+        </ul>
+
+        <ng-template #noRooms>
+            <p class="text-gray-500 dark:text-gray-400 text-center mt-4">
+                {{ 'room.noRooms' | translate }}
+            </p>
+        </ng-template>
+    </div>
+</div>
+

@@ -1,92 +1,90 @@
 <div class="min-h-screen flex flex-col justify-between px-5 bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
-    <div class="min-h-screen w-full flex flex-col md:grid grid-cols-9">
+    <div class="min-h-screen w-full flex flex-col md:grid grid-cols-9 pt-20">
 
+        <!-- Step 1 -->
         <div class="flex md:contents flex-row-reverse">
-            <div class="relative p-4 my-6 text-gray-800 dark:text-gray-100 bg-transparent rounded-xl col-start-1 col-end-5 mr-auto md:mr-0 md:ml-auto">
-                <span class="absolute text-sm text-indigo-100/75 -top-5 left-2 whitespace-nowrap"></span>
-            </div>
-            <div class="relative col-start-5 col-end-6 mr-7 md:mx-auto">
-                <div class="flex items-center justify-center w-6 h-full">
-                    <div class="w-1 h-full bg-indigo-300 dark:bg-indigo-600 rounded-t-full"></div>
-                </div>
-                <div class="absolute w-6 h-6 -mt-3 bg-white dark:bg-gray-800 border-4 border-indigo-400 dark:border-indigo-600 rounded-full top-1/2"></div>
-            </div>
-        </div>
-
-        <div class="flex md:contents">
-            <div class="relative col-start-5 col-end-6 mr-7 md:mx-auto">
-                <div class="flex items-center justify-center w-6 h-full">
-                    <div class="w-1 h-full bg-indigo-300 dark:bg-indigo-600"></div>
-                </div>
-                <div class="absolute w-6 h-6 -mt-3 bg-white dark:bg-gray-800 border-4 border-indigo-400 dark:border-indigo-600 rounded-full top-1/2"></div>
-            </div>
-            <div class="relative p-4 my-6 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-800 rounded-xl col-start-6 col-end-10 mr-auto animate-slideOut">
-                <h3 class="text-lg font-semibold lg:text-xl">1: {{ 'step.1.title' | translate }}</h3>
+            <div class="animate-slideIn relative p-6 my-6 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-800 rounded-xl col-start-1 col-end-5 mr-auto md:mr-0 md:ml-auto shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 max-w-md animate-fadeInUp">
+                <h3 class="text-lg font-semibold lg:text-xl flex items-center gap-2">
+                    <span class="material-icons-outlined text-indigo-500">person_add</span>
+                    1: {{ 'step.1.title' | translate }}
+                </h3>
                 <p class="mt-2 leading-6">{{ 'step.1.description' | translate }}</p>
             </div>
+            <div class="relative col-start-5 col-end-6 mr-7 md:mx-auto ">
+                <div class="flex items-center justify-center w-6 h-full">
+                    <div class="w-1 h-full bg-indigo-300 dark:bg-indigo-600 rounded-t-full"></div>
+                </div>
+                <div class="absolute w-6 h-6 -mt-3 bg-white dark:bg-gray-800 border-4 border-indigo-400 dark:border-indigo-600 rounded-full top-1/2"></div>
+            </div>
         </div>
 
-        <div class="flex md:contents flex-row-reverse">
-            <div class="relative p-4 my-6 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-800 rounded-xl col-start-1 col-end-5 mr-auto md:mr-0 md:ml-auto animate-slideIn">
-                <h3 class="text-lg font-semibold lg:text-xl">2: {{ 'step.2.title' | translate }}</h3>
+        <!-- Step 2 -->
+        <div class="flex md:contents">
+            <div class="relative col-start-5 col-end-6 mr-7 md:mx-auto">
+                <div class="flex items-center justify-center w-6 h-full">
+                    <div class="w-1 h-full bg-indigo-300 dark:bg-indigo-600"></div>
+                </div>
+                <div class="absolute w-6 h-6 -mt-3 bg-white dark:bg-gray-800 border-4 border-indigo-400 dark:border-indigo-600 rounded-full top-1/2"></div>
+            </div>
+            <div class="animate-slideOut relative p-6 my-6 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-800 rounded-xl col-start-6 col-end-10 mr-auto shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 max-w-md animate-fadeInUp">
+                <h3 class="text-lg font-semibold lg:text-xl flex items-center gap-2">
+                    <span class="material-icons-outlined text-indigo-500">meeting_room</span>
+                    2: {{ 'step.2.title' | translate }}
+                </h3>
                 <p class="mt-2 leading-6">{{ 'step.2.description' | translate }}</p>
             </div>
-            <div class="relative col-start-5 col-end-6 mr-7 md:mx-auto">
-                <div class="flex items-center justify-center w-6 h-full">
-                    <div class="w-1 h-full bg-indigo-300 dark:bg-indigo-600 rounded-t-full"></div>
-                </div>
-                <div class="absolute w-6 h-6 -mt-3 bg-white dark:bg-gray-800 border-4 border-indigo-400 dark:border-indigo-600 rounded-full top-1/2"></div>
-            </div>
         </div>
 
-        <div class="flex md:contents">
-            <div class="relative col-start-5 col-end-6 mr-7 md:mx-auto">
-                <div class="flex items-center justify-center w-6 h-full">
-                    <div class="w-1 h-full bg-indigo-300 dark:bg-indigo-600"></div>
-                </div>
-                <div class="absolute w-6 h-6 -mt-3 bg-white dark:bg-gray-800 border-4 border-indigo-400 dark:border-indigo-600 rounded-full top-1/2"></div>
-            </div>
-            <div class="relative p-4 my-6 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-800 rounded-xl col-start-6 col-end-10 mr-auto animate-slideOut">
-                <h3 class="text-lg font-semibold lg:text-xl">3: {{ 'step.3.title' | translate }}</h3>
+        <!-- Step 3 -->
+        <div class="flex md:contents flex-row-reverse">
+            <div class="animate-slideIn relative p-6 my-6 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-800 rounded-xl col-start-1 col-end-5 mr-auto md:mr-0 md:ml-auto shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 max-w-md animate-fadeInUp">
+                <h3 class="text-lg font-semibold lg:text-xl flex items-center gap-2">
+                    <span class="material-icons-outlined text-indigo-500">group_add</span>
+                    3: {{ 'step.3.title' | translate }}
+                </h3>
                 <p class="mt-2 leading-6">{{ 'step.3.description' | translate }}</p>
             </div>
+            <div class="relative col-start-5 col-end-6 mr-7 md:mx-auto">
+                <div class="flex items-center justify-center w-6 h-full">
+                    <div class="w-1 h-full bg-indigo-300 dark:bg-indigo-600"></div>
+                </div>
+                <div class="absolute w-6 h-6 -mt-3 bg-white dark:bg-gray-800 border-4 border-indigo-400 dark:border-indigo-600 rounded-full top-1/2"></div>
+            </div>
         </div>
 
-        <div class="flex md:contents flex-row-reverse">
-            <div class="relative p-4 my-6 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-800 rounded-xl col-start-1 col-end-5 mr-auto md:mr-0 md:ml-auto animate-slideIn">
-                <h3 class="text-lg font-semibold lg:text-xl">4: {{ 'step.4.title' | translate }}</h3>
+        <!-- Step 4 -->
+        <div class="flex md:contents">
+            <div class=" relative col-start-5 col-end-6 mr-7 md:mx-auto">
+                <div class="flex items-center justify-center w-6 h-full">
+                    <div class="w-1 h-full bg-indigo-300 dark:bg-indigo-600"></div>
+                </div>
+                <div class="absolute w-6 h-6 -mt-3 bg-white dark:bg-gray-800 border-4 border-indigo-400 dark:border-indigo-600 rounded-full top-1/2"></div>
+            </div>
+            <div class="animate-slideOut relative p-6 my-6 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-800 rounded-xl col-start-6 col-end-10 mr-auto shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 max-w-md animate-fadeInUp">
+                <h3 class="text-lg font-semibold lg:text-xl flex items-center gap-2">
+                    <span class="material-icons-outlined text-indigo-500">how_to_vote</span>
+                    4: {{ 'step.4.title' | translate }}
+                </h3>
                 <p class="mt-2 leading-6">{{ 'step.4.description' | translate }}</p>
             </div>
-            <div class="relative col-start-5 col-end-6 mr-7 md:mx-auto">
-                <div class="flex items-center justify-center w-6 h-full">
-                    <div class="w-1 h-full bg-indigo-300 dark:bg-indigo-600 rounded-t-full"></div>
-                </div>
-                <div class="absolute w-6 h-6 -mt-3 bg-white dark:bg-gray-800 border-4 border-indigo-400 dark:border-indigo-600 rounded-full top-1/2"></div>
-            </div>
         </div>
 
-        <div class="flex md:contents">
-            <div class="relative col-start-5 col-end-6 mr-7 md:mx-auto">
-                <div class="flex items-center justify-center w-6 h-full">
-                    <div class="w-1 h-full bg-indigo-300 dark:bg-indigo-600"></div>
-                </div>
-                <div class="absolute w-6 h-6 -mt-3 bg-white dark:bg-gray-800 border-4 border-indigo-400 dark:border-indigo-600 rounded-full top-1/2"></div>
-            </div>
-            <div class="relative p-4 my-6 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-800 rounded-xl col-start-6 col-end-10 mr-auto animate-slideOut">
-                <h3 class="text-lg font-semibold lg:text-xl">5: {{ 'step.5.title' | translate }}</h3>
+        <!-- Step 5 -->
+        <div class="flex md:contents flex-row-reverse">
+            <div class="animate-slideIn relative p-6 my-6 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-800 rounded-xl col-start-1 col-end-5 mr-auto md:mr-0 md:ml-auto shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 max-w-md animate-fadeInUp">
+                <h3 class="text-lg font-semibold lg:text-xl flex items-center gap-2">
+                    <span class="material-icons-outlined text-indigo-500">bar_chart</span>
+                    5: {{ 'step.5.title' | translate }}
+                </h3>
                 <p class="mt-2 leading-6">{{ 'step.5.description' | translate }}</p>
             </div>
-        </div>
-
-        <div class="flex md:contents">
             <div class="relative col-start-5 col-end-6 mr-7 md:mx-auto">
                 <div class="flex items-center justify-center w-6 h-full">
                     <div class="w-1 h-full bg-indigo-300 dark:bg-indigo-600"></div>
                 </div>
                 <div class="absolute w-6 h-6 -mt-3 bg-white dark:bg-gray-800 border-4 border-indigo-400 dark:border-indigo-600 rounded-full top-1/2"></div>
             </div>
-            <div class="relative p-4 my-6 text-gray-800 dark:text-gray-100 bg-transparent rounded-xl col-start-6 col-end-10 mr-auto">
-            </div>
         </div>
+
     </div>
 </div>

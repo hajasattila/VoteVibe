@@ -329,6 +329,38 @@ img {
     @apply absolute top-2 left-2 w-12 h-12 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin z-40;
   }
 }
+@layer utilities {
+  .animate-slide-in-up {
+    @apply transition-transform duration-300 ease-out transform translate-y-12 opacity-0;
+    animation: slideInUp 0.3s forwards;
+  }
+
+  @keyframes slideInUp {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+.animate-slide-in-up {
+  animation: slideInUp 0.3s ease-out forwards;
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 
 
 

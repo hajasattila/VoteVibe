@@ -171,7 +171,11 @@
     },
     "voteTypeOptions": {
       "picture": "Képalapú",
-      "text": "Szövegalapú"
+      "text": "Szövegalapú",
+      "yourRooms": "Saját szobáid",
+      "selectToJoin": "Válassz egy szobát a belépéshez",
+      "noRooms": "Nincs elérhető szobád",
+      "code": "Kód"
     },
     "error": {
       "loginRequired": "Be kell jelentkezned a szoba létrehozásához.",
@@ -277,26 +281,32 @@
   },
   "step": {
     "1": {
-      "title": "Beregisztrálsz, megkeresed a barátaid",
-      "description": "Regisztráció után keresd meg a barátaid nevét vagy kódját!"
+      "title": "Regisztrálj, és keresd meg a barátaidat",
+      "description": "Csatlakozz a VoteVibe közösségéhez egy gyors regisztrációval, majd keresd meg barátaidat név vagy egyedi azonosító alapján, hogy együtt játszhassatok!",
+      "icon": "person_add"
     },
     "2": {
-      "title": "Szobát hozol létre a neked szimpatikus játék móddal",
-      "description": "Válassz játékmódot és hozz létre egy szobát, ahol játszhattok."
+      "title": "Hozz létre egy szobát a kedvenc játékmódoddal",
+      "description": "Válaszd ki a hozzád illő játékmódot – legyen az szavazás, döntéssegítő vagy vicces összehasonlítás – és hozz létre egy saját szobát a játékhoz.",
+      "icon": "meeting_room"
     },
     "3": {
-      "title": "Meghívod a barátaid kód vagy bejelölés alapján",
-      "description": "Meghívhatod őket kóddal vagy listából kiválasztva."
+      "title": "Hívd meg barátaidat név szerint vagy kóddal",
+      "description": "A barátaidat könnyedén meghívhatod: válaszd ki őket a listából vagy küldd el nekik a szoba kódját, hogy csatlakozhassanak hozzád.",
+      "icon": "group_add"
     },
     "4": {
-      "title": "Szavaz mindenki arra, hogy melyik opció tetszik neki jobban",
-      "description": "A játék során mindenki szavaz a kedvenc opciójára."
+      "title": "Szavazzatok: melyik opció tetszik jobban?",
+      "description": "Indulhat a játék! Minden résztvevő két opció közül választja ki a számára szimpatikusabbat – gyors, egyszerű és szórakoztató.",
+      "icon": "thumbs_up_down"
     },
     "5": {
-      "title": "Statisztika alapján döntést hoztok!",
-      "description": "A rendszer mutatja az eredményeket, így egyszerű a döntés!"
+      "title": "Dönts a statisztikák alapján",
+      "description": "Miután mindenki leadta a szavazatát, megjelenítjük az eredményeket – így közösen, objektíven hozhattok döntést!",
+      "icon": "insights"
     }
   },
+
   "friends": {
     "confirmRemove": "Biztosan törölni szeretnéd {{name}} felhasználót a barátaid közül?",
     "confirmYes": "Igen",
@@ -313,5 +323,8 @@
     "revoteInfo": "Nem tetszik az eredmény? Új lehetőséged van újraszavazni.",
     "timeLeft": "Hátralévő idő: {{time}}",
     "revoteDisabled": "Egyszer már újraszavaztál"
+  },
+  "common": {
+    "close": "Bezárás"
   }
 }
