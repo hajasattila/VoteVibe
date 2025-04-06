@@ -27,7 +27,8 @@
                                 #roomNameField="ngModel"
                                 class="w-full py-2 px-4 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500"
                         />
-                        <div *ngIf="roomNameField.errors?.['required'] && roomNameField.dirty" class="text-red-500 text-sm mt-2">
+                        <div *ngIf="roomNameField.errors?.['required'] && roomNameField.dirty"
+                             class="text-red-500 text-sm mt-2">
                             {{ 'room.roomNameRequired' | translate }}
                         </div>
                     </div>
@@ -63,7 +64,8 @@
                     </div>
 
                     <div class="flex items-center justify-center mb-6">
-                        <label for="anonymousCheckbox" class="text-lg font-medium text-gray-800 dark:text-gray-200 mr-2">
+                        <label for="anonymousCheckbox"
+                               class="text-lg font-medium text-gray-800 dark:text-gray-200 mr-2">
                             {{ 'room.anonymous' | translate }}
                         </label>
                         <input
@@ -82,9 +84,15 @@
                         >
                             {{ 'room.inviteFriends' | translate }}
                         </h2>
-                        <div *ngIf="showFriendList">
-                            <app-friend-list [friends]="currentUser.friendList"></app-friend-list>
-                        </div>
+                        <app-friend-list
+                                *ngIf="showFriendList"
+                                [friends]="currentUser?.friendList || []"
+                                [room]="currentRoom"
+                        ></app-friend-list>
+
+                        <p *ngIf="showFriendList && currentUser?.friendList?.length === 0" class="text-gray-500 mt-4">
+                            {{ 'room.noFriends' | translate }}
+                        </p>
                     </ng-container>
 
                     <button
@@ -131,7 +139,8 @@
                     </button>
 
                     <div *ngIf="userRooms.length > 0" class="mt-4">
-                        <a routerLink="/home" class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-4 cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-600 transition-colors duration-200 ease-in-out">
+                        <a routerLink="/home"
+                           class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-4 cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-600 transition-colors duration-200 ease-in-out">
                             {{ 'room.yourRooms' | translate }}
                         </a>
                     </div>

@@ -1,7 +1,8 @@
-export interface RoomInvitation {
-    invitationId: string;
+export interface RoomInvite {
     roomId: string;
-    senderId: string;
-    sentDate: Date;
-    status: 'pending' | 'accepted' | 'rejected';
-  }
+    inviterUid: string;
+    inviterName?: string;
+    roomName?: string;
+    sentAt?: Date;
+    status?: 'pending' | 'accepted' | 'rejected';
+}

@@ -67,7 +67,7 @@
                                               d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                                     </svg>
 
-                                    <ng-container *ngIf="hasFriendRequests$ | async">
+                                    <ng-container *ngIf="combinedNotification$ | async">
                                         <span class="animate-ping absolute top-1 right-0.5 block h-2 w-2 rounded-full ring-2 ring-green-400 bg-green-600"></span>
                                         <span class="absolute top-1 right-0.5 block h-2 w-2 rounded-full ring-2 ring-green-400 bg-green-600"></span>
                                     </ng-container>
@@ -75,18 +75,28 @@
 
                                 <div *ngIf="friendRequestDropdownOpen"
                                      class="absolute left-1/2 -translate-x-1/2 mt-2 w-64 bg-white dark:bg-gray-800 shadow-lg rounded-md py-2 z-50 text-sm cursor-pointer
-            md:left-auto md:right-0 md:translate-x-0">
+     md:left-auto md:right-0 md:translate-x-0">
 
-                                    <div *ngIf="incomingFriendNames.length > 0; else noRequests">
+                                    <div *ngIf="incomingFriendNames.length > 0">
                                         <div *ngFor="let name of incomingFriendNames"
                                              class="px-4 py-2 text-gray-800 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
                                              routerLink="/profile">
                                             👤 <strong>{{ name }}</strong> {{ 'nav.friendRequestMessage' | translate }}
                                         </div>
                                     </div>
-                                    <ng-template #noRequests>
+
+                                    <div *ngIf="roomInviteMessages.length > 0">
+                                        <hr class="my-2 border-gray-300 dark:border-gray-600">
+                                        <div *ngFor="let invite of roomInviteMessages"
+                                             class="px-4 py-2 text-indigo-700 dark:text-indigo-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                             routerLink="/home">
+                                            🗳️ <strong>{{ invite.inviterName }}</strong> {{ 'nav.invitedYouTo' | translate }} <strong>{{ invite.roomName }}</strong>
+                                        </div>
+                                    </div>
+
+                                    <ng-template [ngIf]="incomingFriendNames.length === 0 && roomInviteMessages.length === 0">
                                         <div class="px-4 py-2 text-gray-500 dark:text-gray-400 italic">
-                                            {{ 'nav.noFriendRequests' | translate }}
+                                            {{ 'nav.noNotifications' | translate }}
                                         </div>
                                     </ng-template>
                                 </div>
@@ -132,8 +142,7 @@
 
         <div class="hidden lg:flex lg:items-center lg:space-x-4 lg:mt-0">
             <ng-container *ngIf="user$ | async">
-                <div class="relative"
-                     (click)="friendRequestDropdownOpen = !friendRequestDropdownOpen" #friendDropdownReff>
+                <div class="relative" (click)="friendRequestDropdownOpen = !friendRequestDropdownOpen" #friendDropdownRef>
                     <button class="inline-block relative">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              class="h-6 w-6 text-gray-700 dark:text-gray-100"
@@ -141,24 +150,40 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                         </svg>
-                        <ng-container *ngIf="hasFriendRequests$ | async">
+
+                        <ng-container *ngIf="combinedNotification$ | async">
                             <span class="animate-ping absolute top-1 right-0.5 block h-2 w-2 rounded-full ring-2 ring-green-400 bg-green-600"></span>
                             <span class="absolute top-1 right-0.5 block h-2 w-2 rounded-full ring-2 ring-green-400 bg-green-600"></span>
                         </ng-container>
                     </button>
 
+                    <!-- ✅ DROPDOWN asztali nézethez -->
                     <div *ngIf="friendRequestDropdownOpen"
                          class="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 shadow-lg rounded-md py-2 z-50 text-sm cursor-pointer">
-                        <div *ngIf="incomingFriendNames.length > 0; else noRequests">
+
+                        <!-- Barátfelkérések -->
+                        <div *ngIf="incomingFriendNames.length > 0">
                             <div *ngFor="let name of incomingFriendNames"
                                  class="px-4 py-2 text-gray-800 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
                                  routerLink="/profile">
                                 👤 <strong>{{ name }}</strong> {{ 'nav.friendRequestMessage' | translate }}
                             </div>
                         </div>
-                        <ng-template #noRequests>
+
+                        <!-- Szobameghívások -->
+                        <div *ngIf="roomInviteMessages.length > 0">
+                            <hr class="my-2 border-gray-300 dark:border-gray-600">
+                            <div *ngFor="let invite of roomInviteMessages"
+                                 class="px-4 py-2 text-indigo-700 dark:text-indigo-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                 routerLink="/home">
+                                🗳️ <strong>{{ invite.inviterName }}</strong> {{ 'nav.invitedYouTo' | translate }} <strong>{{ invite.roomName }}</strong>
+                            </div>
+                        </div>
+
+                        <!-- Ha nincs semmi -->
+                        <ng-template [ngIf]="incomingFriendNames.length === 0 && roomInviteMessages.length === 0">
                             <div class="px-4 py-2 text-gray-500 dark:text-gray-400 italic">
-                                {{ 'nav.noFriendRequests' | translate }}
+                                {{ 'nav.noNotifications' | translate }}
                             </div>
                         </ng-template>
                     </div>

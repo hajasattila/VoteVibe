@@ -196,7 +196,6 @@
             &times;
         </button>
 
-
         <div class="text-center mb-4 mt-2">
             <h2 class="text-2xl font-bold text-indigo-600 dark:text-indigo-300">
                 {{ 'room.yourRooms' | translate }}
@@ -207,7 +206,7 @@
         </div>
 
         <ul *ngIf="userRooms.length > 0; else noRooms" class="list-none text-start space-y-2">
-            <li *ngFor="let room of userRooms">
+            <li *ngFor="let room of userRooms.slice().reverse()">
                 <a (click)="navigateToRoom(room)"
                    class="block w-full text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 cursor-pointer underline px-2 py-1 break-words">
                     {{ room.roomName }} ({{ 'room.code' | translate }}: {{ room.roomId }})
@@ -222,4 +221,5 @@
         </ng-template>
     </div>
 </div>
+
 

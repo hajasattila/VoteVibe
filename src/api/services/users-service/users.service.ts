@@ -17,6 +17,7 @@ import {AuthService} from "../auth-service/auth.service";
 import {runTransaction} from "firebase/firestore";
 import {Room} from "../../models/room";
 import {startWith} from "rxjs/operators";
+import {RoomInvite} from "../../models/roomInvitation";
 
 @Injectable({
     providedIn: "root",
@@ -256,4 +257,35 @@ export class UsersService {
     //         })
     //     );
     // }
+
+    inviteUserToRoom(friendUid: string, roomId: string, inviter: ProfileUser, roomName: string): Observable<any> {
+        const payload: RoomInvite = {
+            roomId,
+            inviterUid: inviter.uid,
+            inviterName: inviter.displayName,
+            roomName,
+            sentAt: new Date(),
+            status: 'pending',
+        };
+
+
+        console.log('[📥] inviteUserToRoom payload:', payload);
+
+        return from(
+            setDoc(doc(this.firestore, `users/${friendUid}/roomInvites/${roomId}`), payload)
+        );
+    }
+
+    getRoomInvites(userId: string): Observable<RoomInvite[]> {
+        const invitesRef = collection(this.firestore, `users/${userId}/roomInvites`);
+        return collectionData(invitesRef, {idField: 'roomId'}) as Observable<RoomInvite[]>;
+    }
+
+
+    updateInviteStatus(userId: string, roomId: string, status: 'accepted' | 'rejected'): Observable<void> {
+        const inviteDocRef = doc(this.firestore, `users/${userId}/roomInvites/${roomId}`);
+        return from(updateDoc(inviteDocRef, {status}));
+    }
+
+
 }

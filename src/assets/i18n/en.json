@@ -53,7 +53,11 @@
     "login": "Login",
     "steps": "Steps",
     "friendRequestMessage": " added as a friend!",
-    "noFriendRequests": "You have no new friend requests"
+    "noFriendRequests": "You have no new requests",
+    "invitedYouTo": "invited you to",
+    "roomInviteMessage": "room",
+    "noResults": "No results found",
+    "noNotifications": "No notifications"
   },
   "errorPage": {
     "oops": "Oops!",
@@ -304,14 +308,18 @@
       "icon": "insights"
     }
   },
-
   "friends": {
     "confirmRemove": "Are you sure you want to remove {{name}} from your friends?",
     "confirmYes": "Yes",
     "confirmNo": "Cancel",
-    "removeSuccess": "{{name}} has been removed successfully.",
+    "removeSuccess": "{{name}} successfully removed.",
+    "roomInviteMessage": "meghívott egy szobába",
     "removeError": "Failed to remove {{name}}.",
-    "removed": "Removed!"
+    "confirmInvite": "Invite {{name}} to the game?",
+    "confirmYesInvite": "Invite",
+    "removed": "Removed successfully!",
+    "invited": "Invitation sent!",
+    "markedForInvite": "{{name}} is marked for invitation."
   },
   "poll": {
     "winnerTitle": "🏆 Winning Option!",

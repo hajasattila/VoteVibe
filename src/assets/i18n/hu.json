@@ -53,7 +53,11 @@
     "login": "Bejelentkezés",
     "steps": "Lépések",
     "friendRequestMessage": "jelölt ismerősnek!",
-    "noFriendRequests": "Nincs új barátkérésed"
+    "noFriendRequests": "Nincs új értesítés.",
+    "invitedYouTo": "meghívott a(z)",
+    "roomInviteMessage": "szobába",
+    "noResults": "Nincs találat",
+    "noNotifications": "Nincsenek értesítések"
   },
   "errorPage": {
     "oops": "Hoppá!",
@@ -306,14 +310,17 @@
       "icon": "insights"
     }
   },
-
   "friends": {
     "confirmRemove": "Biztosan törölni szeretnéd {{name}} felhasználót a barátaid közül?",
     "confirmYes": "Igen",
     "confirmNo": "Mégse",
     "removeSuccess": "{{name}} sikeresen eltávolítva.",
     "removeError": "Nem sikerült eltávolítani: {{name}}.",
-    "removed": "Törölve!"
+    "confirmInvite": "{{name}} meghívása a játékba?",
+    "confirmYesInvite": "Meghívás",
+    "removed": "Sikeres törlés!",
+    "invited": "Meghívás elküldve!",
+    "markedForInvite": "{{name}} meghívásra kijelölve."
   },
   "poll": {
     "winnerTitle": "🏆 A győztes opció!",

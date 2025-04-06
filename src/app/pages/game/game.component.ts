@@ -22,14 +22,16 @@ export class GameComponent implements OnInit {
     protected selectedVoteType: string = "text";
     protected currentUserId: string | null = null;
     protected isAuthenticated: boolean = false;
-    protected friends: ProfileUser[] = [];
-    protected showFriendList = false;
+    protected friends!: ProfileUser[];
+    protected showFriendList = true;
     protected enteredRoomCode: string = "";
     protected isAnonymous: boolean = false;
     protected showRoomForm: boolean = false;
     protected showRoomDetails = false;
     protected showGenerateText = true;
     protected userRooms: Room[] = [];
+    protected currentRoom: Room | null = null;
+
 
 
     constructor(
@@ -42,24 +44,31 @@ export class GameComponent implements OnInit {
     }
 
 
-
-    ngOnInit() {
+    ngOnInit(): void {
+        this.checkAuthAndLoadUser();
         this.loadUserRooms();
         this.loadFriends();
+    }
 
-        this.authService.getCurrentUser().subscribe((user) => {
+    private checkAuthAndLoadUser(): void {
+        this.authService.getCurrentUser().pipe(take(1)).subscribe((user) => {
             if (user) {
                 this.isAuthenticated = true;
                 this.currentUserId = user.uid;
-                this.userService.getUserById(user.uid).subscribe((profileUser) => {
-                    this.currentUser = profileUser;
-                });
+
+                this.loadCurrentUserProfile(user.uid);
             } else {
                 this.isAuthenticated = false;
                 this.currentUserId = null;
             }
         });
     }
+    private loadCurrentUserProfile(uid: string): void {
+        this.userService.getUserById(uid).pipe(take(1)).subscribe((profileUser) => {
+            this.currentUser = profileUser;
+        });
+    }
+
 
     toggleRoomDetails() {
         this.showRoomDetails = !this.showRoomDetails;
@@ -81,26 +90,31 @@ export class GameComponent implements OnInit {
     }
 
     toggleFriendList() {
+        console.log('[👀] Friend list toggle előtt:', this.showFriendList);
         this.showFriendList = !this.showFriendList;
+        console.log('[✅] Friend list toggle után:', this.showFriendList);
     }
 
-    loadUserRooms() {
-        this.userService.currentUserProfile$.subscribe((user) => {
+
+    private loadUserRooms(): void {
+        this.userService.currentUserProfile$.pipe(take(1)).subscribe((user) => {
             if (user?.gameRooms) {
                 this.userRooms = user.gameRooms;
             }
         });
     }
 
-    loadFriends() {
-        this.authService.getCurrentUser().subscribe((user) => {
+    private loadFriends(): void {
+        this.authService.getCurrentUser().pipe(take(1)).subscribe((user) => {
             if (user) {
-                this.userService.getFriends(user.uid).subscribe((friends) => {
+                this.userService.getFriends(user.uid).pipe(take(1)).subscribe((friends) => {
                     this.friends = friends;
+                    console.log('[✅] Barátok betöltve:', this.friends);
                 });
             }
         });
     }
+
 
     createRoom(): void {
         if (!this.currentUser) {
@@ -143,6 +157,8 @@ export class GameComponent implements OnInit {
             },
             pollCreated: false,
         };
+        this.currentRoom = newRoom;
+
 
         this.dbService
             .roomIdExists(this.roomCode)

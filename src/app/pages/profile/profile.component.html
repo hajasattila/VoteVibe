@@ -68,8 +68,17 @@
                     <span class="material-icons-outlined text-indigo-600">group</span>
                     {{ 'profile.friendList' | translate }}
                 </h2>
-                <app-friend-list [friends]="user?.friendList"></app-friend-list>
+
+                <app-friend-list
+                        *ngIf="user?.friendList?.length"
+                        [friends]="user.friendList || []"
+                ></app-friend-list>
+
+                <p *ngIf="!user?.friendList?.length" class="text-gray-500 mt-4">
+                    {{ 'profile.noFriends' | translate }}
+                </p>
             </div>
+
 
 
             <div class="mb-3">

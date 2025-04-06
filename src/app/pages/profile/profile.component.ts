@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from "@angular/core";
+import {ChangeDetectorRef, Component, Input, OnInit} from "@angular/core";
 import {NonNullableFormBuilder, Validators} from "@angular/forms";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {first, switchMap, take, tap} from "rxjs";
@@ -20,6 +20,8 @@ export class ProfileComponent implements OnInit {
     user$ = this.usersService.currentUserProfile$;
     user?: ProfileUser;
     showFriendRequests = false;
+    @Input() friends: ProfileUser[] = [];
+
 
     profileForm = this.fb.group({
         uid: [""],

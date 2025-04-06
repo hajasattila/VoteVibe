@@ -10,7 +10,7 @@ import {AuthService} from "../../../api/services/auth-service/auth.service";
 import {UsersService} from "../../../api/services/users-service/users.service";
 import {Router, NavigationEnd} from "@angular/router";
 import {ThemeService} from "../../../api/services/theme-service/theme-service.service";
-import {Observable, Subscription} from "rxjs";
+import {combineLatest, Observable, of, Subscription, switchMap} from "rxjs";
 import {filter, map} from "rxjs/operators";
 import {TranslateService} from "@ngx-translate/core";
 
@@ -34,6 +34,13 @@ export class NavBarComponent implements OnInit, OnDestroy {
     protected hasFriendRequests$!: Observable<boolean>;
     protected friendRequestDropdownOpen = false;
     protected incomingFriendNames: string[] = [];
+
+    protected hasRoomInvites$!: Observable<boolean>;
+    protected combinedNotification$!: Observable<boolean>;
+
+    protected roomInviteNames: string[] = [];
+    protected roomInviteMessages: { inviterName: string; roomName: string }[] = [];
+
 
 
     constructor(
@@ -60,6 +67,38 @@ export class NavBarComponent implements OnInit, OnDestroy {
                 }
                 return false;
             })
+        );
+        this.hasRoomInvites$ = this.usersService.currentUserProfile$.pipe(
+            switchMap(user => {
+                if (!user?.uid) return of(false);
+                return this.usersService.getRoomInvites(user.uid).pipe(
+                    map(invites => {
+                        const pending = invites.filter(inv => inv.status === 'pending');
+                        this.roomInviteMessages = pending.map(invite => ({
+                            inviterName: invite.inviterName || 'Ismeretlen',
+                            roomName: invite.roomName || 'Szoba'
+                        }));
+                        return pending.length > 0;
+                    })
+                );
+            })
+        );
+
+
+        this.combinedNotification$ = combineLatest([
+            this.hasFriendRequests$,
+            this.hasRoomInvites$
+        ]).pipe(
+            map(([hasFriends, hasRooms]) => hasFriends || hasRooms)
+        );
+
+
+
+        this.combinedNotification$ = combineLatest([
+            this.hasFriendRequests$,
+            this.hasRoomInvites$
+        ]).pipe(
+            map(([hasFriends, hasRooms]) => hasFriends || hasRooms)
         );
 
         this.routerSubscription = this.router.events

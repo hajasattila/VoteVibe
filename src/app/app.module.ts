@@ -39,6 +39,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { StepsComponent } from './pages/steps/steps.component';
 
 
+
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
@@ -63,7 +64,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         PageNotFoundComponent,
         TextPollComponent,
         NavBarComponent,
-        StepsComponent
+        StepsComponent,
     ],
     imports: [
         MatSnackBarModule,
