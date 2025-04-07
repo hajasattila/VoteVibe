@@ -284,7 +284,7 @@ export class TextPollComponent implements OnInit {
 
         await this.dbService.savePollResultToRoom(this.roomDocId, {
             [finalKey]: completedVoteCounts
-        }, finalKey); // <--- ezt is átadjuk mostantól
+        }, finalKey);
 
         console.log('[💾 Mentve Firestore-ba UID alapján]:', {
             [finalKey]: completedVoteCounts

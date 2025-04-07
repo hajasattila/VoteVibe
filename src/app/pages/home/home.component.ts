@@ -179,7 +179,7 @@ export class HomeComponent implements OnInit {
 
             this.dbService.getRoomsForUser(user.uid).subscribe(rooms => {
                 console.log('🧩 Szobák, amikben benne van a user:', rooms);
-                this.userRooms = rooms; // ha például itt akarod tárolni
+                this.userRooms = rooms;
             });
         });
     }

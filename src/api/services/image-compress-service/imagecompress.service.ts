@@ -1,4 +1,3 @@
-// src/app/shared/services/image-compressor.service.ts
 import {Injectable} from '@angular/core';
 
 @Injectable({
@@ -38,7 +37,7 @@ export class ImageCompressorService {
                                 reject('Nem sikerült létrehozni tömörített blobot.');
                             }
                         },
-                        'image/webp', // <-- ez itt a kulcs!
+                        'image/webp',
                         quality
                     );
                 };
