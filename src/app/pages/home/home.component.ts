@@ -5,6 +5,8 @@ import {ThemeService} from "../../../api/services/theme-service/theme-service.se
 import {TranslateService} from "@ngx-translate/core";
 import {Room} from "../../../api/models/room";
 import {UsersService} from "../../../api/services/users-service/users.service";
+import {RoomInvite} from "../../../api/models/roomInvitation";
+import {DatabaseService} from "../../../api/services/database-service/database.service";
 
 @Component({
     selector: 'app-home',
@@ -17,12 +19,16 @@ export class HomeComponent implements OnInit {
                 private readonly router: Router,
                 protected themeService: ThemeService,
                 protected translate: TranslateService,
-                private userService: UsersService,) {
+                private userService: UsersService,
+                protected dbService: DatabaseService,) {
     }
 
     protected menuOpen = false;
     showRoomModal: boolean = false;
     userRooms: Room[] = [];
+
+    showRoomInviteModal = false;
+    roomInvites: RoomInvite[] = [];
 
 
     ngOnInit(): void {
@@ -75,6 +81,48 @@ export class HomeComponent implements OnInit {
     navigateToRoom(room: Room): void {
         this.closeRoomModal();
         this.router.navigate(['/room', room.roomId]);
+    }
+
+    openInviteModal(): void {
+        this.showRoomInviteModal = true;
+
+        this.authService.getCurrentUser().subscribe((user) => {
+            if (user) {
+                this.userService.getRoomInvites(user.uid).subscribe((invites) => {
+                    this.roomInvites = invites.filter(invite => invite.status === 'pending');
+                });
+            }
+        });
+    }
+
+    closeInviteModal(): void {
+        this.showRoomInviteModal = false;
+    }
+
+    acceptInvite(invite: RoomInvite): void {
+        this.authService.getCurrentUser().subscribe(user => {
+            if (user) {
+                this.userService.getUserById(user.uid).subscribe(profile => {
+                    this.dbService.addUserToRoomByCode(invite.roomId, profile).subscribe(() => {
+                        this.userService.updateInviteStatus(user.uid, invite.roomId, 'accepted').subscribe(() => {
+                            this.router.navigate(['/room', invite.roomId]);
+                            this.closeInviteModal();
+                        });
+                    });
+                });
+            }
+        });
+    }
+
+
+    rejectInvite(invite: RoomInvite): void {
+        this.authService.getCurrentUser().subscribe(user => {
+            if (user) {
+                this.userService.updateInviteStatus(user.uid, invite.roomId, 'rejected').subscribe(() => {
+                    this.roomInvites = this.roomInvites.filter(i => i.roomId !== invite.roomId);
+                });
+            }
+        });
     }
 
 }

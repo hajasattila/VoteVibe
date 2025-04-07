@@ -16,13 +16,20 @@
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
 
-
-                <a href="#"
-                   class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-4 transition-all duration-300 hover:translate-x-1">
-                    <span class="material-icons-outlined mr-2">tune</span>
-                    {{ 'home.menu.stats' | translate }}
+                <a (click)="openInviteModal()"
+                   class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-4 transition-all duration-300 hover:translate-x-1 cursor-pointer">
+                    <span class="material-icons-outlined mr-2">mail</span>
+                    {{ 'home.menu.invitations' | translate }}
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
+
+
+<!--                <a href="#"-->
+<!--                   class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-4 transition-all duration-300 hover:translate-x-1">-->
+<!--                    <span class="material-icons-outlined mr-2">tune</span>-->
+<!--                    {{ 'home.menu.stats' | translate }}-->
+<!--                    <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>-->
+<!--                </a>-->
             </div>
             <div class="flex flex-col gap-4 flex-1 md:flex-none bg-white dark:bg-gray-900 rounded-md shadow-lg mb-0 md:mb-6 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl md:border-none px-6 md:px-4">
                 <a routerLink="/profile"
@@ -120,12 +127,18 @@
                             {{ 'home.menu.rooms' | translate }}
                             <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                         </a>
-                        <a href="#"
-                           class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-2 transition-all duration-300 hover:translate-x-1">
-                            <span class="material-icons-outlined mr-2">tune</span>
-                            {{ 'home.menu.stats' | translate }}
+                        <a (click)="openInviteModal()"
+                           class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-4 transition-all duration-300 hover:translate-x-1 cursor-pointer">
+                            <span class="material-icons-outlined mr-2">mail</span>
+                            {{ 'home.menu.invitations' | translate }}
                             <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                         </a>
+<!--                        <a href="#"-->
+<!--                           class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-2 transition-all duration-300 hover:translate-x-1">-->
+<!--                            <span class="material-icons-outlined mr-2">tune</span>-->
+<!--                            {{ 'home.menu.stats' | translate }}-->
+<!--                            <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>-->
+<!--                        </a>-->
                     </div>
 
                     <div class="flex flex-col gap-4 bg-white dark:bg-gray-900 rounded-md shadow-md p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -196,13 +209,10 @@
             &times;
         </button>
 
-        <div class="text-center mb-4 mt-2">
-            <h2 class="text-2xl font-bold text-indigo-600 dark:text-indigo-300">
+        <div class=" mb-4 mt-2">
+            <h2 class="text-2xl font-bold text-indigo-600 dark:text-indigo-300 text-start">
                 {{ 'room.yourRooms' | translate }}
             </h2>
-            <p class="text-gray-600 dark:text-gray-300 mt-2">
-                {{ 'room.selectToJoin' | translate }}
-            </p>
         </div>
 
         <ul *ngIf="userRooms.length > 0; else noRooms" class="list-none text-start space-y-2">
@@ -221,5 +231,50 @@
         </ng-template>
     </div>
 </div>
+
+<div *ngIf="showRoomInviteModal"
+     class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm"
+     (click)="closeInviteModal()">
+    <div class="relative w-[90%] lg:max-w-lg max-h-[80vh] overflow-y-auto rounded-lg shadow-2xl bg-white dark:bg-gray-800 p-6 animate-slide-in-up mt-16"
+         (click)="$event.stopPropagation()">
+
+        <button (click)="closeInviteModal()"
+                class="absolute top-4 right-4 text-gray-600 dark:text-gray-300 hover:text-red-500 text-xl">
+            &times;
+        </button>
+
+        <h2 class="text-2xl font-bold text-indigo-600 dark:text-indigo-300 mb-4">
+            {{ 'room.invites.title' | translate }}
+        </h2>
+
+        <ng-container *ngIf="roomInvites.length > 0; else noInvites">
+            <div *ngFor="let invite of roomInvites" class="mb-4 border-b pb-4">
+                <p class="text-lg font-semibold text-indigo-700 dark:text-indigo-300">
+                    {{ invite.inviterName }} {{ 'room.invites.invitedYou' | translate }}:
+                </p>
+                <p class="text-gray-700 dark:text-gray-200 mb-2">
+                    "{{ invite.roomName }}"
+                </p>
+                <div class="flex gap-2">
+                    <button (click)="acceptInvite(invite)"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg transition shadow-lg flex items-center gap-2">
+                        {{ 'room.invites.accept' | translate }}
+                    </button>
+                    <button (click)="rejectInvite(invite)"
+                            class="bg-pink-600 hover:bg-pink-700 text-white px-5 py-2 rounded-lg  transition shadow-lg flex items-center gap-2">
+                        {{ 'room.invites.reject' | translate }}
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+
+        <ng-template #noInvites>
+            <p class="text-center text-gray-500 dark:text-gray-400">
+                {{ 'room.invites.none' | translate }}
+            </p>
+        </ng-template>
+    </div>
+</div>
+
 
 

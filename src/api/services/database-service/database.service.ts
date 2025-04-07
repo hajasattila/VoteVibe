@@ -11,7 +11,7 @@ import {
     where,
     DocumentReference
 } from "@angular/fire/firestore";
-import {Observable, from, map} from "rxjs";
+import {Observable, from, map, switchMap} from "rxjs";
 import {Room, textPoll} from "../../models/room";
 import {ProfileUser} from "../../models/user";
 
@@ -84,15 +84,16 @@ export class DatabaseService {
         return from(updateDoc(roomRef, {pollCreated}));
     }
 
-    async savePollResultToRoom(roomDocId: string, result: Record<string, Record<string, number>>): Promise<void> {
+    async savePollResultToRoom(roomDocId: string, result: Record<string, Record<string, number>>, userUid: string): Promise<void> {
         const roomRef = doc(this.firestore, 'rooms', roomDocId);
-        const userKey = Object.keys(result)[0];
-        const userVotes = result[userKey];
+        const userVotes = Object.values(result)[0]; // Az első (és egyetlen) szavazat objektum
 
         await updateDoc(roomRef, {
-            [`pollResults.${userKey}`]: userVotes
+            [`pollResults.${userUid}`]: userVotes
         });
     }
+
+
 
     async removePollResultFromRoom(roomDocId: string, userKey: string): Promise<void> {
         const roomRef = doc(this.firestore, 'rooms', roomDocId);
@@ -100,6 +101,15 @@ export class DatabaseService {
             [`pollResults.${userKey}`]: null
         });
     }
+
+    addUserToRoomByCode(code: string, user: ProfileUser): Observable<void> {
+        return this.getRoomDocRefByCode(code).pipe(
+            switchMap((roomRef) => from(updateDoc(roomRef, {
+                members: arrayUnion(user)
+            })))
+        );
+    }
+
 
 
 }

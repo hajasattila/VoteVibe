@@ -33,7 +33,6 @@ export class GameComponent implements OnInit {
     protected currentRoom: Room | null = null;
 
 
-
     constructor(
         private snackbarService: SnackbarService, private router: Router,
         private authService: AuthService, private dbService: DatabaseService,
@@ -63,6 +62,7 @@ export class GameComponent implements OnInit {
             }
         });
     }
+
     private loadCurrentUserProfile(uid: string): void {
         this.userService.getUserById(uid).pipe(take(1)).subscribe((profileUser) => {
             this.currentUser = profileUser;
@@ -294,12 +294,16 @@ export class GameComponent implements OnInit {
     }
 
     private sanitizeUser(user: ProfileUser): any {
-        return {
+        const sanitized: any = {
             uid: user.uid,
             displayName: user.displayName,
             email: user.email,
-            photoURL: user.photoURL,
         };
-    }
 
+        if (user.photoURL) {
+            sanitized.photoURL = user.photoURL;
+        }
+
+        return sanitized;
+    }
 }

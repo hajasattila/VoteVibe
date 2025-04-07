@@ -129,6 +129,13 @@
     "github": "GitHub belépés"
   },
   "room": {
+    "invites": {
+      "title": "Szobameghívások",
+      "invitedYou": "meghívott ebbe a szobába",
+      "accept": "Elfogadás",
+      "reject": "Elutasítás",
+      "none": "Jelenleg nincsenek függőben lévő szobameghívásaid."
+    },
     "waitingForPoll": "A létrehozó még nem adott meg kérdést!",
     "addedQuestions": "Hozzáadott kérdések",
     "option": "Opció",
@@ -246,7 +253,8 @@
       "profile": "Profil",
       "settings": "Beállítások",
       "logout": "Kijelentkezés",
-      "rooms": "Szobáim"
+      "rooms": "Szobáim",
+      "invitations": "Meghívások"
     },
     "hero": {
       "welcome": "Üdvözlünk",

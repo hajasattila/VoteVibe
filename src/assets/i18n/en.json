@@ -129,6 +129,13 @@
     "github": "Sign in with GitHub"
   },
   "room": {
+    "invites": {
+      "title": "Room Invitations",
+      "invitedYou": "invited you to this room",
+      "accept": "Accept",
+      "reject": "Reject",
+      "none": "You currently have no pending room invitations."
+    },
     "selectToJoin": "Select a room to join",
     "noRooms": "You don't have any rooms yet",
     "waitingForPoll": "The owner has not yet entered a question!",
@@ -244,7 +251,8 @@
       "profile": "Profile",
       "settings": "Settings",
       "logout": "Log out",
-      "rooms": "My rooms"
+      "rooms": "My rooms",
+      "invitations": "Invitations"
     },
     "hero": {
       "welcome": "Welcome",

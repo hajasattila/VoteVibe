@@ -104,16 +104,17 @@ export class TextPollComponent implements OnInit {
                     return;
                 }
 
-                const displayKey =
-                    currentUser.displayName?.trim() ||
-                    currentUser.email?.trim() ||
-                    currentUser.uid;
-
+                const uid = currentUser.uid;
                 const pollResults = (room as any).pollResults as Record<string, Record<string, number>> ?? {};
-                const userVotes = pollResults[displayKey];
-                this.hasAlreadyVoted = !!userVotes;
 
-                console.log('[ℹ️ hasAlreadyVoted]:', this.hasAlreadyVoted);
+                const baseKey = uid;
+                const revoteKey = `${uid}_revote`;
+
+                const userVotes = pollResults[revoteKey] || pollResults[baseKey];
+
+                this.hasAlreadyVoted = !!userVotes;
+                this.hasRevoted = !!pollResults[revoteKey];
+
 
                 if (this.hasAlreadyVoted && !this.hasRevoted && userVotes) {
                     const topOption = Object.entries(userVotes)
@@ -273,7 +274,7 @@ export class TextPollComponent implements OnInit {
     async printTop3Votes(): Promise<void> {
         if (!this.winnerOption || !this.currentUser || !this.roomDocId) return;
 
-        const baseKey = this.currentUser.displayName?.trim() || this.currentUser.email?.trim() || this.currentUser.uid;
+        const baseKey = this.currentUser.uid;
         const finalKey = this.hasAlreadyVoted ? `${baseKey}_revote` : baseKey;
 
         const completedVoteCounts: Record<string, number> = {};
@@ -283,12 +284,13 @@ export class TextPollComponent implements OnInit {
 
         await this.dbService.savePollResultToRoom(this.roomDocId, {
             [finalKey]: completedVoteCounts
-        });
+        }, finalKey); // <--- ezt is átadjuk mostantól
 
-        console.log('[💾 Mentve Firestore-ba]:', {
+        console.log('[💾 Mentve Firestore-ba UID alapján]:', {
             [finalKey]: completedVoteCounts
         });
     }
+
 
     closeWinnerModal(): void {
         this.showWinnerModal = false;
