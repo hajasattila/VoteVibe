@@ -329,6 +329,7 @@ img {
     @apply absolute top-2 left-2 w-12 h-12 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin z-40;
   }
 }
+
 @layer utilities {
   .animate-slide-in-up {
     @apply transition-transform duration-300 ease-out transform translate-y-12 opacity-0;
@@ -346,6 +347,7 @@ img {
     }
   }
 }
+
 .animate-slide-in-up {
   animation: slideInUp 0.3s ease-out forwards;
 }
@@ -359,6 +361,29 @@ img {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+html.dark .apexcharts-tooltip,
+html.dark .apexcharts-menu,
+html.dark .apexcharts-legend,
+html.dark .apexcharts-datalabel,
+html.dark .apexcharts-title-text {
+  background-color: #1f2937 !important;
+  color: #f3f4f6 !important;
+  border-color: #374151 !important;
+}
+
+html.dark .apexcharts-menu-item:hover {
+  background-color: #374151 !important;
+  color: #a5b4fc !important;
+}
+
+html.dark .apexcharts-legend-series {
+  color: #f3f4f6 !important;
+}
+
+html.dark .apexcharts-tooltip {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4) !important;
 }
 
 

@@ -3,9 +3,9 @@ import {
     Input,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
-    OnInit
+    OnInit, OnDestroy
 } from "@angular/core";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {DatabaseService} from "src/api/services/database-service/database.service";
 import {FireworkService} from "../../../api/services/firework-service/firework.service";
 import {AuthService} from "../../../api/services/auth-service/auth.service";
@@ -19,7 +19,7 @@ import {TranslateService} from "@ngx-translate/core";
     styleUrls: ["./text-poll.component.css"],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TextPollComponent implements OnInit {
+export class TextPollComponent implements OnInit, OnDestroy {
     currentUser: User | null = null;
     roomDocId: string | null = null;
 
@@ -30,23 +30,17 @@ export class TextPollComponent implements OnInit {
 
     allOptions: string[] = [];
     comparedPairs: Set<string> = new Set();
-
     leftOption?: string;
     rightOption?: string;
-
     showWinnerModal = false;
     winnerOption?: string;
     remainingCombinations = 0;
-
     voteCounts: Record<string, number> = {};
-
     selectedSide: 'left' | 'right' | null = null;
     animateIncoming: 'left' | 'right' | null = null;
-
     touchStartX = 0;
     swipeDirection: 'left' | 'right' | null = null;
     showHandHint: boolean = true;
-
     dragOffsetX: number = 0;
     activeDragSide: 'left' | 'right' | null = null;
     isDragging: boolean = false;
@@ -57,6 +51,10 @@ export class TextPollComponent implements OnInit {
 
     remainingTime = '';
     private timerSubscription?: Subscription;
+    private revoteCheckSubscription?: Subscription;
+
+    allPollResults: Record<string, Record<string, number>> = {};
+
 
 
     constructor(
@@ -66,6 +64,7 @@ export class TextPollComponent implements OnInit {
         private fireworkService: FireworkService,
         private authService: AuthService,
         private translate: TranslateService,
+        private router: Router
     ) {
     }
 
@@ -81,86 +80,134 @@ export class TextPollComponent implements OnInit {
         if (roomCode) this.loadPollData(roomCode);
     }
 
+    ngOnDestroy(): void {
+        this.timerSubscription?.unsubscribe();
+        this.revoteCheckSubscription?.unsubscribe();
+    }
+
     loadPollData(roomCode: string): void {
         this.dbService.getRoomByCode(roomCode).subscribe((room) => {
-            if (room?.poll) {
-                this.animateIncomingLeft = false;
-                this.animateIncomingRight = false;
-                this.animateIncoming = null;
-                this.disappearSide = null;
-                this.disappearDirection = null;
-                this.selectedSide = null;
-                this.voteCounts = {};
-                this.leftOption = undefined;
-                this.rightOption = undefined;
-                this.showWinnerModal = false;
-                this.comparedPairs.clear();
+            if (!room?.poll) return;
 
-                this.roomDocId = room.docId ?? null;
-                const currentUser = this.currentUser;
+            if (Object.keys(this.allPollResults).length > 0) {
+                console.log('[📥 Szoba pollResults állapota betöltéskor]:', this.allPollResults);
+            } else {
+                console.log('[ℹ️ Nincs pollResults adat a szobában]');
+            }
 
-                if (!currentUser) {
-                    this.loading = false;
-                    return;
+            this.animateIncomingLeft = false;
+            this.animateIncomingRight = false;
+            this.animateIncoming = null;
+            this.disappearSide = null;
+            this.disappearDirection = null;
+            this.selectedSide = null;
+            this.voteCounts = {};
+            this.leftOption = undefined;
+            this.rightOption = undefined;
+            this.showWinnerModal = false;
+            this.comparedPairs.clear();
+
+            this.roomDocId = room.docId ?? null;
+
+            if (!this.currentUser) {
+                this.loading = false;
+                return;
+            }
+
+            const uid = this.currentUser.uid;
+            this.allPollResults = room.pollResults ?? {};
+            const pollResults = this.allPollResults;
+
+            // 🧹 Töröljük a null értékű *_revote bejegyzéseket
+            for (const key of Object.keys(pollResults)) {
+                if (key.endsWith('_revote') && pollResults[key] === null) {
+                    delete pollResults[key];
+                }
+            }
+
+            const baseKey = uid;
+            const revoteKey = `${uid}_revote`;
+
+            const revoteData = pollResults[revoteKey];
+            const baseData = pollResults[baseKey];
+
+            const hasBaseVote = !!baseData;
+            const hasRevote = !!revoteData && typeof revoteData === 'object';
+
+            this.hasAlreadyVoted = hasBaseVote || hasRevote;
+            this.hasRevoted = hasRevote;
+
+            const userVotes = hasRevote ? revoteData : baseData;
+
+            if (this.hasAlreadyVoted && userVotes) {
+                const topOption = Object.entries(userVotes)
+                    .sort((a: [string, number], b: [string, number]) => b[1] - a[1])[0]?.[0] ?? null;
+
+                if (topOption) {
+                    this.winnerOption = topOption;
+                    this.showWinnerModal = true;
+                    this.voteCounts = userVotes;
                 }
 
-                const uid = currentUser.uid;
-                const pollResults = (room as any).pollResults as Record<string, Record<string, number>> ?? {};
+                this.loading = false;
+                this.cdr.markForCheck();
+                return;
+            }
 
-                const baseKey = uid;
-                const revoteKey = `${uid}_revote`;
+            this.question = room.poll.question;
+            this.allOptions = [...new Set(room.poll.options)];
 
-                const userVotes = pollResults[revoteKey] || pollResults[baseKey];
+            const shuffled = [...this.allOptions].sort(() => 0.5 - Math.random());
+            this.leftOption = shuffled[0];
+            this.rightOption = shuffled.find(o => o !== this.leftOption);
 
-                this.hasAlreadyVoted = !!userVotes;
-                this.hasRevoted = !!pollResults[revoteKey];
+            if (this.leftOption && this.rightOption) {
+                this.addComparedPair(this.leftOption, this.rightOption);
+            }
 
+            const totalOptions = this.allOptions.length;
+            this.remainingCombinations = (totalOptions * (totalOptions - 1)) / 2;
 
-                if (this.hasAlreadyVoted && !this.hasRevoted && userVotes) {
-                    const topOption = Object.entries(userVotes)
+            if (room.endTime?.seconds) {
+                const endTime = new Date(room.endTime.seconds * 1000);
+                const now = Date.now();
+                const diff = endTime.getTime() - now;
+
+                if (diff <= 0) {
+                    this.remainingTime = this.translate.instant('room.expired');
+                } else {
+                    this.remainingTime = this.convertMsToTime(diff);
+                    this.startTimer(endTime);
+                }
+            }
+
+            this.loading = false;
+            this.cdr.markForCheck();
+
+            this.revoteCheckSubscription?.unsubscribe();
+            this.revoteCheckSubscription = this.dbService.getRoomByCode(roomCode).subscribe(updatedRoom => {
+                const updatedResults = updatedRoom?.pollResults ?? {};
+                const updatedRevote = updatedResults[revoteKey];
+
+                // ✨ Ellenőrizzük, hogy ne legyen null érték
+                if (!this.hasRevoted && updatedRevote && typeof updatedRevote === 'object' && updatedRoom?.poll?.options) {
+                    this.hasRevoted = true;
+                    this.hasAlreadyVoted = true;
+                    this.voteCounts = updatedRevote;
+
+                    const topOption = Object.entries(updatedRevote)
                         .sort((a: [string, number], b: [string, number]) => b[1] - a[1])[0]?.[0] ?? null;
 
                     if (topOption) {
                         this.winnerOption = topOption;
                         this.showWinnerModal = true;
-                        this.voteCounts = userVotes;
                     }
 
-                    this.loading = false;
+                    this.leftOption = undefined;
+                    this.rightOption = undefined;
                     this.cdr.markForCheck();
-                    return;
                 }
-
-                this.question = room.poll.question;
-                this.allOptions = [...new Set(room.poll.options)];
-
-                const shuffled = [...this.allOptions].sort(() => 0.5 - Math.random());
-                this.leftOption = shuffled[0];
-                this.rightOption = shuffled.find(o => o !== this.leftOption);
-
-                if (this.leftOption && this.rightOption) {
-                    this.addComparedPair(this.leftOption, this.rightOption);
-                }
-
-                const totalOptions = this.allOptions.length;
-                this.remainingCombinations = (totalOptions * (totalOptions - 1)) / 2;
-
-                if (room.endTime?.seconds) {
-                    const endTime = new Date(room.endTime.seconds * 1000);
-                    const now = Date.now();
-                    const diff = endTime.getTime() - now;
-
-                    if (diff <= 0) {
-                        this.remainingTime = this.translate.instant('room.expired');
-                    } else {
-                        this.remainingTime = this.convertMsToTime(diff);
-                        this.startTimer(endTime);
-                    }
-                }
-
-                this.loading = false;
-                this.cdr.markForCheck();
-            }
+            });
         });
     }
 
@@ -288,6 +335,14 @@ export class TextPollComponent implements OnInit {
 
         console.log('[💾 Mentve Firestore-ba UID alapján]:', {
             [finalKey]: completedVoteCounts
+        });
+
+        // 🆕 Szoba teljes pollResults loggolása
+        this.dbService.getRoomByCode(this.route.snapshot.paramMap.get('code')!).subscribe(room => {
+            if (room?.pollResults) {
+                this.allPollResults = room.pollResults;
+                console.log('[📊 Frissített pollResults mentés után]:', this.allPollResults);
+            }
         });
     }
 
@@ -422,12 +477,8 @@ export class TextPollComponent implements OnInit {
 
         this.isResettingVote = true;
 
-        const baseKey =
-            this.currentUser.displayName?.trim() ||
-            this.currentUser.email?.trim() ||
-            this.currentUser.uid;
-
-        const keysToRemove = [baseKey, `${baseKey}_revote`];
+        const uid = this.currentUser.uid;
+        const keysToRemove = [uid, `${uid}_revote`];
 
         Promise.all(
             keysToRemove.map(key =>
@@ -471,5 +522,13 @@ export class TextPollComponent implements OnInit {
             });
     }
 
+
+    goHome(): void {
+        this.router.navigate(['/home']);
+    }
+    goToStats(): void {
+        const code = this.route.snapshot.paramMap.get('code');
+        if (code) this.router.navigate(['/room', code, 'stats']);
+    }
 
 }

@@ -31,6 +31,7 @@ export class GameComponent implements OnInit {
     protected showGenerateText = true;
     protected userRooms: Room[] = [];
     protected currentRoom: Room | null = null;
+    protected friendListLoaded: boolean = false;
 
 
     constructor(
@@ -117,11 +118,21 @@ export class GameComponent implements OnInit {
     }
 
     private loadFriends(): void {
+        this.friendListLoaded = false;
+
         this.authService.getCurrentUser().pipe(take(1)).subscribe((user) => {
             if (user) {
-                this.userService.getFriends(user.uid).pipe(take(1)).subscribe((friends) => {
-                    this.friends = friends;
+                this.userService.getFriends(user.uid).pipe(take(1)).subscribe({
+                    next: (friends) => {
+                        this.friends = friends;
+                        this.friendListLoaded = true;
+                    },
+                    error: () => {
+                        this.friendListLoaded = true;
+                    }
                 });
+            } else {
+                this.friendListLoaded = true;
             }
         });
     }

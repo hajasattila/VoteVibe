@@ -9,7 +9,7 @@ import {ActivatedRoute} from '@angular/router';
 import {DatabaseService} from '../../../api/services/database-service/database.service';
 import {Room} from '../../../api/models/room';
 import {interval, Subscription} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
 import {TranslateService} from '@ngx-translate/core';
 import {Location} from '@angular/common';
 import {SnackbarService} from "../../../api/services/snackbar-service/snackbar-service.service";
@@ -17,6 +17,8 @@ import {AuthService} from "../../../api/services/auth-service/auth.service";
 import {DocumentReference, onSnapshot} from "@angular/fire/firestore";
 import firebase from "firebase/compat";
 import DocumentData = firebase.firestore.DocumentData;
+import {ProfileUser} from "../../../api/models/user";
+import {UsersService} from "../../../api/services/users-service/users.service";
 
 @Component({
     selector: 'app-room-details',
@@ -27,21 +29,21 @@ import DocumentData = firebase.firestore.DocumentData;
 export class RoomDetailsComponent implements OnInit, OnDestroy {
     @ViewChildren('optionInput') optionInputs!: QueryList<ElementRef<HTMLInputElement>>;
 
-    room: Room | null = null;
-    remainingTime = '';
-    options: string[] = ['', ''];
-    question = '';
-    pollCreated = false;
-    isLoading = true;
-
+    protected room: Room | null = null;
+    protected remainingTime = '';
+    protected options: string[] = ['', ''];
+    protected question = '';
+    protected pollCreated = false;
+    protected isLoading = true;
     private timerSubscription?: Subscription;
     protected initTimestamp = 0;
-
-    showWaitingMessage = false;
-    isCreator = false;
-    isDarkMode = false;
-
-
+    protected showWaitingMessage = false;
+    protected isCreator = false;
+    protected isDarkMode = false;
+    protected currentUser: ProfileUser | null = null;
+    protected showFriendList: boolean = true;
+    protected friends: ProfileUser[] = [];
+    protected friendListLoaded = false;
 
     private unsubscribeSnapshot?: () => void;
 
@@ -53,11 +55,16 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         private snackbar: SnackbarService,
         private translate: TranslateService,
         private location: Location,
-        private authService: AuthService
+        private authService: AuthService,
+        private userService: UsersService,
     ) {
     }
 
     ngOnInit(): void {
+
+        this.loadFriends();
+        this.loadCurrentUser();
+
         this.initTimestamp = performance.now();
         const roomCode = this.route.snapshot.paramMap.get('code');
         if (roomCode) this.loadRoomDetails(roomCode);
@@ -232,5 +239,37 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
 
     goBack(): void {
         this.location.back();
+    }
+
+    private loadCurrentUser(): void {
+        this.authService.getCurrentUser().pipe(take(1)).subscribe((user) => {
+            if (user) {
+                this.userService.getUserById(user.uid).pipe(take(1)).subscribe((profileUser) => {
+                    this.currentUser = profileUser;
+                    this.cdr.markForCheck();
+                });
+            }
+        });
+    }
+
+
+    private loadFriends(): void {
+        this.authService.getCurrentUser().pipe(take(1)).subscribe((user) => {
+            if (user) {
+                this.userService.getFriends(user.uid).pipe(take(1)).subscribe((friends) => {
+                    this.friends = friends;
+                    this.friendListLoaded = true;
+                    this.cdr.markForCheck();
+                });
+            } else {
+                this.friendListLoaded = true;
+                this.cdr.markForCheck();
+            }
+        });
+    }
+
+
+    toggleFriendList(): void {
+        this.showFriendList = !this.showFriendList;
     }
 }

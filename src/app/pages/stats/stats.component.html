@@ -1,0 +1,59 @@
+<div class="flex flex-col lg:flex-row h-screen text-gray-800 dark:text-gray-100 transition-colors duration-300 pt-24 px-4 text-red-400">
+    <div class="w-full max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl animate-fade-in">
+
+        <h2 class="text-3xl md:text-4xl font-bold text-indigo-600 dark:text-indigo-300 text-center mb-6">
+            📊 {{ 'room.statsChart.title' | translate }}
+        </h2>
+
+        <!-- 💡 Chart Type Selector -->
+        <div class="mb-4 text-center">
+            <label for="chartType" class="mr-2 font-medium">{{ 'room.statsChart.selectType' | translate }}:</label>
+            <select
+                    id="chartType"
+                    [(ngModel)]="chartType"
+                    (change)="onChartTypeChange(chartType)"
+                    class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-gray-800 dark:text-gray-200 focus:outline-none"
+            >
+                <option value="pie">🥧 {{ 'room.statsChart.types.pie' | translate }}</option>
+                <option value="donut">🍩 {{ 'room.statsChart.types.donut' | translate }}</option>
+                <option value="bar">📊 {{ 'room.statsChart.types.bar' | translate }}</option>
+                <option value="line">📈 {{ 'room.statsChart.types.line' | translate }}</option>
+                <option value="radar">🕸️ {{ 'room.statsChart.types.radar' | translate }}</option>
+                <option value="area">🌄 {{ 'room.statsChart.types.area' | translate }}</option>
+                <option value="polarArea">🧭 {{ 'room.statsChart.types.polarArea' | translate }}</option>
+                <option value="radialBar">🔘 {{ 'room.statsChart.types.radialBar' | translate }}</option>
+            </select>
+
+        </div>
+
+        <div *ngIf="chartOptions?.series && chartOptions?.chart && chartOptions?.labels; else loading">
+            <apx-chart
+                    [series]="chartOptions.series"
+                    [chart]="chartOptions.chart"
+                    [labels]="chartOptions.labels"
+                    [responsive]="chartOptions.responsive"
+                    [title]="chartOptions.title"
+            ></apx-chart>
+
+            <ul class="mt-6 divide-y divide-gray-200 dark:divide-gray-700">
+                <li
+                        *ngFor="let label of chartOptions.labels; let i = index"
+                        class="py-2 flex justify-between items-center"
+                >
+          <span class="font-semibold text-indigo-700 dark:text-indigo-300">
+            {{ i + 1 }}. {{ label }}
+          </span>
+                    <span class="text-gray-600 dark:text-gray-300">
+            {{ chartOptions.series[i] }} {{ 'room.statsChart.votes' | translate }}
+          </span>
+                </li>
+            </ul>
+        </div>
+
+        <ng-template #loading>
+            <p class="text-center text-gray-500 dark:text-gray-400 mt-6 animate-pulse">
+                {{ 'room.statsChart.loading' | translate }}
+            </p>
+        </ng-template>
+    </div>
+</div>

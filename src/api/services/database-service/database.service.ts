@@ -96,10 +96,12 @@ export class DatabaseService {
 
     async removePollResultFromRoom(roomDocId: string, userKey: string): Promise<void> {
         const roomRef = doc(this.firestore, 'rooms', roomDocId);
-        await updateDoc(roomRef, {
-            [`pollResults.${userKey}`]: null
-        });
+        const dataToUpdate: any = {};
+        dataToUpdate[`pollResults.${userKey}_revote`] = null;
+        dataToUpdate[`pollResults.${userKey}`] = null;
+        await updateDoc(roomRef, dataToUpdate);
     }
+
 
     addUserToRoomByCode(code: string, user: ProfileUser): Observable<void> {
         return this.getRoomDocRefByCode(code).pipe(

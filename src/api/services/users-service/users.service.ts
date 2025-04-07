@@ -9,7 +9,7 @@ import {
     updateDoc,
     collectionData,
     arrayUnion,
-    arrayRemove
+    arrayRemove, onSnapshot
 } from "@angular/fire/firestore";
 import {catchError, from, map, Observable, of, shareReplay, switchMap, tap, throwError} from "rxjs";
 import {ProfileUser} from "../../models/user";
@@ -287,7 +287,17 @@ export class UsersService {
         return from(updateDoc(inviteDocRef, {status}));
     }
 
+    getFriendsLive(uid: string): Observable<ProfileUser[]> {
+        return new Observable(observer => {
+            const sub = onSnapshot(doc(this.firestore, 'users', uid), (docSnap) => {
+                const user = docSnap.data() as ProfileUser;
+                const friends = user?.friendList || [];
+                observer.next(friends);
+            });
 
+            return () => sub();
+        });
+    }
 
 
 }

@@ -11,6 +11,7 @@ import {RoomDetailsComponent} from "./pages/room-details/room-details.component"
 import {RoomMemberGuard} from "../api/services/room-member-service/roommemberguard.service";
 import {PageNotFoundComponent} from "./pages/page-not-found/page-not-found.component";
 import {StepsComponent} from "./pages/steps/steps.component";
+import {StatsComponent} from "./pages/stats/stats.component";
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["login"]);
 const redirectLoggedInToHome = () => redirectLoggedInTo(["home"]);
@@ -53,6 +54,11 @@ const routes: Routes = [
     {
         path: "notfound",
         component: PageNotFoundComponent,
+    },
+    {
+        path: 'room/:code/stats',
+        component: StatsComponent,
+        canActivate: [RoomMemberGuard]
     },
     {path: "**", redirectTo: "notfound"},
 ];

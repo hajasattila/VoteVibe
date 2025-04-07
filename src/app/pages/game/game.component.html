@@ -3,7 +3,8 @@
     <ng-container *ngIf="showRoomDetails">
         <div class="w-full flex justify-center relative">
             <div
-                    class="w-full max-w-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-100 shadow-xl rounded-xl p-6 sm:p-8 transition-all hover:-translate-y-1 hover:shadow-2xl"
+                    class="w-full max-w-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-100 shadow-xl rounded-xl p-6 sm:p-8 transition-transform duration-300"
+                    [class.hover\:translate-y-1]="false"
             >
                 <div class="text-center mb-6">
           <span class="block text-gray-700 dark:text-gray-100 text-2xl font-bold mb-2">
@@ -12,8 +13,8 @@
           </span>
                 </div>
 
-                <form>
-                    <div class="mb-6">
+                <form class="text-start">
+                    <div class="mb-6 ">
                         <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
                             {{ 'room.roomNameLabel' | translate }}
                         </label>
@@ -22,7 +23,7 @@
                                 name="roomName"
                                 type="text"
                                 required
-                                maxlength="12"
+                                maxlength="32"
                                 placeholder="{{ 'room.roomNamePlaceholder' | translate }}"
                                 #roomNameField="ngModel"
                                 class="w-full py-2 px-4 border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500"
@@ -63,7 +64,7 @@
                         </select>
                     </div>
 
-                    <div class="flex items-center justify-center mb-6">
+                    <div class="flex items-center justify-center mb-3">
                         <label for="anonymousCheckbox"
                                class="text-lg font-medium text-gray-800 dark:text-gray-200 mr-2">
                             {{ 'room.anonymous' | translate }}
@@ -77,7 +78,12 @@
                         />
                     </div>
 
+                    <div *ngIf="showFriendList && !friendListLoaded" class="flex justify-center items-center py-6">
+                        <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+
                     <ng-container *ngIf="currentUser">
+
                         <h2
                                 class="text-indigo-700 dark:text-indigo-300 font-bold cursor-pointer hover:text-indigo-900 dark:hover:text-indigo-400"
                                 (click)="toggleFriendList()"
@@ -86,19 +92,19 @@
                         </h2>
                         <app-friend-list
                                 *ngIf="showFriendList"
-                                [friends]="currentUser?.friendList || []"
+                                [friends]="currentUser.friendList || []"
                                 [room]="currentRoom"
                         ></app-friend-list>
 
                         <p *ngIf="showFriendList && currentUser?.friendList?.length === 0" class="text-gray-500 mt-4">
-                            {{ 'room.noFriends' | translate }}
+                            {{ 'profile.noFriends' | translate }}
                         </p>
                     </ng-container>
 
                     <button
                             (click)="createRoom()"
                             type="button"
-                            class="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition mt-6"
+                            class="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition mt-6 text-center flex mx-auto"
                     >
                         {{ 'room.generate' | translate }}
                     </button>

@@ -227,7 +227,7 @@
         <ng-template #loadedRooms>
             <ng-container *ngIf="userRooms.length > 0; else noRooms">
                 <ul class="list-none text-start space-y-2">
-                    <li *ngFor="let room of userRooms.slice().reverse()">
+                    <li *ngFor="let room of userRooms.slice()">
                         <a (click)="navigateToRoom(room)"
                            class="block w-full text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 cursor-pointer underline px-2 py-1 break-words">
                             {{ room.roomName }} ({{ 'room.code' | translate }}: {{ room.roomId }})

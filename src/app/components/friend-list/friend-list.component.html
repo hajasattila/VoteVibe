@@ -1,6 +1,10 @@
+<div *ngIf="isLoadingFriends" class="flex justify-center items-center py-6">
+    <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+</div>
+
 <div class="friend-list">
     <div class="overflow-x-auto">
-        <ul class="flex flex-wrap justify-start space-x-4 pt-2">
+        <ul *ngIf="!isLoadingFriends" class="flex flex-wrap justify-start space-x-4 pt-2">
             <li *ngFor="let friend of friends" class="friend-item">
                 <div class="flex flex-col items-center">
                     <div class="friend-avatar relative">
@@ -11,7 +15,7 @@
                                 (click)="openConfirmModal(friend)"
                         />
                         <div
-                                *ngIf="invitedFriends.has(friend.uid)"
+                                *ngIf="!isProfileRoute && invitedFriends.has(friend.uid)"
                                 class="absolute top-0 right-0 bg-green-100 p-1 rounded-full"
                                 style="transform: translate(30%, -30%); opacity: 0.7;"
                         >
@@ -42,21 +46,32 @@
         <div *ngIf="!deletionSuccess" class="text-center">
             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
                 {{
-                    routePath.includes('/game')
-                        ? ('friends.confirmInvite' | translate:{name: selectedFriend?.displayName})
-                        : ('friends.confirmRemove' | translate:{name: selectedFriend?.displayName})
+                    isProfileRoute
+                        ? ('friends.confirmRemove' | translate:{name: selectedFriend?.displayName})
+                        : (
+                            invitedFriends.has(selectedFriend?.uid || '')
+                                ? ('friends.confirmUninvite' | translate:{name: selectedFriend?.displayName})
+                                : ('friends.confirmInvite' | translate:{name: selectedFriend?.displayName})
+                        )
                 }}
             </h3>
+
+
             <div class="flex justify-center gap-4 mt-6">
                 <button
                         (click)="confirmAction()"
                         class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
                 >
                     {{
-                        routePath.includes('/game')
-                            ? ('friends.confirmYesInvite' | translate)
-                            : ('friends.confirmYes' | translate)
+                        isProfileRoute
+                            ? ('friends.confirmYes' | translate)
+                            : (
+                                invitedFriends.has(selectedFriend?.uid || '')
+                                    ? ('friends.confirmYesUninvite' | translate)
+                                    : ('friends.confirmYesInvite' | translate)
+                            )
                     }}
+
                 </button>
                 <button
                         (click)="cancelDelete()"
@@ -83,11 +98,16 @@
                     />
                 </svg>
             </div>
-            <p class="text-green-600 font-semibold">
+            <p class="font-semibold"
+               [ngClass]="wasInvited ? 'text-green-600' : 'text-red-600'">
                 {{
-                    routePath.includes('/game')
-                        ? ('friends.invited' | translate)
-                        : ('friends.removed' | translate)
+                    isProfileRoute
+                        ? ('friends.removed' | translate)
+                        : (
+                            wasInvited
+                                ? ('friends.invited' | translate)
+                                : ('friends.uninvited' | translate)
+                        )
                 }}
             </p>
         </div>

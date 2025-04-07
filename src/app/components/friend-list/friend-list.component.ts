@@ -3,7 +3,7 @@ import {
     Input,
     OnInit,
     OnChanges,
-    SimpleChanges
+    SimpleChanges, ChangeDetectorRef, OnDestroy
 } from "@angular/core";
 import {of} from "rxjs";
 import {switchMap} from "rxjs/operators";
@@ -20,8 +20,10 @@ import {Room} from "../../../api/models/room";
     templateUrl: "./friend-list.component.html",
     styleUrls: ["./friend-list.component.css"],
 })
-export class FriendListComponent implements OnInit, OnChanges {
+export class FriendListComponent implements OnInit, OnChanges, OnDestroy {
     @Input() friends: ProfileUser[] = [];
+    wasInvited: boolean = false;
+    isLoadingFriends = true;
 
     @Input() set room(value: Room | null) {
         this._room = value;
@@ -35,7 +37,7 @@ export class FriendListComponent implements OnInit, OnChanges {
                     value.roomName
                 ).subscribe({
                     next: () => {
-                        this.translate.get('friends.inviteSuccess', { name: uid }).subscribe(msg =>
+                        this.translate.get('friends.inviteSuccess', {name: uid}).subscribe(msg =>
                             this.snackbar.success(msg)
                         );
                     },
@@ -61,6 +63,8 @@ export class FriendListComponent implements OnInit, OnChanges {
     selectedFriend: ProfileUser | null = null;
     deletionSuccess = false;
     routePath: string = '';
+    private friendsSub: any;
+
 
     constructor(
         private userService: UsersService,
@@ -68,7 +72,9 @@ export class FriendListComponent implements OnInit, OnChanges {
         private translate: TranslateService,
         private authService: AuthService,
         private router: Router,
-    ) {}
+        private cdr: ChangeDetectorRef
+    ) {
+    }
 
     ngOnInit() {
         this.routePath = this.router.url;
@@ -76,10 +82,23 @@ export class FriendListComponent implements OnInit, OnChanges {
         this.authService.getCurrentUser().subscribe(user => {
             this.currentUserId = user?.uid || null;
             this.currentUserDisplayName = user?.displayName || '';
-        });
 
-        this.loadFriendImages();
+            if (this.currentUserId) {
+                this.friendsSub = this.userService.getFriendsLive(this.currentUserId).subscribe(friends => {
+                    this.friends = friends;
+                    this.loadFriendImages(); // minden frissülés után újratöltjük a képeket is
+                    this.cdr.markForCheck();
+                });
+            }
+        });
     }
+
+    ngOnDestroy(): void {
+        if (this.friendsSub) {
+            this.friendsSub.unsubscribe();
+        }
+    }
+
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['friends']) {
@@ -88,7 +107,12 @@ export class FriendListComponent implements OnInit, OnChanges {
     }
 
     loadFriendImages(): void {
-        if (!this.friends) return;
+        if (!this.friends || this.friends.length === 0) {
+            this.isLoadingFriends = false;
+            return;
+        }
+
+        let loadedCount = 0;
 
         for (let friend of this.friends) {
             this.userService.getUserById(friend.uid).pipe(
@@ -101,10 +125,18 @@ export class FriendListComponent implements OnInit, OnChanges {
                 const img = new Image();
                 img.onload = () => {
                     this.loadedImages[friend.uid] = true;
+                    loadedCount++;
+                    if (loadedCount === this.friends.length) {
+                        this.isLoadingFriends = false;
+                    }
                 };
                 img.onerror = () => {
                     this.loadedImages[friend.uid] = false;
                     this.friendImages[friend.uid] = "/assets/images/image-placeholder.png";
+                    loadedCount++;
+                    if (loadedCount === this.friends.length) {
+                        this.isLoadingFriends = false;
+                    }
                 };
                 img.src = photoURL;
             });
@@ -136,7 +168,7 @@ export class FriendListComponent implements OnInit, OnChanges {
         this.userService.removeFriend(this.selectedFriend).subscribe({
             next: () => {
                 this.friends = this.friends.filter(f => f.uid !== this.selectedFriend?.uid);
-                this.translate.get('friends.removeSuccess', { name: this.selectedFriend?.displayName }).subscribe(msg =>
+                this.translate.get('friends.removeSuccess', {name: this.selectedFriend?.displayName}).subscribe(msg =>
                     this.snackbar.success(msg)
                 );
                 this.deletionSuccess = true;
@@ -148,7 +180,7 @@ export class FriendListComponent implements OnInit, OnChanges {
             },
             error: (error) => {
                 console.error("Error removing friend:", error);
-                this.translate.get('friends.removeError', { name: this.selectedFriend?.displayName }).subscribe(msg =>
+                this.translate.get('friends.removeError', {name: this.selectedFriend?.displayName}).subscribe(msg =>
                     this.snackbar.error(msg)
                 );
                 this.showConfirmModal = false;
@@ -159,53 +191,59 @@ export class FriendListComponent implements OnInit, OnChanges {
 
     confirmAction() {
         if (!this.selectedFriend) return;
+        const uid = this.selectedFriend.uid;
 
-        if (this.routePath.includes('/game')) {
+        if (this.isProfileRoute) {
+            this.confirmDelete();
+        } else {
             if (!this._room?.roomId) {
-                console.warn(' megjelölve meghívandónak:', this.selectedFriend);
-                this.invitedFriends.add(this.selectedFriend.uid);
 
-                this.translate.get('friends.markedForInvite', { name: this.selectedFriend.displayName }).subscribe(msg =>
-                    this.snackbar.info(msg)
-                );
-
+                if (this.invitedFriends.has(uid)) {
+                    this.invitedFriends.delete(uid);
+                    this.wasInvited = false;
+                    this.translate.get('friends.unmarkedForInvite', {name: this.selectedFriend.displayName}).subscribe(msg =>
+                        this.snackbar.info(msg)
+                    );
+                } else {
+                    this.invitedFriends.add(uid);
+                    this.wasInvited = true;
+                    this.translate.get('friends.markedForInvite', {name: this.selectedFriend.displayName}).subscribe(msg =>
+                        this.snackbar.info(msg)
+                    );
+                }
                 this.deletionSuccess = true;
-                setTimeout(() => {
-                    this.showConfirmModal = false;
-                    this.selectedFriend = null;
-                }, 1500);
-                return;
+            } else {
+
+                this.userService.inviteUserToRoom(
+                    uid,
+                    this._room.roomId,
+                    this._room.creator,
+                    this._room.roomName
+                ).subscribe({
+                    next: () => {
+                        this.translate.get('friends.inviteSuccess', {name: this.selectedFriend!.displayName}).subscribe(msg =>
+                            this.snackbar.success(msg)
+                        );
+                        this.invitedFriends.add(uid);
+                        this.wasInvited = true;
+                        this.deletionSuccess = true;
+                    },
+                    error: (err) => {
+                        console.error(`${err.message}`);
+                        this.snackbar.error('Hiba történt a meghívás során.');
+                    }
+                });
             }
 
-            this.userService.inviteUserToRoom(
-                this.selectedFriend.uid,
-                this._room.roomId,
-                this._room.creator,
-                this._room.roomName
-            ).subscribe({
-                next: () => {
-                    this.translate.get('friends.inviteSuccess', { name: this.selectedFriend!.displayName }).subscribe(msg =>
-                        this.snackbar.success(msg)
-                    );
-
-                    this.invitedFriends.add(this.selectedFriend!.uid);
-                    this.deletionSuccess = true;
-
-                    setTimeout(() => {
-                        this.showConfirmModal = false;
-                        this.selectedFriend = null;
-                    }, 1500);
-                },
-                error: (err) => {
-                    console.error(`${err.message}`);
-                    this.snackbar.error('Hiba történt a meghívás során.');
-                    this.showConfirmModal = false;
-                    this.selectedFriend = null;
-                }
-            });
-
-        } else {
-            this.confirmDelete();
+            setTimeout(() => {
+                this.showConfirmModal = false;
+                this.selectedFriend = null;
+            }, 1500);
         }
     }
+
+    get isProfileRoute(): boolean {
+        return this.routePath.includes('/profile');
+    }
+
 }

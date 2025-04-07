@@ -1,5 +1,6 @@
 {
   "profile": {
+    "noFriends": "Üres a lista. 🥲",
     "polls": "Szavazások",
     "games": "Játékok",
     "friends": "Barátok",
@@ -130,6 +131,26 @@
     "github": "GitHub belépés"
   },
   "room": {
+    "statsChart": {
+      "title": "Szavazati statisztika",
+      "loading": "Diagram betöltése...",
+      "votes": "szavazat",
+      "chartTitle": "Szavazati arányok",
+      "seriesName": "Szavazatok",
+      "selectType": "Diagram típusa",
+      "types": {
+        "pie": "Kördiagram",
+        "donut": "Donut diagram",
+        "bar": "Oszlopdiagram",
+        "line": "Vonaldiagram",
+        "radar": "Radar diagram",
+        "area": "Területdiagram",
+        "polarArea": "Polár diagram",
+        "radialBar": "Radiális sáv"
+      }
+    },
+    "stats": "Statisztika",
+    "revote": "Újraszavazás",
     "loading": "Szobák betöltése...",
     "noRooms": "Nincs megjeleníthető szoba.",
     "yours": "saját szobád",
@@ -172,7 +193,7 @@
     "roomNameRequired": "Meg kell adni a szoba nevét!",
     "timeLimit": "Időkorlát (óra)",
     "anonymous": "Névtelen:",
-    "inviteFriends": "Barátok meghívása: (kattints)",
+    "inviteFriends": "Barátok meghívása:",
     "generate": "Szoba létrehozása",
     "joinRoom": "Csatlakozás szobához",
     "joinWithCode": "Csatlakozás kóddal:",
@@ -333,14 +354,18 @@
     "confirmYesInvite": "Meghívás",
     "removed": "Sikeres törlés!",
     "invited": "Meghívás elküldve!",
-    "markedForInvite": "{{name}} meghívásra kijelölve."
+    "markedForInvite": "{{name}} megjelölve meghívásra.",
+    "unmarkedForInvite": "{{name}} eltávolítva a meghívandók közül.",
+    "confirmUninvite": "Eltávolítod {{name}}-t a meghívottak közül?",
+    "confirmYesUninvite": "Igen, törlöm",
+    "uninvited": "Eltávolítva a meghívottak közül."
   },
   "poll": {
     "winnerTitle": "🏆 A győztes opció!",
     "winnerIs": "A győztes: {{ option }}",
     "close": "Bezárás",
     "revote": "Újraszavazás",
-    "revoteInfo": "Nem tetszik az eredmény? Új lehetőséged van újraszavazni.",
+    "revoteInfo": "Nem tetszik az eredmény?",
     "timeLeft": "Hátralévő idő: {{time}}",
     "revoteDisabled": "Egyszer már újraszavaztál"
   },

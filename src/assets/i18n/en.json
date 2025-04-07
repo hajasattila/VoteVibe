@@ -1,5 +1,6 @@
 {
   "profile": {
+    "noFriends": "The list is empty. 🥲",
     "polls": "Polls",
     "games": "Games",
     "friends": "Friends",
@@ -130,6 +131,26 @@
     "github": "Sign in with GitHub"
   },
   "room": {
+    "statsChart": {
+      "title": "Voting Statistics",
+      "loading": "Loading chart...",
+      "votes": "votes",
+      "chartTitle": "Vote Distribution",
+      "seriesName": "Votes",
+      "selectType": "Chart Type",
+      "types": {
+        "pie": "Pie Chart",
+        "donut": "Donut Chart",
+        "bar": "Bar Chart",
+        "line": "Line Chart",
+        "radar": "Radar Chart",
+        "area": "Area Chart",
+        "polarArea": "Polar Area Chart",
+        "radialBar": "Radial Bar"
+      }
+    },
+
+    "stats": "Statistics",
     "loading": "Loading rooms...",
     "yours": "your room",
     "member": "you are a member",
@@ -175,7 +196,7 @@
     "timeLimit": "Time limit (hr/hrs)",
     "voteType": "Type of the vote",
     "anonymous": "Anonymous:",
-    "inviteFriends": "Invite friends: (click)",
+    "inviteFriends": "Invite friends:",
     "generate": "Generate the room",
     "joinRoom": "Join a room",
     "joinWithCode": "Connect to a room by code:",
@@ -333,7 +354,9 @@
     "confirmYesInvite": "Invite",
     "removed": "Removed successfully!",
     "invited": "Invitation sent!",
-    "markedForInvite": "{{name}} is marked for invitation."
+    "markedForInvite": "{{name}} marked for invitation.",
+    "unmarkedForInvite": "{{name}} removed from invitations.",
+    "uninvited": "Removed from invitations."
   },
   "poll": {
     "winnerTitle": "🏆 Winning Option!",

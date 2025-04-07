@@ -1,6 +1,6 @@
 <div class="result h-full relative">
 
-    <div *ngIf="!showWinnerModal" class="absolute inset-x-0 top-16 z-30 flex flex-col items-center px-4">
+    <div *ngIf="!showWinnerModal && !winnerOption" class="absolute inset-x-0 top-16 z-30 flex flex-col items-center px-4">
 
         <h1 class="mt-4 text-3xl md:text-4xl xl:text-5xl font-bold text-gray-800 dark:text-gray-100 drop-shadow-sm bg-white dark:bg-gray-900 bg-opacity-70 dark:bg-opacity-70 rounded-lg inline-block px-6 py-3 shadow-lg transition-all duration-300">
             {{ question }}
@@ -103,19 +103,38 @@
 
 
 <div *ngIf="winnerOption" class="fixed inset-0 z-40 flex items-center justify-center pointer-events-none p-4">
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl w-full max-w-md transform transition-all duration-300 animate-fade-in-up text-center pointer-events-auto">
-        <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-300 my-0 pb-0 pt-3">
+    <div class="relative bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl w-full max-w-md transform transition-all duration-300 animate-fade-in-up text-center pointer-events-auto">
+
+        <button
+                (click)="goHome()"
+                class="absolute top-2 right-4 text-gray-500 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-600 text-2xl font-bold"
+                aria-label="Close"
+        >
+            &times;
+        </button>
+
+        <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-300 my-0 pb-0 pt-6">
             🏆 {{ 'poll.winnerIs' | translate:{option: winnerOption} }}
         </p>
-        <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+        <p class="mt-4 text-sm text-gray-600 dark:text-gray-300">
             {{ 'poll.revoteInfo' | translate }}
         </p>
-        <div class="text-center mt-6">
+        <div class="text-center mt-0 gap-4 flex flex-row justify-between">
             <button
-                    class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-6 rounded-lg shadow transition"
-                    (click)="resetPollForUser()">
-                {{ 'poll.revote' | translate }}
+                    (click)="resetPollForUser()"
+                    [disabled]="hasRevoted || isResettingVote"
+                    class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+                {{ 'room.revote' | translate }}
             </button>
+            <button
+                    class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                    (click)="goToStats()"
+            >
+                {{ 'room.stats' | translate }}
+            </button>
+
+
         </div>
     </div>
 </div>

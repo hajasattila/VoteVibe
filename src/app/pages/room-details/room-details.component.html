@@ -52,6 +52,27 @@
                             </li>
                         </ul>
                     </div>
+                    <div *ngIf="showFriendList && !friendListLoaded" class="flex justify-center items-center py-6">
+                        <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                    <ng-container *ngIf="isCreator && remainingTime !== 'Expired' && remainingTime !== 'Lejárt'">
+                        <h2
+                                class="text-indigo-700 dark:text-indigo-300 font-bold cursor-pointer hover:text-indigo-900 dark:hover:text-indigo-400"
+                                (click)="toggleFriendList()"
+                        >
+                            {{ 'room.inviteFriends' | translate }}
+                        </h2>
+
+                        <app-friend-list
+                                *ngIf="showFriendList"
+                                [friends]="currentUser?.friendList || []"
+                                [room]="room"
+                        ></app-friend-list>
+
+                        <p *ngIf="showFriendList && (currentUser?.friendList?.length === 0)" class="text-gray-500 mt-4">
+                            {{ 'profile.noFriends' | translate }}
+                        </p>
+                    </ng-container>
                 </div>
             </div>
 
@@ -159,9 +180,6 @@
             >
                 <app-text-poll [question]="question" [options]="options"></app-text-poll>
             </div>
-
-
-
 
 
         </div>
