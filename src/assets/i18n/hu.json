@@ -371,5 +371,9 @@
   },
   "common": {
     "close": "Bezárás"
+  },
+  "language": {
+    "hu": "Magyar",
+    "en": "Angol"
   }
 }

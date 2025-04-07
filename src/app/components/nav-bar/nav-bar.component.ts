@@ -177,4 +177,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
             this.friendRequestDropdownOpen = false;
         }
     }
+    toggleTheme(): void {
+        this.themeService.toggleTheme();
+    }
 }
