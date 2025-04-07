@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {take} from "rxjs";
 import {Room} from "src/api/models/room";
 import {ProfileUser} from "src/api/models/user";
@@ -38,6 +38,7 @@ export class GameComponent implements OnInit {
         private authService: AuthService, private dbService: DatabaseService,
         private userService: UsersService,
         private translate: TranslateService,
+        private route: ActivatedRoute,
     ) {
         this.roomCode = this.generateRoomCode(6, 12);
     }
@@ -47,6 +48,13 @@ export class GameComponent implements OnInit {
         this.checkAuthAndLoadUser();
         this.loadUserRooms();
         this.loadFriends();
+
+        this.route.queryParams.subscribe(params => {
+            const openModal = params['openModal'];
+            if (openModal === 'createRoom') {
+                this.toggleRoomDetails();
+            }
+        });
     }
 
     private checkAuthAndLoadUser(): void {
@@ -78,6 +86,12 @@ export class GameComponent implements OnInit {
         }
 
         this.showGenerateText = !this.showRoomDetails;
+
+        this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {openModal: null},
+            queryParamsHandling: 'merge'
+        });
     }
 
     toggleRoomForm() {
@@ -90,9 +104,7 @@ export class GameComponent implements OnInit {
     }
 
     toggleFriendList() {
-        console.log('[👀] Friend list toggle előtt:', this.showFriendList);
         this.showFriendList = !this.showFriendList;
-        console.log('[✅] Friend list toggle után:', this.showFriendList);
     }
 
 
@@ -109,7 +121,6 @@ export class GameComponent implements OnInit {
             if (user) {
                 this.userService.getFriends(user.uid).pipe(take(1)).subscribe((friends) => {
                     this.friends = friends;
-                    console.log('[✅] Barátok betöltve:', this.friends);
                 });
             }
         });
@@ -175,7 +186,6 @@ export class GameComponent implements OnInit {
 
                 this.dbService.createRoom(newRoom).subscribe({
                     next: () => {
-                        console.log('Room successfully created:', newRoom);
 
                         this.translate.get('room.success.created', {code: this.roomCode}).subscribe(res => {
                             this.snackbarService.success(res);
@@ -184,7 +194,6 @@ export class GameComponent implements OnInit {
                         if (this.currentUser?.uid) {
                             this.userService.addRoomToUser(this.currentUser.uid, newRoom).subscribe({
                                 next: () => {
-                                    console.log('Updated user rooms:', this.userRooms);
                                     this.translate.get('room.success.addedToProfile').subscribe(res => {
                                         this.snackbarService.success(res);
                                     });

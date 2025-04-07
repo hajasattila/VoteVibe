@@ -42,7 +42,8 @@
     "upload": {
       "loading": "Uploading profile image...",
       "success": "Image uploaded successfully.",
-      "error": "There was an error in uploading the image."
+      "error": "There was an error in uploading the image.",
+      "compressed": "Tömörítés: {{original}} KB → {{compressed}} KB"
     }
   },
   "nav": {
@@ -129,12 +130,17 @@
     "github": "Sign in with GitHub"
   },
   "room": {
+    "loading": "Loading rooms...",
+    "yours": "your room",
+    "member": "you are a member",
     "invites": {
       "title": "Room Invitations",
       "invitedYou": "invited you to this room",
       "accept": "Accept",
       "reject": "Reject",
-      "none": "You currently have no pending room invitations."
+      "none": "You currently have no pending room invitations.",
+      "code": "Code",
+      "yours": "yours"
     },
     "selectToJoin": "Select a room to join",
     "noRooms": "You don't have any rooms yet",

@@ -9,6 +9,7 @@ import {AuthService} from "src/api/services/auth-service/auth.service";
 import {Router} from "@angular/router";
 import {SnackbarService} from "../../../api/services/snackbar-service/snackbar-service.service";
 import {TranslateService} from "@ngx-translate/core";
+import {ImageCompressorService} from "../../../api/services/image-compress-service/imagecompress.service";
 
 @UntilDestroy()
 @Component({
@@ -21,6 +22,9 @@ export class ProfileComponent implements OnInit {
     user?: ProfileUser;
     showFriendRequests = false;
     @Input() friends: ProfileUser[] = [];
+
+    imageLoaded: boolean = false;
+    fallbackImage: string = '../../assets/images/image-placeholder.png';
 
 
     profileForm = this.fb.group({
@@ -41,7 +45,8 @@ export class ProfileComponent implements OnInit {
         private cdRef: ChangeDetectorRef,
         private router: Router,
         private snackbar: SnackbarService,
-        private translate: TranslateService
+        private translate: TranslateService,
+        private imageCompressor: ImageCompressorService,
     ) {
     }
 
@@ -83,31 +88,57 @@ export class ProfileComponent implements OnInit {
     }
 
 
-    uploadFile(event: any, {uid}: ProfileUser) {
+    uploadFile(event: any, { uid }: ProfileUser) {
         const file = event.target.files[0];
         if (!file) return;
 
-        this.translate.get('profile.upload.loading').subscribe(loadingMsg => {
-            this.snackbar.info(loadingMsg);
+        const originalSizeKB = (file.size / 1024).toFixed(2);
 
-            this.imageUploadService
-                .uploadImage(file, `images/profile/${uid}`)
-                .pipe(
-                    switchMap((photoURL) =>
-                        this.usersService.updateUser({
-                            uid,
-                            photoURL,
-                        })
-                    )
-                )
-                .subscribe({
-                    next: () => {
-                        this.translate.get('profile.upload.success').subscribe(msg => this.snackbar.success(msg));
-                    },
-                    error: () => {
-                        this.translate.get('profile.upload.error').subscribe(msg => this.snackbar.error(msg));
-                    },
+        this.translate.get('profile.upload.loading').subscribe(loadingMsg => {
+            this.snackbar.info(`${loadingMsg} (${originalSizeKB} KB)`);
+
+            this.imageCompressor.compressImage(file, 0.6, 600).then((compressedFile) => {
+                const compressedSizeKB = (compressedFile.size / 1024).toFixed(2);
+                console.log(`📦 Tömörítés eredménye: ${originalSizeKB} KB → ${compressedSizeKB} KB`);
+
+                this.translate.get('profile.upload.compressed', {
+                    original: originalSizeKB,
+                    compressed: compressedSizeKB
+                }).subscribe(msg => {
+                    this.snackbar.success(msg);
                 });
+
+                const imagePath = `images/profile/${uid}`;
+
+                this.imageUploadService.deleteImageByPath(imagePath)
+                    .then(() => {
+                        // console.log(`🗑️ Törölt kép: ${imagePath}`);
+                    })
+                    .catch((err) => {
+                        console.warn(`⚠️ Nem sikerült törölni a képet (${imagePath}) vagy nem létezett.`, err);
+                    })
+                    .finally(() => {
+                        this.imageUploadService
+                            .uploadImage(compressedFile, imagePath)
+                            .pipe(
+                                switchMap((photoURL) => {
+                                    // console.log(`⬆️ Feltöltött kép új URL-je: ${photoURL}`);
+                                    return this.usersService.updateUser({ uid, photoURL });
+                                })
+                            )
+                            .subscribe({
+                                next: () => {
+                                    this.translate.get('profile.upload.success').subscribe(msg => this.snackbar.success(msg));
+                                },
+                                error: () => {
+                                    this.translate.get('profile.upload.error').subscribe(msg => this.snackbar.error(msg));
+                                },
+                            });
+                    });
+            }).catch(error => {
+                console.error('❌ Képtömörítési hiba:', error);
+                this.translate.get('profile.upload.error').subscribe(msg => this.snackbar.error(msg));
+            });
         });
     }
 

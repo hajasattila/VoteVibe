@@ -86,13 +86,12 @@ export class DatabaseService {
 
     async savePollResultToRoom(roomDocId: string, result: Record<string, Record<string, number>>, userUid: string): Promise<void> {
         const roomRef = doc(this.firestore, 'rooms', roomDocId);
-        const userVotes = Object.values(result)[0]; // Az első (és egyetlen) szavazat objektum
+        const userVotes = Object.values(result)[0];
 
         await updateDoc(roomRef, {
             [`pollResults.${userUid}`]: userVotes
         });
     }
-
 
 
     async removePollResultFromRoom(roomDocId: string, userKey: string): Promise<void> {
@@ -110,6 +109,30 @@ export class DatabaseService {
         );
     }
 
+    getRoomsForUser(userUid: string): Observable<(Room & { isCreator: boolean })[]> {
+        const roomsRef = collection(this.firestore, 'rooms');
+        const q = query(roomsRef);
 
+        return from(getDocs(q)).pipe(
+            map(snapshot => {
+                return snapshot.docs
+                    .map(doc => {
+                        const room = doc.data() as Room;
+                        const isMember = room.members?.some(member => member.uid === userUid);
+                        const isCreator = room.creator?.uid === userUid;
 
+                        if (isMember) {
+                            return {
+                                ...room,
+                                docId: doc.id,
+                                isCreator
+                            } as Room & { isCreator: boolean };
+                        }
+
+                        return null;
+                    })
+                    .filter((room): room is Room & { isCreator: boolean } => room !== null);
+            })
+        );
+    }
 }

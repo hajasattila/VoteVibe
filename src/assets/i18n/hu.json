@@ -42,7 +42,8 @@
     "upload": {
       "loading": "Profilkép feltöltése...",
       "success": "A profilkép sikeresen feltöltve.",
-      "error": "Hiba történt a profilkép feltöltése során."
+      "error": "Hiba történt a profilkép feltöltése során.",
+      "compressed": "Tömörítés: {{original}} KB → {{compressed}} KB"
     }
   },
   "nav": {
@@ -129,6 +130,10 @@
     "github": "GitHub belépés"
   },
   "room": {
+    "loading": "Szobák betöltése...",
+    "noRooms": "Nincs megjeleníthető szoba.",
+    "yours": "saját szobád",
+    "member": "tag vagy",
     "invites": {
       "title": "Szobameghívások",
       "invitedYou": "meghívott ebbe a szobába",

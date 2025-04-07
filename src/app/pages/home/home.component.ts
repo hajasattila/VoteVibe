@@ -7,6 +7,8 @@ import {Room} from "../../../api/models/room";
 import {UsersService} from "../../../api/services/users-service/users.service";
 import {RoomInvite} from "../../../api/models/roomInvitation";
 import {DatabaseService} from "../../../api/services/database-service/database.service";
+import {ActivatedRoute} from '@angular/router';
+
 
 @Component({
     selector: 'app-home',
@@ -20,7 +22,8 @@ export class HomeComponent implements OnInit {
                 protected themeService: ThemeService,
                 protected translate: TranslateService,
                 private userService: UsersService,
-                protected dbService: DatabaseService,) {
+                protected dbService: DatabaseService,
+                private route: ActivatedRoute,) {
     }
 
     protected menuOpen = false;
@@ -31,10 +34,23 @@ export class HomeComponent implements OnInit {
     roomInvites: RoomInvite[] = [];
 
 
-    ngOnInit(): void {
-        this.initLanguage();
+    currentUserUid: string | null = null;
 
+    ngOnInit(): void {
+        this.authService.getCurrentUser().subscribe(user => {
+            this.currentUserUid = user?.uid || null;
+        });
+
+        this.route.queryParams.subscribe(params => {
+            const openModal = params['openModal'];
+            if (openModal === 'rooms') {
+                this.openRoomModal();
+            } else if (openModal === 'invites') {
+                this.openInviteModal();
+            }
+        });
     }
+
 
     logout() {
         this.authService.logout().subscribe(() => {
@@ -62,20 +78,41 @@ export class HomeComponent implements OnInit {
         this.menuOpen = !this.menuOpen;
     }
 
+    isRoomLoading: boolean = false;
+
     openRoomModal(): void {
         this.showRoomModal = true;
+        this.isRoomLoading = true;
 
         this.authService.getCurrentUser().subscribe((user) => {
             if (user) {
-                this.userService.getUserById(user.uid).subscribe((profileUser) => {
-                    this.userRooms = profileUser?.gameRooms || [];
+                this.dbService.getRoomsForUser(user.uid).subscribe((rooms) => {
+                    this.userRooms = rooms;
+                    this.isRoomLoading = false;
                 });
+            } else {
+                this.isRoomLoading = false;
             }
+        });
+
+        this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: { openModal: null },
+            queryParamsHandling: 'merge'
         });
     }
 
+
+
     closeRoomModal(): void {
         this.showRoomModal = false;
+
+        this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {openModal: null},
+            queryParamsHandling: 'merge'
+        });
+
     }
 
     navigateToRoom(room: Room): void {
@@ -97,20 +134,31 @@ export class HomeComponent implements OnInit {
 
     closeInviteModal(): void {
         this.showRoomInviteModal = false;
+
+        this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {openModal: null},
+            queryParamsHandling: 'merge'
+        });
     }
+
 
     acceptInvite(invite: RoomInvite): void {
         this.authService.getCurrentUser().subscribe(user => {
-            if (user) {
-                this.userService.getUserById(user.uid).subscribe(profile => {
-                    this.dbService.addUserToRoomByCode(invite.roomId, profile).subscribe(() => {
-                        this.userService.updateInviteStatus(user.uid, invite.roomId, 'accepted').subscribe(() => {
-                            this.router.navigate(['/room', invite.roomId]);
-                            this.closeInviteModal();
-                        });
+            if (!user) {
+                return;
+            }
+
+            this.userService.getUserById(user.uid).subscribe(profile => {
+                if (!profile) {
+                    return;
+                }
+                this.dbService.addUserToRoomByCode(invite.roomId, profile).subscribe(() => {
+                    this.userService.updateInviteStatus(user.uid, invite.roomId, 'accepted').subscribe(() => {
+                        this.router.navigate(['room', invite.roomId])
                     });
                 });
-            }
+            });
         });
     }
 
@@ -124,5 +172,17 @@ export class HomeComponent implements OnInit {
             }
         });
     }
+
+    loadUserRooms(): void {
+        this.authService.getCurrentUser().subscribe(user => {
+            if (!user) return;
+
+            this.dbService.getRoomsForUser(user.uid).subscribe(rooms => {
+                console.log('🧩 Szobák, amikben benne van a user:', rooms);
+                this.userRooms = rooms; // ha például itt akarod tárolni
+            });
+        });
+    }
+
 
 }

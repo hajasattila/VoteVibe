@@ -8,13 +8,18 @@ import {take} from "rxjs/operators";
     providedIn: "root",
 })
 export class RoomMemberGuard implements CanActivate {
-    constructor(private authService: AuthService, private dbService: DatabaseService, private router: Router) {
+    constructor(
+        private authService: AuthService,
+        private dbService: DatabaseService,
+        private router: Router
+    ) {
     }
 
     async canActivate(route: ActivatedRouteSnapshot): Promise<boolean | UrlTree> {
         const roomCode = route.paramMap.get("code");
+
         if (!roomCode) {
-            return false;
+            return this.router.parseUrl("/notfound");
         }
 
         try {
@@ -26,14 +31,20 @@ export class RoomMemberGuard implements CanActivate {
 
             const room = await this.dbService.getRoomByCode(roomCode).pipe(take(1)).toPromise();
 
-            if (room && room.members.some((member) => member.uid === currentUser.uid)) {
+            if (!room) {
+                return this.router.parseUrl("/notfound");
+            }
+
+            const isMember = (room.members || []).some(member => member.uid === currentUser.uid);
+
+            if (isMember) {
                 return true;
             } else {
-                return this.router.parseUrl("**");
+                return this.router.parseUrl("/notfound");
             }
+
         } catch (error) {
-            console.error(error);
-            return this.router.parseUrl("**");
+            return this.router.parseUrl("/notfound");
         }
     }
 }

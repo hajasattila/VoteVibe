@@ -1,11 +1,12 @@
-import { Injectable } from '@angular/core';
 import {
+  deleteObject,
   getDownloadURL,
   ref,
   Storage,
   uploadBytes,
 } from '@angular/fire/storage';
-import {  from, Observable, switchMap } from 'rxjs';
+import { from, Observable, switchMap } from 'rxjs';
+import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
@@ -18,4 +19,10 @@ export class ImageUploadService {
     const uploadTask = from(uploadBytes(storageRef, image));
     return uploadTask.pipe(switchMap((result) => getDownloadURL(result.ref)));
   }
+
+  deleteImageByPath(path: string): Promise<void> {
+    const imageRef = ref(this.storage, path);
+    return deleteObject(imageRef);
+  }
+
 }

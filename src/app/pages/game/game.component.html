@@ -139,10 +139,11 @@
                     </button>
 
                     <div *ngIf="userRooms.length > 0" class="mt-4">
-                        <a routerLink="/home"
+                        <a [routerLink]="['/home']" [queryParams]="{ openModal: 'rooms' }"
                            class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-4 cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-600 transition-colors duration-200 ease-in-out">
                             {{ 'room.yourRooms' | translate }}
                         </a>
+
                     </div>
                 </form>
             </div>

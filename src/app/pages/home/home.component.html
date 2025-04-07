@@ -3,7 +3,7 @@
         <div class="flex flex-col gap-4 lg:flex-col lg:h-full lg:justify-between">
 
             <div class="flex flex-col gap-4 flex-1 md:flex-none bg-white dark:bg-gray-900 rounded-md shadow-lg mb-0 md:mb-6 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl md:border-none px-6 md:px-4">
-                <a routerLink="/game"
+                <a routerLink="/game" [queryParams]="{ openModal: 'createRoom' }"
                    class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-4 transition-all duration-300 hover:translate-x-1">
                     <span class="material-icons-outlined mr-2">dashboard</span>
                     {{ 'home.menu.game' | translate }}
@@ -24,12 +24,12 @@
                 </a>
 
 
-<!--                <a href="#"-->
-<!--                   class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-4 transition-all duration-300 hover:translate-x-1">-->
-<!--                    <span class="material-icons-outlined mr-2">tune</span>-->
-<!--                    {{ 'home.menu.stats' | translate }}-->
-<!--                    <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>-->
-<!--                </a>-->
+                <!--                <a href="#"-->
+                <!--                   class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-4 transition-all duration-300 hover:translate-x-1">-->
+                <!--                    <span class="material-icons-outlined mr-2">tune</span>-->
+                <!--                    {{ 'home.menu.stats' | translate }}-->
+                <!--                    <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>-->
+                <!--                </a>-->
             </div>
             <div class="flex flex-col gap-4 flex-1 md:flex-none bg-white dark:bg-gray-900 rounded-md shadow-lg mb-0 md:mb-6 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl md:border-none px-6 md:px-4">
                 <a routerLink="/profile"
@@ -133,12 +133,12 @@
                             {{ 'home.menu.invitations' | translate }}
                             <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                         </a>
-<!--                        <a href="#"-->
-<!--                           class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-2 transition-all duration-300 hover:translate-x-1">-->
-<!--                            <span class="material-icons-outlined mr-2">tune</span>-->
-<!--                            {{ 'home.menu.stats' | translate }}-->
-<!--                            <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>-->
-<!--                        </a>-->
+                        <!--                        <a href="#"-->
+                        <!--                           class="flex items-center text-gray-600 dark:text-gray-300 hover:text-indigo-800 dark:hover:text-indigo-400 py-2 transition-all duration-300 hover:translate-x-1">-->
+                        <!--                            <span class="material-icons-outlined mr-2">tune</span>-->
+                        <!--                            {{ 'home.menu.stats' | translate }}-->
+                        <!--                            <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>-->
+                        <!--                        </a>-->
                     </div>
 
                     <div class="flex flex-col gap-4 bg-white dark:bg-gray-900 rounded-md shadow-md p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -215,14 +215,32 @@
             </h2>
         </div>
 
-        <ul *ngIf="userRooms.length > 0; else noRooms" class="list-none text-start space-y-2">
-            <li *ngFor="let room of userRooms.slice().reverse()">
-                <a (click)="navigateToRoom(room)"
-                   class="block w-full text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 cursor-pointer underline px-2 py-1 break-words">
-                    {{ room.roomName }} ({{ 'room.code' | translate }}: {{ room.roomId }})
-                </a>
-            </li>
-        </ul>
+        <ng-container *ngIf="isRoomLoading; else loadedRooms">
+            <div class="text-center py-6">
+    <span class="material-icons-outlined animate-spin text-indigo-500 text-4xl">
+      autorenew
+    </span>
+                <p class="mt-2 text-gray-500 dark:text-gray-400">{{ 'room.loading' | translate }}</p>
+            </div>
+        </ng-container>
+
+        <ng-template #loadedRooms>
+            <ng-container *ngIf="userRooms.length > 0; else noRooms">
+                <ul class="list-none text-start space-y-2">
+                    <li *ngFor="let room of userRooms.slice().reverse()">
+                        <a (click)="navigateToRoom(room)"
+                           class="block w-full text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 cursor-pointer underline px-2 py-1 break-words">
+                            {{ room.roomName }} ({{ 'room.code' | translate }}: {{ room.roomId }})
+                            <span *ngIf="room.creator?.uid === currentUserUid"
+                                  class="ml-2 text-sm text-yellow-600 dark:text-yellow-400 font-semibold">
+                                👑
+                          </span>
+                        </a>
+                    </li>
+                </ul>
+            </ng-container>
+        </ng-template>
+
 
         <ng-template #noRooms>
             <p class="text-gray-500 dark:text-gray-400 text-center mt-4">
