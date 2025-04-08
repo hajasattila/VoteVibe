@@ -12,8 +12,8 @@ import {
     DocumentReference
 } from "@angular/fire/firestore";
 import {Observable, from, map, switchMap} from "rxjs";
-import {Room, textPoll} from "../../models/room";
-import {ProfileUser} from "../../models/user";
+import {RoomModel, textPollModel} from "../../models/room.model";
+import {ProfileUser} from "../../models/user.model";
 
 @Injectable({
     providedIn: "root",
@@ -22,7 +22,7 @@ export class DatabaseService {
     constructor(private firestore: Firestore) {
     }
 
-    createRoom(room: Room): Observable<void> {
+    createRoom(room: RoomModel): Observable<void> {
         const roomRef = doc(collection(this.firestore, "rooms"));
         return from(setDoc(roomRef, room));
     }
@@ -36,13 +36,13 @@ export class DatabaseService {
         );
     }
 
-    getRoomByCode(code: string): Observable<Room | null> {
+    getRoomByCode(code: string): Observable<RoomModel | null> {
         const roomsRef = collection(this.firestore, "rooms");
         const q = query(roomsRef, where("connectionCode", "==", code));
         return from(getDocs(q)).pipe(
             map((snapshot) => {
                 if (snapshot.docs.length > 0) {
-                    const roomData = snapshot.docs[0].data() as Room;
+                    const roomData = snapshot.docs[0].data() as RoomModel;
                     const docId = snapshot.docs[0].id;
                     return {...roomData, docId};
                 }
@@ -58,7 +58,7 @@ export class DatabaseService {
         return from(getDocs(q)).pipe(
             map(snapshot => {
                 if (snapshot.empty) {
-                    throw new Error("Room not found with given code.");
+                    throw new Error("RoomModel not found with given code.");
                 }
                 return snapshot.docs[0].ref;
             })
@@ -74,7 +74,7 @@ export class DatabaseService {
         );
     }
 
-    addPollToRoom(docId: string, poll: textPoll): Observable<void> {
+    addPollToRoom(docId: string, poll: textPollModel): Observable<void> {
         const roomRef = doc(this.firestore, "rooms", docId);
         return from(updateDoc(roomRef, {poll}));
     }
@@ -111,7 +111,7 @@ export class DatabaseService {
         );
     }
 
-    getRoomsForUser(userUid: string): Observable<(Room & { isCreator: boolean })[]> {
+    getRoomsForUser(userUid: string): Observable<(RoomModel & { isCreator: boolean })[]> {
         const roomsRef = collection(this.firestore, 'rooms');
         const q = query(roomsRef);
 
@@ -119,7 +119,7 @@ export class DatabaseService {
             map(snapshot => {
                 return snapshot.docs
                     .map(doc => {
-                        const room = doc.data() as Room;
+                        const room = doc.data() as RoomModel;
                         const isMember = room.members?.some(member => member.uid === userUid);
                         const isCreator = room.creator?.uid === userUid;
 
@@ -128,12 +128,12 @@ export class DatabaseService {
                                 ...room,
                                 docId: doc.id,
                                 isCreator
-                            } as Room & { isCreator: boolean };
+                            } as RoomModel & { isCreator: boolean };
                         }
 
                         return null;
                     })
-                    .filter((room): room is Room & { isCreator: boolean } => room !== null);
+                    .filter((room): room is RoomModel & { isCreator: boolean } => room !== null);
             })
         );
     }

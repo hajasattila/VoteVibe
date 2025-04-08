@@ -1,5 +1,5 @@
-import {Room} from "./room";
-import {RoomInvite} from "./roomInvitation";
+import {RoomModel} from "./room.model";
+import {RoomInvite} from "./roomInvitation.model";
 
 export interface ProfileUser {
     uid: string;
@@ -15,7 +15,7 @@ export interface ProfileUser {
     polls?: number;
     friendRequests?: string[];
     sentFriendRequests?: string[];
-    gameRooms?: Room[];
+    gameRooms?: RoomModel[];
     pendingInvites?: RoomInvite[];
 }
 

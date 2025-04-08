@@ -12,12 +12,12 @@ import {
     arrayRemove, onSnapshot
 } from "@angular/fire/firestore";
 import {catchError, from, map, Observable, of, shareReplay, switchMap, tap, throwError} from "rxjs";
-import {ProfileUser} from "../../models/user";
+import {ProfileUser} from "../../models/user.model";
 import {AuthService} from "../auth-service/auth.service";
 import {runTransaction} from "firebase/firestore";
-import {Room} from "../../models/room";
+import {RoomModel} from "../../models/room.model";
 import {startWith} from "rxjs/operators";
-import {RoomInvite} from "../../models/roomInvitation";
+import {RoomInvite} from "../../models/roomInvitation.model";
 
 @Injectable({
     providedIn: "root",
@@ -210,7 +210,7 @@ export class UsersService {
         return this.getFilteredUsers(displayName).pipe(map((users) => users.some((user) => user.uid !== currentUserId && user.displayName?.toLowerCase() === displayName.toLowerCase())));
     }
 
-    addRoomToUser(userId: string | null, room: Room): Observable<void> {
+    addRoomToUser(userId: string | null, room: RoomModel): Observable<void> {
         if (!userId) {
             console.error("Invalid user ID");
             return throwError(() => new Error("Invalid user ID"));

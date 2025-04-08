@@ -4,7 +4,7 @@ import {Observable, of} from "rxjs";
 import {switchMap, startWith, take, map} from "rxjs/operators";
 import {UsersService} from "../../../api/services/users-service/users.service";
 import {AuthService} from "../../../api/services/auth-service/auth.service";
-import {ProfileUser} from "../../../api/models/user";
+import {ProfileUser} from "../../../api/models/user.model";
 import {TranslateService} from "@ngx-translate/core";
 import {SnackbarService} from "../../../api/services/snackbar-service/snackbar-service.service";
 
@@ -39,6 +39,10 @@ export class ProfileSearchComponent implements OnInit {
                 this.isAuthenticated = true;
                 this.currentUserId = user.uid;
 
+                this.userService.getUserById(user.uid).pipe(take(1)).subscribe(profile => {
+                    this.currentUser = profile;
+                });
+
                 this.filteredUsers$ = this.searchControl.valueChanges.pipe(
                     startWith(""),
                     switchMap((text) =>
@@ -62,6 +66,7 @@ export class ProfileSearchComponent implements OnInit {
             }
         });
     }
+
 
 
     @HostListener("document:click", ["$event"])
@@ -130,4 +135,11 @@ export class ProfileSearchComponent implements OnInit {
                 }
             });
     }
+
+    isAlreadyFriendOrRequested(uid: string): boolean {
+        const alreadyFriend = !!this.currentUser?.friendList?.some(friend => friend.uid === uid);
+        const alreadyRequested = !!this.currentUser?.sentFriendRequests?.includes(uid);
+        return alreadyFriend || alreadyRequested;
+    }
+
 }

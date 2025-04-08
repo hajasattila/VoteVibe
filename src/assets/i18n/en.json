@@ -132,6 +132,20 @@
   },
   "room": {
     "statsChart": {
+      "statsChart": {
+        "sortBy": "Rendezés",
+        "sortDefault": "Alapértelmezett sorrend",
+        "sortAsc": "Növekvő sorrend",
+        "sortDesc": "Csökkenő sorrend",
+        "sortIcons": {
+          "default": "sort",
+          "asc": "north",
+          "desc": "south"
+        },
+      "selectChartType": "Select chart type",
+      "podiumTitle": "Podium finishes",
+      "voterDetails": "Show voters",
+      "noVotes": "No one has voted yet.",
       "title": "Voting Statistics",
       "loading": "Loading chart...",
       "votes": "votes",
@@ -149,7 +163,6 @@
         "radialBar": "Radial Bar"
       }
     },
-
     "stats": "Statistics",
     "loading": "Loading rooms...",
     "yours": "your room",

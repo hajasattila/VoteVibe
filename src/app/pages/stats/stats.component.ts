@@ -1,23 +1,9 @@
 import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {DatabaseService} from 'src/api/services/database-service/database.service';
-import {
-    ApexNonAxisChartSeries,
-    ApexChart,
-    ApexResponsive,
-    ApexTitleSubtitle,
-    ApexTheme
-} from 'ng-apexcharts';
+import {ApexNonAxisChartSeries, ApexChart,} from 'ng-apexcharts';
 import {TranslateService} from '@ngx-translate/core';
-
-export type ChartOptions = {
-    series: ApexNonAxisChartSeries;
-    chart: ApexChart;
-    labels: string[];
-    responsive: ApexResponsive[];
-    title: ApexTitleSubtitle;
-    theme?: ApexTheme;
-};
+import {ChartOptions} from "../../../api/models/chartOptions.model";
 
 @Component({
     selector: 'app-stats',
@@ -35,6 +21,18 @@ export class StatsComponent implements OnInit, AfterViewInit {
     public labels: string[] = [];
     public series: ApexNonAxisChartSeries = [];
 
+    protected isLoading: boolean = true;
+    private themeObserver?: MutationObserver;
+
+    protected selectedUserId: string = 'all';
+    protected userDisplayMap: Record<string, string> = {};
+    protected userDropdownOpen = false;
+    protected voterDetails: { uid: string; votes: Record<string, number> }[] = [];
+    protected voterUids: string[] = [];
+
+    protected top3: { label: string, votes: number }[] = [];
+
+
     constructor(
         private route: ActivatedRoute,
         private dbService: DatabaseService,
@@ -44,7 +42,22 @@ export class StatsComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         this.dropdownReady = true;
+
+        const htmlEl = document.documentElement;
+        this.themeObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    this.updateChart();
+                }
+            });
+        });
+
+        this.themeObserver.observe(htmlEl, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
     }
+
 
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent) {
@@ -65,23 +78,37 @@ export class StatsComponent implements OnInit, AfterViewInit {
         if (!code) return;
 
         this.dbService.getRoomByCode(code).subscribe(room => {
-            if (!room?.pollResults || !room.poll?.options) return;
-
-            const totalVotes: Record<string, number> = {};
-
-            for (const userVotes of Object.values(room.pollResults)) {
-                if (userVotes && typeof userVotes === 'object') {
-                    for (const [option, count] of Object.entries(userVotes)) {
-                        totalVotes[option] = (totalVotes[option] || 0) + (count as number);
-                    }
-                }
+            if (!room?.pollResults || !room.poll?.options) {
+                this.isLoading = false;
+                return;
             }
 
+            const userMap: Record<string, string> = {};
+
+            this.voterDetails = Object.entries(room.pollResults)
+                .filter(([_, userVotes]) => userVotes && typeof userVotes === 'object')
+                .map(([uid, userVotes]) => {
+                    const display = room.members?.find(m => m.uid === uid)?.displayName || uid;
+                    userMap[uid] = display;
+                    return {uid, votes: userVotes};
+                });
+
+            this.userDisplayMap = userMap;
             this.labels = room.poll.options;
-            this.series = this.labels.map(option => totalVotes[option] || 0);
+            this.voterUids = this.voterDetails.map(v => v.uid);
+
+
+            this.series = this.labels.map(option => {
+                return this.voterDetails.reduce((sum, v) => sum + (v.votes?.[option] || 0), 0);
+            });
+            this.originalLabels = [...this.labels];
+            this.originalSeries = [...this.series];
+
             this.updateChart();
+            this.isLoading = false;
         });
     }
+
 
     updateChart(): void {
         const translatedTitle = this.translate.instant('room.statsChart.chartTitle');
@@ -102,10 +129,20 @@ export class StatsComponent implements OnInit, AfterViewInit {
             },
             labels: this.labels,
             title: {
-                text: translatedTitle
+                text: translatedTitle,
+                style: {
+                    color: isDark ? '#f3f4f6' : '#1f2937',
+                    fontSize: '20px',
+                    fontWeight: 'bold'
+                }
             },
             theme: {
                 mode: isDark ? 'dark' : 'light'
+            },
+            legend: {
+                labels: {
+                    colors: isDark ? '#f3f4f6' : '#1f2937'
+                }
             },
             responsive: [
                 {
@@ -121,7 +158,17 @@ export class StatsComponent implements OnInit, AfterViewInit {
                 }
             ]
         };
+
+        this.top3 = this.labels
+            .map((label, i) => ({
+                label,
+                votes: this.series[i] || 0
+            }))
+            .sort((a, b) => b.votes - a.votes)
+            .slice(0, 3);
+
     }
+
 
     chartTypes: string[] = ['pie', 'donut', 'bar', 'line', 'radar', 'area', 'polarArea', 'radialBar'];
     selectedChartType: string = 'pie';
@@ -154,6 +201,66 @@ export class StatsComponent implements OnInit, AfterViewInit {
                 return 'radio_button_checked';
             default:
                 return 'insert_chart';
+        }
+    }
+
+    onUserSelectChange(): void {
+        if (this.selectedUserId === 'all') {
+            this.series = this.labels.map(option => {
+                return this.voterDetails.reduce((sum, v) => sum + (v.votes?.[option] || 0), 0);
+            });
+        } else {
+            const userVotes = this.voterDetails.find(v => v.uid === this.selectedUserId)?.votes || {};
+            this.series = this.labels.map(option => userVotes[option] || 0);
+        }
+
+        this.updateChart();
+    }
+
+    sortOption: 'default' | 'asc' | 'desc' = 'default';
+    originalLabels: string[] = [];
+    originalSeries: ApexNonAxisChartSeries = [];
+
+    onSortOptionChange(): void {
+        let data: { label: string, votes: number }[];
+
+        if (this.sortOption === 'default') {
+            this.labels = [...this.originalLabels];
+            this.series = [...this.originalSeries];
+        } else {
+            data = this.labels.map((label, i) => ({label, votes: this.series[i]}));
+
+            if (this.sortOption === 'asc') {
+                data = data.sort((a, b) => a.votes - b.votes);
+            } else if (this.sortOption === 'desc') {
+                data = data.sort((a, b) => b.votes - a.votes);
+            }
+
+            this.labels = data.map(d => d.label);
+            this.series = data.map(d => d.votes);
+        }
+
+        this.updateChart();
+    }
+
+    sortDropdownOpen = false;
+    sortOptions: ('default' | 'asc' | 'desc')[] = ['default', 'desc', 'asc'];
+
+    selectSortOption(option: 'default' | 'asc' | 'desc'): void {
+        this.sortOption = option;
+        this.sortDropdownOpen = false;
+        this.onSortOptionChange();
+    }
+
+    getSortIcon(option: 'default' | 'asc' | 'desc'): string {
+        switch (option) {
+            case 'asc':
+                return 'arrow_upward';
+            case 'desc':
+                return 'arrow_downward';
+            case 'default':
+            default:
+                return 'sort';
         }
     }
 }

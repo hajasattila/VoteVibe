@@ -34,9 +34,14 @@
                     <div class="flex-grow">
                         <div class="font-medium text-gray-700 dark:text-white">{{ user.displayName }}</div>
                     </div>
-                    <button class="ml-4 hover:text-indigo-500" (click)="onAddFriend(user)">
+                    <button
+                            class="ml-4 hover:text-indigo-500 disabled:text-gray-400"
+                            (click)="onAddFriend(user)"
+                            [disabled]="isAlreadyFriendOrRequested(user.uid)"
+                    >
                         <mat-icon>add</mat-icon>
                     </button>
+
                 </li>
             </ul>
         </div>

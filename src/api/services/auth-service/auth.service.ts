@@ -11,7 +11,7 @@ import {
     signInWithPopup,
 } from "@angular/fire/auth";
 import {from, Observable, switchMap} from "rxjs";
-import {ProfileUser} from "../../models/user";
+import {ProfileUser} from "../../models/user.model";
 import {Firestore, doc, getDoc, setDoc} from "@angular/fire/firestore";
 
 @Injectable({

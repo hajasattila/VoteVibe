@@ -1,0 +1,122 @@
+@keyframes fade-in-up {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out both;
+}
+.delay-100 {
+    animation-delay: 0.1s;
+}
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+@keyframes fireworks {
+    0% {
+        background-position: 0% 0%;
+    }
+    100% {
+        background-position: 200% 200%;
+    }
+}
+
+.bg-fireworks {
+    background-image: radial-gradient(circle at 10% 20%, #facc15, transparent 30%),
+    radial-gradient(circle at 80% 10%, #ef4444, transparent 30%),
+    radial-gradient(circle at 50% 50%, #3b82f6, transparent 30%),
+    radial-gradient(circle at 30% 80%, #a78bfa, transparent 30%);
+    background-size: 400% 400%;
+}
+
+.animate-fireworks {
+    animation: fireworks 15s linear infinite;
+}
+@keyframes bang {
+    to {
+        box-shadow:
+                50px 60px hsl(0, 100%, 50%),
+                -60px -30px hsl(40, 100%, 50%),
+                30px -70px hsl(120, 100%, 50%),
+                -40px 80px hsl(210, 100%, 50%),
+                70px -40px hsl(280, 100%, 50%);
+    }
+}
+
+@keyframes gravity {
+    to {
+        transform: translateY(200px);
+        opacity: 0;
+    }
+}
+
+@keyframes position {
+    0%, 19.9% {
+        margin-top: 10%;
+        margin-left: 40%;
+    }
+    20%, 39.9% {
+        margin-top: 40%;
+        margin-left: 30%;
+    }
+    40%, 59.9% {
+        margin-top: 20%;
+        margin-left: 70%;
+    }
+    60%, 79.9% {
+        margin-top: 30%;
+        margin-left: 20%;
+    }
+    80%, 99.9% {
+        margin-top: 30%;
+        margin-left: 80%;
+    }
+}
+
+.pyro > .before,
+.pyro > .after {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: 0 0 #fff;
+    animation: bang 1s ease-out infinite, gravity 1s ease-in infinite, position 5s linear infinite;
+    pointer-events: none;
+}
+
+.pyro > .after {
+    animation-delay: 1.25s, 1.25s, 1.25s;
+}
+.bounce-slow {
+    animation: bounce-slow 3s ease-in-out infinite;
+}
+
+@keyframes bounce-slow {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+.bounce-mid {
+    animation: bounce-mid 1.5s ease-in-out infinite;
+}
+
+@keyframes bounce-mid {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-12px);
+    }
+}
+

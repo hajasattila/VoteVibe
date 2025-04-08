@@ -5,9 +5,9 @@ import {
     ChangeDetectorRef,
     ChangeDetectionStrategy, ViewChildren, QueryList, ElementRef,
 } from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {DatabaseService} from '../../../api/services/database-service/database.service';
-import {Room} from '../../../api/models/room';
+import {RoomModel} from '../../../api/models/room.model';
 import {interval, Subscription} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {TranslateService} from '@ngx-translate/core';
@@ -17,7 +17,7 @@ import {AuthService} from "../../../api/services/auth-service/auth.service";
 import {DocumentReference, onSnapshot} from "@angular/fire/firestore";
 import firebase from "firebase/compat";
 import DocumentData = firebase.firestore.DocumentData;
-import {ProfileUser} from "../../../api/models/user";
+import {ProfileUser} from "../../../api/models/user.model";
 import {UsersService} from "../../../api/services/users-service/users.service";
 
 @Component({
@@ -29,7 +29,7 @@ import {UsersService} from "../../../api/services/users-service/users.service";
 export class RoomDetailsComponent implements OnInit, OnDestroy {
     @ViewChildren('optionInput') optionInputs!: QueryList<ElementRef<HTMLInputElement>>;
 
-    protected room: Room | null = null;
+    protected room: RoomModel | null = null;
     protected remainingTime = '';
     protected options: string[] = ['', ''];
     protected question = '';
@@ -57,6 +57,7 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         private location: Location,
         private authService: AuthService,
         private userService: UsersService,
+        private router: Router
     ) {
     }
 
@@ -90,7 +91,7 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
                 this.unsubscribeSnapshot?.();
 
                 this.unsubscribeSnapshot = onSnapshot(roomRef, (snapshot) => {
-                    const room = snapshot.data() as Room;
+                    const room = snapshot.data() as RoomModel;
 
                     if (room && room.endTime) {
                         this.room = {...room, docId: roomRef.id};
@@ -272,4 +273,10 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
     toggleFriendList(): void {
         this.showFriendList = !this.showFriendList;
     }
+
+    goToStats(): void {
+        const code = this.route.snapshot.paramMap.get('code');
+        if (code) this.router.navigate(['/room', code, 'stats']);
+    }
+
 }

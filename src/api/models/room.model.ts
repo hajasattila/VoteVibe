@@ -1,7 +1,7 @@
-import {textPoll} from "./textPoll";
-import {ProfileUser} from "./user";
+import {textPollModel} from "./textPoll.model";
+import {ProfileUser} from "./user.model";
 
-export interface Room {
+export interface RoomModel {
     docId?: string;
     roomId: string;
     roomName: string;
@@ -16,11 +16,11 @@ export interface Room {
         nanoseconds: number;
     };
     isAnonymous: boolean;
-    poll?: textPoll;
+    poll?: textPollModel;
     pollCreated?: boolean;
     pollResults?: Record<string, Record<string, number>>;
-
+    createdAt: Date;
 }
 
-export {textPoll};
+export {textPollModel};
 

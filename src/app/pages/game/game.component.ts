@@ -1,8 +1,8 @@
 import {Component, OnInit} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {take} from "rxjs";
-import {Room} from "src/api/models/room";
-import {ProfileUser} from "src/api/models/user";
+import {RoomModel} from "src/api/models/room.model";
+import {ProfileUser} from "src/api/models/user.model";
 import {AuthService} from "src/api/services/auth-service/auth.service";
 import {DatabaseService} from "src/api/services/database-service/database.service";
 import {UsersService} from "src/api/services/users-service/users.service";
@@ -29,8 +29,8 @@ export class GameComponent implements OnInit {
     protected showRoomForm: boolean = false;
     protected showRoomDetails = false;
     protected showGenerateText = true;
-    protected userRooms: Room[] = [];
-    protected currentRoom: Room | null = null;
+    protected userRooms: RoomModel[] = [];
+    protected currentRoom: RoomModel | null = null;
     protected friendListLoaded: boolean = false;
 
 
@@ -159,7 +159,7 @@ export class GameComponent implements OnInit {
 
         const sanitizedUser = this.sanitizeUser(this.currentUser);
 
-        let newRoom: Room = {
+        let newRoom: RoomModel = {
             roomId: this.roomCode,
             roomName: this.roomName,
             creator: sanitizedUser,
@@ -178,9 +178,9 @@ export class GameComponent implements OnInit {
                 options: [],
             },
             pollCreated: false,
+            createdAt: new Date()
         };
         this.currentRoom = newRoom;
-
 
         this.dbService
             .roomIdExists(this.roomCode)

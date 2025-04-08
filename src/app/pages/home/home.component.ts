@@ -3,9 +3,9 @@ import {AuthService} from 'src/api/services/auth-service/auth.service';
 import {Router} from "@angular/router";
 import {ThemeService} from "../../../api/services/theme-service/theme-service.service";
 import {TranslateService} from "@ngx-translate/core";
-import {Room} from "../../../api/models/room";
+import {RoomModel} from "../../../api/models/room.model";
 import {UsersService} from "../../../api/services/users-service/users.service";
-import {RoomInvite} from "../../../api/models/roomInvitation";
+import {RoomInvite} from "../../../api/models/roomInvitation.model";
 import {DatabaseService} from "../../../api/services/database-service/database.service";
 import {ActivatedRoute} from '@angular/router';
 
@@ -28,7 +28,7 @@ export class HomeComponent implements OnInit {
 
     protected menuOpen = false;
     showRoomModal: boolean = false;
-    userRooms: Room[] = [];
+    userRooms: RoomModel[] = [];
 
     showRoomInviteModal = false;
     roomInvites: RoomInvite[] = [];
@@ -87,7 +87,11 @@ export class HomeComponent implements OnInit {
         this.authService.getCurrentUser().subscribe((user) => {
             if (user) {
                 this.dbService.getRoomsForUser(user.uid).subscribe((rooms) => {
-                    this.userRooms = rooms;
+                    this.userRooms = rooms.sort((a, b) => {
+                        const dateA = new Date(a.createdAt).getTime();
+                        const dateB = new Date(b.createdAt).getTime();
+                        return dateB - dateA;
+                    });
                     this.isRoomLoading = false;
                 });
             } else {
@@ -115,7 +119,7 @@ export class HomeComponent implements OnInit {
 
     }
 
-    navigateToRoom(room: Room): void {
+    navigateToRoom(room: RoomModel): void {
         this.closeRoomModal();
         this.router.navigate(['/room', room.roomId]);
     }

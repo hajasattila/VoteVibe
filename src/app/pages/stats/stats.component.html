@@ -1,4 +1,11 @@
-<div class="flex flex-col lg:flex-row h-screen text-gray-800 dark:text-gray-100 transition-colors duration-300 pt-24 px-4">
+<div class="flex flex-col lg:flex-row min-h-screen text-gray-800 dark:text-gray-100 transition-colors duration-300 pt-24 px-4">
+    <div *ngIf="isLoading"
+         class="fixed inset-0 flex items-center justify-center z-50 bg-white dark:bg-gray-900 bg-opacity-90">
+        <div class="relative w-16 h-16">
+            <div class="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin "></div>
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
     <div class="w-full max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl animate-fade-in">
 
         <h2 class="text-3xl md:text-4xl font-bold text-indigo-600 dark:text-indigo-300 text-center mb-6 flex items-center justify-center gap-2">
@@ -6,32 +13,111 @@
             {{ 'room.statsChart.title' | translate }}
         </h2>
 
+        <div class="flex flex-col lg:flex-row gap-4 items-start mb-6">
 
-        <!-- 💡 Chart Type Selector -->
-        <div class="relative inline-block text-left w-full" #dropdownWrapper>
-            <button type="button"
-                    (click)="toggleChartDropdown()"
-                    class="mb-4 mx-auto lg:w-1/3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-indigo-500 flex justify-between items-center">
-    <span>
-      <span class="material-icons-outlined align-middle mr-2">
-        {{ getChartIcon(selectedChartType) }}
-      </span>
-        {{ 'room.statsChart.types.' + selectedChartType | translate }}
-    </span>
-                <span class="material-icons-outlined text-base">expand_more</span>
-            </button>
+            <!-- CHART TÍPUS DROPDOWN -->
+            <div class="relative w-full lg:w-1/2" #dropdownWrapper>
+                <label class="block mb-1 font-semibold text-gray-700 dark:text-gray-300">
+                    {{ 'room.statsChart.selectChartType' | translate }}
+                </label>
+                <button type="button"
+                        (click)="toggleChartDropdown()"
+                        class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm px-4 text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-indigo-500 flex justify-between items-center h-10">
+            <span>
+                <span class="material-icons-outlined align-middle mr-2">
+                    {{ getChartIcon(selectedChartType) }}
+                </span>
+                {{ 'room.statsChart.types.' + selectedChartType | translate }}
+            </span>
+                    <span class="material-icons-outlined text-base">expand_more</span>
+                </button>
 
-            <div *ngIf="chartDropdownOpen"
-                 class="absolute left-1/2 -translate-x-1/2 mt-1 w-64 rounded-md shadow-lg bg-white dark:bg-gray-900 ring-1 ring-black ring-opacity-5 z-10">
-                <div class="py-1 text-sm text-gray-700 dark:text-gray-200">
-                    <button *ngFor="let type of chartTypes"
-                            (click)="selectChartType(type)"
-                            class="w-full flex items-center px-4 py-2 hover:bg-indigo-50 dark:hover:bg-gray-800 transition text-left">
-                        <span class="material-icons-outlined mr-2">{{ getChartIcon(type) }}</span>
-                        {{ 'room.statsChart.types.' + type | translate }}
-                    </button>
+                <div *ngIf="chartDropdownOpen"
+                     class="absolute mt-1 w-full rounded-md shadow-lg bg-white dark:bg-gray-900 ring-1 ring-black ring-opacity-5 z-10">
+                    <div class="py-1 text-sm text-gray-700 dark:text-gray-200">
+                        <button *ngFor="let type of chartTypes"
+                                (click)="selectChartType(type)"
+                                class="w-full flex items-center px-4 py-2 hover:bg-indigo-50 dark:hover:bg-gray-800 transition text-left">
+                            <span class="material-icons-outlined mr-2">{{ getChartIcon(type) }}</span>
+                            {{ 'room.statsChart.types.' + type | translate }}
+                        </button>
+                    </div>
                 </div>
             </div>
+
+            <!-- User-->
+            <div class="w-full lg:w-1/2 relative">
+                <label class="block mb-1 font-semibold text-gray-700 dark:text-gray-300">
+                    {{ 'room.statsChart.selectUser' | translate }}
+                </label>
+
+                <button type="button"
+                        (click)="userDropdownOpen = !userDropdownOpen"
+                        class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm px-4 text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-indigo-500 flex justify-between items-center h-10">
+        <span class="flex items-center">
+            <span class="material-icons-outlined mr-2">
+                {{ selectedUserId === 'all' ? 'groups' : 'person' }}
+            </span>
+            {{ selectedUserId === 'all' ? ('room.statsChart.optionAll' | translate) : userDisplayMap[selectedUserId] }}
+        </span>
+                    <span class="material-icons-outlined text-base">expand_more</span>
+                </button>
+
+                <div *ngIf="userDropdownOpen"
+                     class="absolute top-full left-0 mt-1 w-full rounded-md shadow-lg bg-white dark:bg-gray-900 ring-1 ring-black ring-opacity-5 z-10">
+                    <div class="py-1 text-sm text-gray-700 dark:text-gray-200 max-h-64 overflow-y-auto">
+                        <button (click)="selectedUserId = 'all'; userDropdownOpen = false; onUserSelectChange()"
+                                class="w-full flex items-center px-4 py-2 hover:bg-indigo-50 dark:hover:bg-gray-800 transition text-left">
+                            <span class="material-icons-outlined mr-2">groups</span>
+                            {{ 'room.statsChart.optionAll' | translate }}
+                        </button>
+
+                        <button *ngFor="let uid of voterUids"
+                                (click)="selectedUserId = uid; userDropdownOpen = false; onUserSelectChange()"
+                                class="w-full flex items-center px-4 py-2 hover:bg-indigo-50 dark:hover:bg-gray-800 transition text-left">
+                            <span class="material-icons-outlined mr-2">person</span>
+                            {{ userDisplayMap[uid] }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sorrendezés Dropdown -->
+            <!-- Sorrendezés Dropdown -->
+            <div class="w-full lg:w-1/2 relative">
+                <label class="block mb-1 font-semibold text-gray-700 dark:text-gray-300">
+                    {{ 'room.statsChart.sortBy' | translate }}
+                </label>
+
+                <button type="button"
+                        (click)="sortDropdownOpen = !sortDropdownOpen"
+                        class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm px-4 text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-indigo-500 flex justify-between items-center h-10">
+        <span class="flex items-center">
+            <span class="material-icons-outlined mr-2">
+                {{ getSortIcon(sortOption) }}
+            </span>
+            {{ 'room.statsChart.sort' + (sortOption | titlecase) | translate }}
+        </span>
+                    <span class="material-icons-outlined text-base">expand_more</span>
+                </button>
+
+                <div *ngIf="sortDropdownOpen"
+                     class="absolute mt-1 w-full rounded-md shadow-lg bg-white dark:bg-gray-900 ring-1 ring-black ring-opacity-5 z-10">
+                    <div class="py-1 text-sm text-gray-700 dark:text-gray-200">
+                        <button *ngFor="let option of sortOptions"
+                                (click)="selectSortOption(option)"
+                                class="w-full flex items-center px-4 py-2 hover:bg-indigo-50 dark:hover:bg-gray-800 transition text-left">
+                            <span class="material-icons-outlined mr-2">{{ getSortIcon(option) }}</span>
+                            {{ 'room.statsChart.sort' + (option | titlecase) | translate }}
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
         </div>
 
 
@@ -44,17 +130,55 @@
                     [title]="chartOptions.title"
             ></apx-chart>
 
+            <!-- 🏆 PÓDIUM -->
+            <div class="relative mt-12 z-10">
+                <h3 class="text-2xl font-bold text-center text-indigo-600 dark:text-indigo-300 mb-4">
+                    🏆 Top 3 – {{ 'room.statsChart.podiumTitle' | translate }}
+                </h3>
+
+                <div class="pyro absolute inset-0 pointer-events-none">
+                    <div class="before"></div>
+                    <div class="after"></div>
+                </div>
+
+                <div class="flex justify-center items-end gap-6 mt-10 animate-fade-in">
+                    <!-- 2. hely -->
+                    <div class="flex flex-col items-center">
+                        <div class="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">{{ top3[1]?.label }}</div>
+                        <div class="bg-slate-400 dark:bg-slate-600 w-20 h-24 rounded-t-md flex items-center justify-center text-white text-lg font-bold">
+                            2
+                        </div>
+                    </div>
+
+                    <!-- 1. hely -->
+                    <div class="flex flex-col items-center">
+                        <div class="text-base font-semibold text-yellow-600 dark:text-yellow-400 mb-2">{{ top3[0]?.label }}</div>
+                        <div class="bg-yellow-400 dark:bg-yellow-600 w-24 h-32 rounded-t-md flex items-center justify-center text-white text-xl font-bold shadow-lg">
+                            1
+                        </div>
+                    </div>
+
+                    <!-- 3. hely -->
+                    <div class="flex flex-col items-center">
+                        <div class="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">{{ top3[2]?.label }}</div>
+                        <div class="bg-orange-400 dark:bg-orange-600 w-20 h-20 rounded-t-md flex items-center justify-center text-white text-lg font-bold">
+                            3
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <ul class="mt-6 divide-y divide-gray-200 dark:divide-gray-700">
                 <li
                         *ngFor="let label of chartOptions.labels; let i = index"
                         class="py-2 flex justify-between items-center"
                 >
-          <span class="font-semibold text-indigo-700 dark:text-indigo-300">
-            {{ i + 1 }}. {{ label }}
-          </span>
+                      <span class="font-semibold text-indigo-700 dark:text-indigo-300">
+                        {{ i + 1 }}. {{ label }}
+                      </span>
                     <span class="text-gray-600 dark:text-gray-300">
-            {{ chartOptions.series[i] }} {{ 'room.statsChart.votes' | translate }}
-          </span>
+                        {{ chartOptions.series[i] }} {{ 'room.statsChart.votes' | translate }}
+                      </span>
                 </li>
             </ul>
         </div>

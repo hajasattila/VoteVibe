@@ -132,6 +132,21 @@
   },
   "room": {
     "statsChart": {
+      "sortBy": "Rendezés",
+      "sortDefault": "Alapértelmezett sorrend",
+      "sortAsc": "Növekvő sorrend",
+      "sortDesc": "Csökkenő sorrend",
+      "sortIcons": {
+        "default": "sort",
+        "asc": "north",
+        "desc": "south"
+      },
+      "selectChartType": "Diagra kiválasztása",
+      "podiumTitle": "Dobogós helyezések",
+      "selectUser": "Felhasználó kiválasztása",
+      "optionAll": "Mindenki",
+      "voterDetails": "Szavazók megjelenítése",
+      "noVotes": "Még senki sem szavazott.",
       "title": "Szavazati statisztika",
       "loading": "Diagram betöltése...",
       "votes": "szavazat",

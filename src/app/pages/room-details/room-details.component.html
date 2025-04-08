@@ -169,10 +169,13 @@
             <div *ngIf="remainingTime === 'Expired' || remainingTime === 'Lejárt'" class="w-full">
                 <button
                         type="button"
-                        class="text-white bg-indigo-500 hover:bg-indigo-600 rounded-md py-2 px-4 text-lg shadow-sm transition duration-150 ease-in-out w-full">
+                        class="text-white bg-indigo-500 hover:bg-indigo-600 rounded-md py-2 px-4 text-lg shadow-sm transition duration-150 ease-in-out w-full"
+                        (click)="goToStats()"
+                >
                     {{ 'room.viewStats' | translate }}
                 </button>
             </div>
+
 
             <div
                     *ngIf="room?.pollCreated && remainingTime !== 'Expired' && remainingTime !== 'Lejárt'"

@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, Input, OnInit} from "@angular/core";
 import {NonNullableFormBuilder, Validators} from "@angular/forms";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {first, switchMap, take, tap} from "rxjs";
-import {ProfileUser} from "src/api/models/user";
+import {ProfileUser} from "src/api/models/user.model";
 import {ImageUploadService} from "src/api/services/image-upload-service/image-upload.service";
 import {UsersService} from "src/api/services/users-service/users.service";
 import {AuthService} from "src/api/services/auth-service/auth.service";

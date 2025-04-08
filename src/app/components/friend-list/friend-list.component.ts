@@ -7,13 +7,13 @@ import {
 } from "@angular/core";
 import {of} from "rxjs";
 import {switchMap} from "rxjs/operators";
-import {ProfileUser} from "../../../api/models/user";
+import {ProfileUser} from "../../../api/models/user.model";
 import {UsersService} from "../../../api/services/users-service/users.service";
 import {TranslateService} from "@ngx-translate/core";
 import {SnackbarService} from "../../../api/services/snackbar-service/snackbar-service.service";
 import {AuthService} from "../../../api/services/auth-service/auth.service";
 import {Router} from "@angular/router";
-import {Room} from "../../../api/models/room";
+import {RoomModel} from "../../../api/models/room.model";
 
 @Component({
     selector: "app-friend-list",
@@ -25,7 +25,7 @@ export class FriendListComponent implements OnInit, OnChanges, OnDestroy {
     wasInvited: boolean = false;
     isLoadingFriends = true;
 
-    @Input() set room(value: Room | null) {
+    @Input() set room(value: RoomModel | null) {
         this._room = value;
 
         if (value?.roomId && this.invitedFriends.size > 0) {
@@ -52,7 +52,7 @@ export class FriendListComponent implements OnInit, OnChanges, OnDestroy {
         }
     }
 
-    private _room: Room | null = null;
+    private _room: RoomModel | null = null;
 
     invitedFriends: Set<string> = new Set();
     friendImages: { [uid: string]: string } = {};
