@@ -142,250 +142,251 @@
           "asc": "north",
           "desc": "south"
         },
-      "selectChartType": "Select chart type",
-      "podiumTitle": "Podium finishes",
-      "voterDetails": "Show voters",
-      "noVotes": "No one has voted yet.",
-      "title": "Voting Statistics",
-      "loading": "Loading chart...",
-      "votes": "votes",
-      "chartTitle": "Vote Distribution",
-      "seriesName": "Votes",
-      "selectType": "Chart Type",
-      "types": {
-        "pie": "Pie Chart",
-        "donut": "Donut Chart",
-        "bar": "Bar Chart",
-        "line": "Line Chart",
-        "radar": "Radar Chart",
-        "area": "Area Chart",
-        "polarArea": "Polar Area Chart",
-        "radialBar": "Radial Bar"
+        "selectChartType": "Select chart type",
+        "podiumTitle": "Podium finishes",
+        "voterDetails": "Show voters",
+        "noVotes": "No one has voted yet.",
+        "title": "Voting Statistics",
+        "loading": "Loading chart...",
+        "votes": "votes",
+        "chartTitle": "Vote Distribution",
+        "seriesName": "Votes",
+        "selectType": "Chart Type",
+        "types": {
+          "pie": "Pie Chart",
+          "donut": "Donut Chart",
+          "bar": "Bar Chart",
+          "line": "Line Chart",
+          "radar": "Radar Chart",
+          "area": "Area Chart",
+          "polarArea": "Polar Area Chart",
+          "radialBar": "Radial Bar"
+        }
+      },
+      "stats": "Statistics",
+      "loading": "Loading rooms...",
+      "yours": "your room",
+      "member": "you are a member",
+      "invites": {
+        "title": "Room Invitations",
+        "invitedYou": "invited you to this room",
+        "accept": "Accept",
+        "reject": "Reject",
+        "none": "You currently have no pending room invitations.",
+        "code": "Code",
+        "yours": "yours"
+      },
+      "selectToJoin": "Select a room to join",
+      "noRooms": "You don't have any rooms yet",
+      "waitingForPoll": "The owner has not yet entered a question!",
+      "addedQuestions": "Added Questions",
+      "option": "Option",
+      "errorMissingRoom": "Room details are missing.",
+      "errorMissingQuestion": "The question is required.",
+      "errorMissingOption": "All options must be filled out.",
+      "pollSuccess": "Poll added successfully.",
+      "errorUpdateRoom": "Failed to update room state.",
+      "errorPollCreation": "Failed to add poll.",
+      "errorLoadRoom": "Failed to load room data.",
+      "back": "Back",
+      "expired": "Expired",
+      "name": "Room Name",
+      "code": "Connection Code",
+      "timeRemaining": "Remaining Time",
+      "participants": "Participants",
+      "questionLabel": "Question:",
+      "questionPlaceholder": "Enter your question",
+      "optionsLabel": "Options:",
+      "optionPlaceholder": "Enter an option",
+      "addOption": "Add another option",
+      "createPoll": "Create Poll",
+      "viewStats": "View Statistics",
+      "generateRoom": "Generate a room",
+      "roomCode": "Room Code",
+      "roomNameLabel": "Room's name",
+      "roomNamePlaceholder": "Name of the room",
+      "roomNameRequired": "You have to give a name for the room!",
+      "timeLimit": "Time limit (hr/hrs)",
+      "voteType": "Type of the vote",
+      "anonymous": "Anonymous:",
+      "inviteFriends": "Invite friends:",
+      "generate": "Generate the room",
+      "joinRoom": "Join a room",
+      "joinWithCode": "Connect to a room by code:",
+      "roomCodePlaceholder": "Enter the room code...",
+      "join": "Join",
+      "yourRooms": "Your rooms",
+      "time": {
+        "60min": "60 min",
+        "6hour": "6 hours",
+        "12hour": "12 hours",
+        "24hour": "24 hours"
+      },
+      "voteTypeOptions": {
+        "picture": "Picture based",
+        "text": "Text based"
+      },
+      "error": {
+        "loginRequired": "You must be logged in to create a room.",
+        "roomNameRequired": "Please provide a room name.",
+        "addToProfile": "Failed to add room to your profile: {{ error }}",
+        "creationFailed": "Failed to create room: {{ error }}",
+        "codeRequired": "Please enter a room code.",
+        "loginRequiredJoin": "You must be logged in to join a room.",
+        "codeNotFound": "No such room code exists.",
+        "missingDocId": "Room data is incomplete. Missing document ID.",
+        "expired": "This room has already expired.",
+        "joinFailed": "There was an error joining the room: {{ error }}"
+      },
+      "info": {
+        "newCode": "Room ID already exists. Generated a new code: {{ code }}",
+        "alreadyMember": "You are already a member of this room."
+      },
+      "success": {
+        "created": "Room successfully created with code: {{ code }}",
+        "addedToProfile": "Room added to your profile successfully.",
+        "joined": "You have successfully joined the room."
       }
     },
-    "stats": "Statistics",
-    "loading": "Loading rooms...",
-    "yours": "your room",
-    "member": "you are a member",
-    "invites": {
-      "title": "Room Invitations",
-      "invitedYou": "invited you to this room",
-      "accept": "Accept",
-      "reject": "Reject",
-      "none": "You currently have no pending room invitations.",
-      "code": "Code",
-      "yours": "yours"
+    "signup": {
+      "success": "Congrats! You are all signed up",
+      "error": "Sign-up failed",
+      "loading": "Signing up...",
+      "intro": "Sign up for a new account and join the community!",
+      "alreadyAccount": "Already have an account?",
+      "login": "Log In",
+      "read": "Read our",
+      "terms": "terms",
+      "and": "and",
+      "conditions": "conditions",
+      "title": "Sign Up",
+      "name": {
+        "label": "Nickname",
+        "placeholder": "Your nickname",
+        "required": "Name is required"
+      },
+      "email": {
+        "label": "Email address",
+        "placeholder": "Your email address",
+        "required": "Email address is required",
+        "invalid": "Please enter a valid email address"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Password",
+        "required": "Password is required"
+      },
+      "confirm": {
+        "label": "Confirm Password",
+        "placeholder": "Confirm your password",
+        "required": "Confirm Password is required"
+      },
+      "passwordsMismatch": "Passwords should match",
+      "submit": "Sign Up"
     },
-    "selectToJoin": "Select a room to join",
-    "noRooms": "You don't have any rooms yet",
-    "waitingForPoll": "The owner has not yet entered a question!",
-    "addedQuestions": "Added Questions",
-    "option": "Option",
-    "errorMissingRoom": "Room details are missing.",
-    "errorMissingQuestion": "The question is required.",
-    "errorMissingOption": "All options must be filled out.",
-    "pollSuccess": "Poll added successfully.",
-    "errorUpdateRoom": "Failed to update room state.",
-    "errorPollCreation": "Failed to add poll.",
-    "errorLoadRoom": "Failed to load room data.",
-    "back": "Back",
-    "expired": "Expired",
-    "name": "Room Name",
-    "code": "Connection Code",
-    "timeRemaining": "Remaining Time",
-    "participants": "Participants",
-    "questionLabel": "Question:",
-    "questionPlaceholder": "Enter your question",
-    "optionsLabel": "Options:",
-    "optionPlaceholder": "Enter an option",
-    "addOption": "Add another option",
-    "createPoll": "Create Poll",
-    "viewStats": "View Statistics",
-    "generateRoom": "Generate a room",
-    "roomCode": "Room Code",
-    "roomNameLabel": "Room's name",
-    "roomNamePlaceholder": "Name of the room",
-    "roomNameRequired": "You have to give a name for the room!",
-    "timeLimit": "Time limit (hr/hrs)",
-    "voteType": "Type of the vote",
-    "anonymous": "Anonymous:",
-    "inviteFriends": "Invite friends:",
-    "generate": "Generate the room",
-    "joinRoom": "Join a room",
-    "joinWithCode": "Connect to a room by code:",
-    "roomCodePlaceholder": "Enter the room code...",
-    "join": "Join",
-    "yourRooms": "Your rooms",
-    "time": {
-      "60min": "60 min",
-      "6hour": "6 hours",
-      "12hour": "12 hours",
-      "24hour": "24 hours"
+    "home": {
+      "menu": {
+        "game": "Game",
+        "stats": "Statistics",
+        "profile": "Profile",
+        "settings": "Settings",
+        "logout": "Log out",
+        "rooms": "My rooms",
+        "invitations": "Invitations"
+      },
+      "hero": {
+        "welcome": "Welcome",
+        "name": "Dash",
+        "inbox": "Inbox",
+        "seeMessages": "See messages"
+      },
+      "stats": {
+        "card1": "Stats Card 1",
+        "card2": "Stats Card 2",
+        "card3": "Stats Card 3"
+      }
     },
-    "voteTypeOptions": {
-      "picture": "Picture based",
-      "text": "Text based"
+    "landing": {
+      "hero": {
+        "title1": "Useful and fast",
+        "title2": "opportunity to make decisions",
+        "description": "It's never been so easy to easily create polls that you and your friends can use to make decisions on any topic!",
+        "try": "Try It!",
+        "more": "More"
+      },
+      "section2": {
+        "title": "Forging friendships",
+        "description": "Build an atmosphere that creates productivity in your organization and your company culture.",
+        "point1": "Maximize your decision",
+        "point2": "Take pictures",
+        "point3": "Find out the answers right away"
+      },
+      "section3": {
+        "title": "Collect opinions quickly",
+        "description": "Need instant feedback? Want to predict voter behavior? Looking for insights to inform your marketing strategy? Build a poll worth voting for—and get all the data you need.",
+        "point1": "Easy and quick",
+        "point2": "It can be made at any time",
+        "point3": "Entertaining and useful"
+      }
     },
-    "error": {
-      "loginRequired": "You must be logged in to create a room.",
-      "roomNameRequired": "Please provide a room name.",
-      "addToProfile": "Failed to add room to your profile: {{ error }}",
-      "creationFailed": "Failed to create room: {{ error }}",
-      "codeRequired": "Please enter a room code.",
-      "loginRequiredJoin": "You must be logged in to join a room.",
-      "codeNotFound": "No such room code exists.",
-      "missingDocId": "Room data is incomplete. Missing document ID.",
-      "expired": "This room has already expired.",
-      "joinFailed": "There was an error joining the room: {{ error }}"
+    "step": {
+      "1": {
+        "title": "Register and connect with your friends",
+        "description": "Join the VoteVibe community with a quick sign-up, then search for your friends by name or unique code to start playing together!",
+        "icon": "person_add"
+      },
+      "2": {
+        "title": "Create a room with your favorite game mode",
+        "description": "Choose the game mode that suits you best – whether it's a fun comparison, decision-making tool, or a poll – and set up a room to play.",
+        "icon": "meeting_room"
+      },
+      "3": {
+        "title": "Invite your friends by name or room code",
+        "description": "Easily invite your friends by selecting them from your list or sharing the unique room code so they can join instantly.",
+        "icon": "group_add"
+      },
+      "4": {
+        "title": "Vote for the option you like more",
+        "description": "Let the game begin! Each player chooses between two options based on their personal preference – quick, engaging, and fun.",
+        "icon": "thumbs_up_down"
+      },
+      "5": {
+        "title": "Make a decision based on the results",
+        "description": "Once everyone has voted, the system will show the final statistics – helping you make fair and data-driven group decisions.",
+        "icon": "insights"
+      }
     },
-    "info": {
-      "newCode": "Room ID already exists. Generated a new code: {{ code }}",
-      "alreadyMember": "You are already a member of this room."
+    "friends": {
+      "confirmRemove": "Are you sure you want to remove {{name}} from your friends?",
+      "confirmYes": "Yes",
+      "confirmNo": "Cancel",
+      "removeSuccess": "{{name}} successfully removed.",
+      "roomInviteMessage": "meghívott egy szobába",
+      "removeError": "Failed to remove {{name}}.",
+      "confirmInvite": "Invite {{name}} to the game?",
+      "confirmYesInvite": "Invite",
+      "removed": "Removed successfully!",
+      "invited": "Invitation sent!",
+      "markedForInvite": "{{name}} marked for invitation.",
+      "unmarkedForInvite": "{{name}} removed from invitations.",
+      "uninvited": "Removed from invitations."
     },
-    "success": {
-      "created": "Room successfully created with code: {{ code }}",
-      "addedToProfile": "Room added to your profile successfully.",
-      "joined": "You have successfully joined the room."
+    "poll": {
+      "winnerTitle": "🏆 Winning Option!",
+      "winnerIs": "The winner is: {{ option }}",
+      "close": "Close",
+      "revote": "Revote",
+      "revoteInfo": "Not happy with the result? You have a chance to vote again.",
+      "timeLeft": "Time remaining: {{time}}",
+      "revoteDisabled": "You have already re-voted once."
+    },
+    "common": {
+      "close": "Close"
+    },
+    "language": {
+      "hu": "Hungarian",
+      "en": "English"
     }
-  },
-  "signup": {
-    "success": "Congrats! You are all signed up",
-    "error": "Sign-up failed",
-    "loading": "Signing up...",
-    "intro": "Sign up for a new account and join the community!",
-    "alreadyAccount": "Already have an account?",
-    "login": "Log In",
-    "read": "Read our",
-    "terms": "terms",
-    "and": "and",
-    "conditions": "conditions",
-    "title": "Sign Up",
-    "name": {
-      "label": "Nickname",
-      "placeholder": "Your nickname",
-      "required": "Name is required"
-    },
-    "email": {
-      "label": "Email address",
-      "placeholder": "Your email address",
-      "required": "Email address is required",
-      "invalid": "Please enter a valid email address"
-    },
-    "password": {
-      "label": "Password",
-      "placeholder": "Password",
-      "required": "Password is required"
-    },
-    "confirm": {
-      "label": "Confirm Password",
-      "placeholder": "Confirm your password",
-      "required": "Confirm Password is required"
-    },
-    "passwordsMismatch": "Passwords should match",
-    "submit": "Sign Up"
-  },
-  "home": {
-    "menu": {
-      "game": "Game",
-      "stats": "Statistics",
-      "profile": "Profile",
-      "settings": "Settings",
-      "logout": "Log out",
-      "rooms": "My rooms",
-      "invitations": "Invitations"
-    },
-    "hero": {
-      "welcome": "Welcome",
-      "name": "Dash",
-      "inbox": "Inbox",
-      "seeMessages": "See messages"
-    },
-    "stats": {
-      "card1": "Stats Card 1",
-      "card2": "Stats Card 2",
-      "card3": "Stats Card 3"
-    }
-  },
-  "landing": {
-    "hero": {
-      "title1": "Useful and fast",
-      "title2": "opportunity to make decisions",
-      "description": "It's never been so easy to easily create polls that you and your friends can use to make decisions on any topic!",
-      "try": "Try It!",
-      "more": "More"
-    },
-    "section2": {
-      "title": "Forging friendships",
-      "description": "Build an atmosphere that creates productivity in your organization and your company culture.",
-      "point1": "Maximize your decision",
-      "point2": "Take pictures",
-      "point3": "Find out the answers right away"
-    },
-    "section3": {
-      "title": "Collect opinions quickly",
-      "description": "Need instant feedback? Want to predict voter behavior? Looking for insights to inform your marketing strategy? Build a poll worth voting for—and get all the data you need.",
-      "point1": "Easy and quick",
-      "point2": "It can be made at any time",
-      "point3": "Entertaining and useful"
-    }
-  },
-  "step": {
-    "1": {
-      "title": "Register and connect with your friends",
-      "description": "Join the VoteVibe community with a quick sign-up, then search for your friends by name or unique code to start playing together!",
-      "icon": "person_add"
-    },
-    "2": {
-      "title": "Create a room with your favorite game mode",
-      "description": "Choose the game mode that suits you best – whether it's a fun comparison, decision-making tool, or a poll – and set up a room to play.",
-      "icon": "meeting_room"
-    },
-    "3": {
-      "title": "Invite your friends by name or room code",
-      "description": "Easily invite your friends by selecting them from your list or sharing the unique room code so they can join instantly.",
-      "icon": "group_add"
-    },
-    "4": {
-      "title": "Vote for the option you like more",
-      "description": "Let the game begin! Each player chooses between two options based on their personal preference – quick, engaging, and fun.",
-      "icon": "thumbs_up_down"
-    },
-    "5": {
-      "title": "Make a decision based on the results",
-      "description": "Once everyone has voted, the system will show the final statistics – helping you make fair and data-driven group decisions.",
-      "icon": "insights"
-    }
-  },
-  "friends": {
-    "confirmRemove": "Are you sure you want to remove {{name}} from your friends?",
-    "confirmYes": "Yes",
-    "confirmNo": "Cancel",
-    "removeSuccess": "{{name}} successfully removed.",
-    "roomInviteMessage": "meghívott egy szobába",
-    "removeError": "Failed to remove {{name}}.",
-    "confirmInvite": "Invite {{name}} to the game?",
-    "confirmYesInvite": "Invite",
-    "removed": "Removed successfully!",
-    "invited": "Invitation sent!",
-    "markedForInvite": "{{name}} marked for invitation.",
-    "unmarkedForInvite": "{{name}} removed from invitations.",
-    "uninvited": "Removed from invitations."
-  },
-  "poll": {
-    "winnerTitle": "🏆 Winning Option!",
-    "winnerIs": "The winner is: {{ option }}",
-    "close": "Close",
-    "revote": "Revote",
-    "revoteInfo": "Not happy with the result? You have a chance to vote again.",
-    "timeLeft": "Time remaining: {{time}}",
-    "revoteDisabled": "You have already re-voted once."
-  },
-  "common": {
-    "close": "Close"
-  },
-  "language": {
-    "hu": "Hungarian",
-    "en": "English"
   }
 }
 
