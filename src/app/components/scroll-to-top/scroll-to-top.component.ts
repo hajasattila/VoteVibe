@@ -9,7 +9,7 @@ import {filter} from "rxjs/operators";
 })
 export class ScrollToTopComponent implements OnInit {
     showScrollButton: boolean = false;
-    allowedRoutes: string[] = ['/', '/steps', '/profile', '/login', '/sign-up'];
+    allowedRoutes: string[] = ['/', '/steps', '/login', '/sign-up', '/home'];
     isRouteAllowed: boolean = false;
 
     constructor(private router: Router) {

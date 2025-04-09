@@ -362,6 +362,7 @@
     }
   },
   "friends": {
+    "inviteSuccess" : "Sikeres meghívás!",
     "confirmRemove": "Biztosan törölni szeretnéd {{name}} felhasználót a barátaid közül?",
     "confirmYes": "Igen",
     "confirmNo": "Mégse",

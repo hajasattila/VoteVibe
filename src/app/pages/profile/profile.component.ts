@@ -10,6 +10,8 @@ import {Router} from "@angular/router";
 import {SnackbarService} from "../../../api/services/snackbar-service/snackbar-service.service";
 import {TranslateService} from "@ngx-translate/core";
 import {ImageCompressorService} from "../../../api/services/image-compress-service/imagecompress.service";
+import {DatabaseService} from "../../../api/services/database-service/database.service";
+import {RoomModel} from "../../../api/models/room.model";
 
 @UntilDestroy()
 @Component({
@@ -25,6 +27,9 @@ export class ProfileComponent implements OnInit {
 
     imageLoaded: boolean = false;
     fallbackImage: string = '../../assets/images/image-placeholder.png';
+
+    createdRoomsCount: number = 0;
+    joinedRoomsCount: number = 0;
 
 
     profileForm = this.fb.group({
@@ -47,6 +52,7 @@ export class ProfileComponent implements OnInit {
         private snackbar: SnackbarService,
         private translate: TranslateService,
         private imageCompressor: ImageCompressorService,
+        private databaseService: DatabaseService,
     ) {
     }
 
@@ -54,14 +60,16 @@ export class ProfileComponent implements OnInit {
         this.initializeProfile();
     }
 
+
+
     private initializeProfile(): void {
         this.user$
             .pipe(
                 first(),
-                tap((user) => {
+                switchMap((user) => {
                     if (!user) {
                         this.router.navigate(["/register"]);
-                        return;
+                        return [];
                     }
 
                     this.user = user;
@@ -75,6 +83,22 @@ export class ProfileComponent implements OnInit {
                     });
 
                     this.cdRef.detectChanges();
+
+                    const cached = sessionStorage.getItem(`rooms_${user.uid}`);
+                    const parsed = cached ? JSON.parse(cached) : null;
+
+                    if (parsed?.rooms?.length) {
+                        this.setRoomCounts(parsed.rooms);
+                    }
+
+                    return this.databaseService.getRoomsForUser(user.uid).pipe(
+                        tap((rooms) => {
+                            if (!parsed || parsed.rooms.length !== rooms.length) {
+                                this.setRoomCounts(rooms);
+                                sessionStorage.setItem(`rooms_${user.uid}`, JSON.stringify({rooms}));
+                            }
+                        })
+                    );
                 }),
                 untilDestroyed(this)
             )
@@ -87,8 +111,14 @@ export class ProfileComponent implements OnInit {
             });
     }
 
+    private setRoomCounts(rooms: (RoomModel & { isCreator: boolean })[]) {
+        this.createdRoomsCount = rooms.filter(r => r.isCreator).length;
+        this.joinedRoomsCount = rooms.length;
+        this.cdRef.detectChanges();
+    }
 
-    uploadFile(event: any, { uid }: ProfileUser) {
+
+    uploadFile(event: any, {uid}: ProfileUser) {
         const file = event.target.files[0];
         if (!file) return;
 
@@ -122,7 +152,7 @@ export class ProfileComponent implements OnInit {
                             .pipe(
                                 switchMap((photoURL) => {
                                     // console.log(`⬆️ Feltöltött kép új URL-je: ${photoURL}`);
-                                    return this.usersService.updateUser({ uid, photoURL });
+                                    return this.usersService.updateUser({uid, photoURL});
                                 })
                             )
                             .subscribe({

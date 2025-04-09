@@ -46,13 +46,13 @@
                 <div class="flex justify-center lg:justify-start gap-8 mt-4 text-indigo-800">
                     <div class="flex flex-col items-center">
                         <span class="material-icons-outlined text-2xl text-indigo-600 mb-1 ">how_to_vote</span>
-                        <div class="text-xl font-bold dark:text-white">{{ user?.polls || 0 }}</div>
+                        <div class="text-xl font-bold dark:text-white">{{ createdRoomsCount  || 0 }}</div>
                         <div class="text-sm text-gray-600 dark:text-white">{{ 'profile.polls' | translate }}</div>
                     </div>
 
                     <div class="flex flex-col items-center">
                         <span class="material-icons-outlined text-2xl text-indigo-600 mb-1">sports_esports</span>
-                        <div class="text-xl font-bold dark:text-white">{{ user?.games || 0 }}</div>
+                        <div class="text-xl font-bold dark:text-white">{{ joinedRoomsCount  || 0 }}</div>
                         <div class="text-sm text-gray-600 dark:text-white">{{ 'profile.games' | translate }}</div>
                     </div>
 

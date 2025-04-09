@@ -6,6 +6,11 @@ node_modules/
 
 # Angular környezeti fájlok (ha vannak)
 src/environments/
+src/environments/environment.prod.ts
+src/environments/environment.ts
+
+# Firebase config
+.firebaserc
 
 # Build output
 dist/

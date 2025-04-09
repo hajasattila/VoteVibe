@@ -1,0 +1,16 @@
+{
+  "projects": {
+    "default": "camera-app-33d15",
+    "camera-app": "camera-app-33d15"
+  },
+  "targets": {
+    "camera-app-33d15": {
+      "hosting": {
+        "camera-app": [
+          "camera-app-33d15"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

@@ -12,6 +12,7 @@ export const environment = {
     appId: '1:347517284478:web:9bf56d01dd4346e6b2e82f',
   },
   production: false,
+  quotesApiKey: '8dBwKrWZKefjfokyHUZfBg==UditcQliFvkJDR1M'
 };
 
 /*

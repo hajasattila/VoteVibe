@@ -358,6 +358,7 @@
     }
   },
   "friends": {
+    "inviteSuccess" : "Succesfull invitation!",
     "confirmRemove": "Are you sure you want to remove {{name}} from your friends?",
     "confirmYes": "Yes",
     "confirmNo": "Cancel",
