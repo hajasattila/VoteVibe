@@ -4,14 +4,14 @@ import {
     HostListener,
     ElementRef,
     OnInit,
-    OnDestroy, ChangeDetectorRef, ViewChildren, QueryList
+    OnDestroy, ChangeDetectorRef, ViewChildren, QueryList, ViewChild
 } from '@angular/core';
 import {AuthService} from "../../../api/services/auth-service/auth.service";
 import {UsersService} from "../../../api/services/users-service/users.service";
 import {Router, NavigationEnd} from "@angular/router";
 import {ThemeService} from "../../../api/services/theme-service/theme-service.service";
 import {combineLatest, Observable, of, Subscription, switchMap} from "rxjs";
-import {filter, map} from "rxjs/operators";
+import {filter, map, take} from "rxjs/operators";
 import {TranslateService} from "@ngx-translate/core";
 
 @Component({
@@ -22,7 +22,6 @@ import {TranslateService} from "@ngx-translate/core";
 })
 export class NavBarComponent implements OnInit, OnDestroy {
     @ViewChildren('friendDropdownRef, friendDropdownReff') friendDropdownRefs!: QueryList<ElementRef>;
-
 
     protected user$ = this.usersService.currentUserProfile$;
     protected navbarOpen = false;
@@ -40,7 +39,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
     protected roomInviteNames: string[] = [];
     protected roomInviteMessages: { inviterName: string; roomName: string }[] = [];
-
 
 
     constructor(
@@ -91,7 +89,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
         ]).pipe(
             map(([hasFriends, hasRooms]) => hasFriends || hasRooms)
         );
-
 
 
         this.combinedNotification$ = combineLatest([
@@ -177,7 +174,19 @@ export class NavBarComponent implements OnInit, OnDestroy {
             this.friendRequestDropdownOpen = false;
         }
     }
+
     toggleTheme(): void {
         this.themeService.toggleTheme();
     }
+
+    navigateHome() {
+        this.user$.pipe(take(1)).subscribe(user => {
+            if (user) {
+                this.router.navigate(['/home']);
+            } else {
+                this.router.navigate(['/']);
+            }
+        });
+    }
+
 }

@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {DatabaseService} from 'src/api/services/database-service/database.service';
 import {ApexNonAxisChartSeries, ApexChart,} from 'ng-apexcharts';
 import {TranslateService} from '@ngx-translate/core';
@@ -12,7 +12,9 @@ import {ChartOptions} from "../../../api/models/chartOptions.model";
 })
 export class StatsComponent implements OnInit, AfterViewInit {
 
-    @ViewChild('dropdownWrapper') dropdownWrapper!: ElementRef;
+    @ViewChild('chartDropdown') chartDropdownRef!: ElementRef;
+    @ViewChild('userDropdown') userDropdownRef!: ElementRef;
+    @ViewChild('sortDropdown') sortDropdownRef!: ElementRef;
     dropdownReady = false;
 
     public chartOptions!: ChartOptions;
@@ -32,11 +34,16 @@ export class StatsComponent implements OnInit, AfterViewInit {
 
     protected top3: { label: string, votes: number }[] = [];
 
+    protected chartTypes: string[] = ['pie', 'donut', 'bar', 'line', 'radar', 'area', 'polarArea', 'radialBar'];
+    protected selectedChartType: string = 'pie';
+    protected chartDropdownOpen = false;
+
 
     constructor(
         private route: ActivatedRoute,
         private dbService: DatabaseService,
-        private translate: TranslateService
+        private translate: TranslateService,
+        private router: Router
     ) {
     }
 
@@ -61,23 +68,51 @@ export class StatsComponent implements OnInit, AfterViewInit {
 
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent) {
-        if (this.chartDropdownOpen && this.dropdownReady) {
-            const clickedInside = this.dropdownWrapper.nativeElement.contains(event.target);
-            if (!clickedInside) {
+        const target = event.target as Node;
+
+        if (this.dropdownReady) {
+            const clickedChart = this.chartDropdownRef?.nativeElement.contains(target);
+            const clickedUser = this.userDropdownRef?.nativeElement.contains(target);
+            const clickedSort = this.sortDropdownRef?.nativeElement.contains(target);
+
+            if (!clickedChart) {
                 this.chartDropdownOpen = false;
+            }
+
+            if (!clickedUser) {
+                this.userDropdownOpen = false;
+            }
+
+            if (!clickedSort) {
+                this.sortDropdownOpen = false;
             }
         }
     }
 
+
     toggleChartDropdown() {
         this.chartDropdownOpen = !this.chartDropdownOpen;
+        this.userDropdownOpen = false;
+        this.sortDropdownOpen = false;
+    }
+
+    toggleUserDropdown() {
+        this.chartDropdownOpen = false;
+        this.userDropdownOpen = !this.userDropdownOpen;
+        this.sortDropdownOpen = false;
+    }
+
+    toggleSortDropdown() {
+        this.chartDropdownOpen = false;
+        this.userDropdownOpen = false;
+        this.sortDropdownOpen = !this.sortDropdownOpen;
     }
 
     ngOnInit(): void {
         const code = this.route.snapshot.paramMap.get('code');
         if (!code) return;
 
-        this.dbService.getRoomByCode(code).subscribe(room => {
+        this.dbService.watchRoomByCode(code).subscribe(room => {
             if (!room?.pollResults || !room.poll?.options) {
                 this.isLoading = false;
                 return;
@@ -90,17 +125,22 @@ export class StatsComponent implements OnInit, AfterViewInit {
                 .map(([uid, userVotes]) => {
                     const display = room.members?.find(m => m.uid === uid)?.displayName || uid;
                     userMap[uid] = display;
-                    return {uid, votes: userVotes};
+                    return { uid, votes: userVotes };
                 });
 
             this.userDisplayMap = userMap;
             this.labels = room.poll.options;
             this.voterUids = this.voterDetails.map(v => v.uid);
 
+            if (this.selectedUserId === 'all') {
+                this.series = this.labels.map(option => {
+                    return this.voterDetails.reduce((sum, v) => sum + (v.votes?.[option] || 0), 0);
+                });
+            } else {
+                const userVotes = this.voterDetails.find(v => v.uid === this.selectedUserId)?.votes || {};
+                this.series = this.labels.map(option => userVotes[option] || 0);
+            }
 
-            this.series = this.labels.map(option => {
-                return this.voterDetails.reduce((sum, v) => sum + (v.votes?.[option] || 0), 0);
-            });
             this.originalLabels = [...this.labels];
             this.originalSeries = [...this.series];
 
@@ -168,11 +208,6 @@ export class StatsComponent implements OnInit, AfterViewInit {
             .slice(0, 3);
 
     }
-
-
-    chartTypes: string[] = ['pie', 'donut', 'bar', 'line', 'radar', 'area', 'polarArea', 'radialBar'];
-    selectedChartType: string = 'pie';
-    chartDropdownOpen = false;
 
     selectChartType(type: string) {
         this.selectedChartType = type;
@@ -263,4 +298,27 @@ export class StatsComponent implements OnInit, AfterViewInit {
                 return 'sort';
         }
     }
+
+    goBackToRoom(): void {
+        const currentUrl = this.router.url;
+        const baseUrl = currentUrl.replace(/\/stats$/, '');
+        this.router.navigateByUrl(baseUrl);
+    }
+
+    isMultiSeries(): boolean {
+        const multiSeriesTypes = ['bar', 'line', 'area', 'radar', 'heatmap'];
+        return multiSeriesTypes.includes(this.chartType);
+    }
+
+    getVoteCountAtIndex(index: number): number {
+        if (this.isMultiSeries()) {
+            const series = this.chartOptions.series as unknown as { data: number[] }[];
+            return series[0]?.data?.[index] ?? 0;
+        } else {
+            const series = this.chartOptions.series as number[];
+            return series[index] ?? 0;
+        }
+    }
+
+
 }

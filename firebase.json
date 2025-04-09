@@ -2,8 +2,18 @@
   "hosting": [
     {
       "target": "camera-app",
-      "source": ".",
-      "frameworksBackend": {}
+      "public": "dist/angular-sign-up",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
     }
   ]
 }

@@ -9,11 +9,12 @@ import {
     setDoc,
     updateDoc,
     where,
-    DocumentReference
+    DocumentReference, onSnapshot
 } from "@angular/fire/firestore";
-import {Observable, from, map, switchMap} from "rxjs";
+import {BehaviorSubject, Observable, from, map, switchMap} from "rxjs";
 import {RoomModel, textPollModel} from "../../models/room.model";
 import {ProfileUser} from "../../models/user.model";
+
 
 @Injectable({
     providedIn: "root",
@@ -137,4 +138,27 @@ export class DatabaseService {
             })
         );
     }
+
+    watchRoomByCode(code: string): Observable<RoomModel | null> {
+        const roomsRef = collection(this.firestore, "rooms");
+        const q = query(roomsRef, where("connectionCode", "==", code));
+
+        return new Observable<RoomModel | null>((observer) => {
+            const unsubscribe = onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    observer.next(null);
+                    return;
+                }
+
+                const roomData = snapshot.docs[0].data() as RoomModel;
+                const docId = snapshot.docs[0].id;
+                observer.next({ ...roomData, docId });
+            }, error => {
+                observer.error(error);
+            });
+
+            return () => unsubscribe();
+        });
+    }
+
 }

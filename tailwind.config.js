@@ -5,6 +5,10 @@ module.exports = {
     theme: {
         extend: {
             keyframes: {
+                floatX: {
+                    '0%, 100%': { transform: 'translateX(-10px)' },
+                    '50%': { transform: 'translateX(10px)' },
+                },
                 slideIn: {
                     '0%': {transform: 'translateX(-100%)', opacity: '0'},
                     '100%': {transform: 'translateX(0)', opacity: '1'},
@@ -45,8 +49,10 @@ module.exports = {
                     '0%': { opacity: '0' },
                     '100%': { opacity: '1' },
                 },
+
             },
             animation: {
+                floatX: 'floatX 1.5s ease-in-out infinite',
                 slideDownTextPoll: 'slideDown 0.7s ease-out forwards',
                 fadeIn: 'fadeIn 0.7s ease-out forwards',
                 slideIn: 'slideIn 1s ease-in-out',

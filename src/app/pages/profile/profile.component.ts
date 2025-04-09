@@ -99,7 +99,6 @@ export class ProfileComponent implements OnInit {
 
             this.imageCompressor.compressImage(file, 0.6, 600).then((compressedFile) => {
                 const compressedSizeKB = (compressedFile.size / 1024).toFixed(2);
-                console.log(`📦 Tömörítés eredménye: ${originalSizeKB} KB → ${compressedSizeKB} KB`);
 
                 this.translate.get('profile.upload.compressed', {
                     original: originalSizeKB,

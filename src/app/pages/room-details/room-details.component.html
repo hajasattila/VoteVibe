@@ -15,10 +15,9 @@
                     <button
                             (click)="goBack()"
                             type="button"
-                            class="flex items-center text-gray-800 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg px-4 py-2 text-base font-medium shadow-sm transition duration-200"
+                            class=" flex items-center gap-1 text-indigo-600 dark:text-indigo-300 hover:text-indigo-800 dark:hover:text-indigo-100 transition"
                     >
-                        <span class="material-icons-outlined">keyboard_arrow_left</span>
-                        {{ 'room.back' | translate }}
+                        <span class="material-icons-outlined">arrow_back</span>
                     </button>
 
                     <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-gray-100 text-center mx-auto md:mx-0 pt-4">
@@ -96,7 +95,7 @@
                                 [(ngModel)]="question"
                                 name="question"
                                 autocomplete="off"
-                                maxlength="22"
+                                maxlength="64"
                                 type="text"
                                 id="question"
                                 class="transition duration-500 ease-in-out transform border-2 border-gray-300 dark:border-gray-600 focus:border-blue-500 rounded-lg w-full py-2 px-4 text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-800 leading-tight focus:outline-none"
@@ -117,7 +116,7 @@
 
                                 <input
                                     #optionInput
-                                    maxlength="22"
+                                    maxlength="64"
                                     autocomplete="off"
                                     [(ngModel)]="options[i]"
                                     [id]="'option-' + i"

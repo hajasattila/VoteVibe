@@ -89,11 +89,11 @@ export class TextPollComponent implements OnInit, OnDestroy {
         this.dbService.getRoomByCode(roomCode).subscribe((room) => {
             if (!room?.poll) return;
 
-            if (Object.keys(this.allPollResults).length > 0) {
-                console.log('[📥 Szoba pollResults állapota betöltéskor]:', this.allPollResults);
-            } else {
-                console.log('[ℹ️ Nincs pollResults adat a szobában]');
-            }
+            // if (Object.keys(this.allPollResults).length > 0) {
+            //     console.log('[📥 Szoba pollResults állapota betöltéskor]:', this.allPollResults);
+            // } else {
+            //     console.log('[ℹ️ Nincs pollResults adat a szobában]');
+            // }
 
             this.animateIncomingLeft = false;
             this.animateIncomingRight = false;
@@ -118,7 +118,6 @@ export class TextPollComponent implements OnInit, OnDestroy {
             this.allPollResults = room.pollResults ?? {};
             const pollResults = this.allPollResults;
 
-            // 🧹 Töröljük a null értékű *_revote bejegyzéseket
             for (const key of Object.keys(pollResults)) {
                 if (key.endsWith('_revote') && pollResults[key] === null) {
                     delete pollResults[key];
@@ -189,7 +188,6 @@ export class TextPollComponent implements OnInit, OnDestroy {
                 const updatedResults = updatedRoom?.pollResults ?? {};
                 const updatedRevote = updatedResults[revoteKey];
 
-                // ✨ Ellenőrizzük, hogy ne legyen null érték
                 if (!this.hasRevoted && updatedRevote && typeof updatedRevote === 'object' && updatedRoom?.poll?.options) {
                     this.hasRevoted = true;
                     this.hasAlreadyVoted = true;
@@ -333,15 +331,10 @@ export class TextPollComponent implements OnInit, OnDestroy {
             [finalKey]: completedVoteCounts
         }, finalKey);
 
-        console.log('[💾 Mentve Firestore-ba UID alapján]:', {
-            [finalKey]: completedVoteCounts
-        });
 
-        // 🆕 Szoba teljes pollResults loggolása
         this.dbService.getRoomByCode(this.route.snapshot.paramMap.get('code')!).subscribe(room => {
             if (room?.pollResults) {
                 this.allPollResults = room.pollResults;
-                console.log('[📊 Frissített pollResults mentés után]:', this.allPollResults);
             }
         });
     }

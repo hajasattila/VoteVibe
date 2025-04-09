@@ -269,7 +269,6 @@ export class UsersService {
         };
 
 
-        console.log('[📥] inviteUserToRoom payload:', payload);
 
         return from(
             setDoc(doc(this.firestore, `users/${friendUid}/roomInvites/${roomId}`), payload)

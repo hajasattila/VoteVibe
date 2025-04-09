@@ -131,6 +131,7 @@
     "github": "GitHub belépés"
   },
   "room": {
+    "createdAt": "Létrehozva",
     "statsChart": {
       "sortBy": "Rendezés",
       "sortDefault": "Alapértelmezett sorrend",
@@ -298,7 +299,8 @@
       "invitations": "Meghívások"
     },
     "hero": {
-      "welcome": "Üdvözlünk",
+      "welcome": "Üdvözöllek",
+      "new_quote": "Új idézet",
       "name": "Dash",
       "inbox": "Bejövő",
       "seeMessages": "Üzenetek megtekintése"

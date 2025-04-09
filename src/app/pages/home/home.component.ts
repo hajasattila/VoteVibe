@@ -8,6 +8,8 @@ import {UsersService} from "../../../api/services/users-service/users.service";
 import {RoomInvite} from "../../../api/models/roomInvitation.model";
 import {DatabaseService} from "../../../api/services/database-service/database.service";
 import {ActivatedRoute} from '@angular/router';
+import {HttpClient} from "@angular/common/http";
+import {environment} from 'src/environments/environment';
 
 
 @Component({
@@ -23,7 +25,9 @@ export class HomeComponent implements OnInit {
                 protected translate: TranslateService,
                 private userService: UsersService,
                 protected dbService: DatabaseService,
-                private route: ActivatedRoute,) {
+                private route: ActivatedRoute,
+                private http: HttpClient
+    ) {
     }
 
     protected menuOpen = false;
@@ -33,13 +37,32 @@ export class HomeComponent implements OnInit {
     showRoomInviteModal = false;
     roomInvites: RoomInvite[] = [];
 
-
     currentUserUid: string | null = null;
+    nickname: string | null = null;
+
+    quote: string | null = null;
+
 
     ngOnInit(): void {
+        const cachedName = localStorage.getItem('nickname');
+        if (cachedName) {
+            this.nickname = cachedName;
+        }
+
         this.authService.getCurrentUser().subscribe(user => {
             this.currentUserUid = user?.uid || null;
+
+            if (user?.uid) {
+                this.userService.getUserById(user.uid).subscribe(profile => {
+                    if (profile?.displayName && profile.displayName !== this.nickname) {
+                        this.nickname = profile.displayName;
+                        localStorage.setItem('nickname', this.nickname);
+                    }
+                });
+            }
         });
+
+        this.getMotivationalQuote();
 
         this.route.queryParams.subscribe(params => {
             const openModal = params['openModal'];
@@ -51,6 +74,43 @@ export class HomeComponent implements OnInit {
         });
     }
 
+
+    getMotivationalQuote(forceRefresh = false): void {
+        const now = new Date().getTime();
+        const oneDay = 24 * 60 * 60 * 1000;
+
+        if (!forceRefresh) {
+            const cachedQuote = localStorage.getItem('daily_quote');
+            const cachedTimestamp = localStorage.getItem('daily_quote_time');
+
+            if (cachedQuote && cachedTimestamp && now - Number(cachedTimestamp) < oneDay) {
+                this.quote = cachedQuote;
+                return;
+            }
+        } else {
+            localStorage.removeItem('daily_quote');
+            localStorage.removeItem('daily_quote_time');
+        }
+
+        const headers = {
+            'X-Api-Key': environment.quotesApiKey
+        };
+
+        this.http.get<any>('https://api.api-ninjas.com/v1/quotes', {headers})
+            .subscribe({
+                next: (data) => {
+                    if (data.length > 0) {
+                        this.quote = `"${data[0].quote}" — ${data[0].author}`;
+                        localStorage.setItem('daily_quote', this.quote);
+                        localStorage.setItem('daily_quote_time', now.toString());
+                    }
+                },
+                error: (err) => {
+                    console.error(err);
+                    this.quote = null;
+                }
+            });
+    }
 
     logout() {
         this.authService.logout().subscribe(() => {
@@ -68,11 +128,6 @@ export class HomeComponent implements OnInit {
         localStorage.setItem('lang', lang);
     }
 
-    initLanguage(): void {
-        const savedLang = localStorage.getItem('lang') || 'hu';
-        this.translate.setDefaultLang('hu');
-        this.translate.use(savedLang);
-    }
 
     toggleSideMenu() {
         this.menuOpen = !this.menuOpen;
@@ -87,11 +142,18 @@ export class HomeComponent implements OnInit {
         this.authService.getCurrentUser().subscribe((user) => {
             if (user) {
                 this.dbService.getRoomsForUser(user.uid).subscribe((rooms) => {
-                    this.userRooms = rooms.sort((a, b) => {
-                        const dateA = new Date(a.createdAt).getTime();
-                        const dateB = new Date(b.createdAt).getTime();
-                        return dateB - dateA;
-                    });
+                    this.userRooms = rooms
+                        .map(room => ({
+                            ...room,
+                            createdAt: this.normalizeTimestamp(room.createdAt)
+                        }))
+                        .sort((a, b) => {
+                            const dateA = a.createdAt ? a.createdAt.getTime() : 0;
+                            const dateB = b.createdAt ? b.createdAt.getTime() : 0;
+                            return dateB - dateA;
+                        })
+
+
                     this.isRoomLoading = false;
                 });
             } else {
@@ -101,11 +163,10 @@ export class HomeComponent implements OnInit {
 
         this.router.navigate([], {
             relativeTo: this.route,
-            queryParams: { openModal: null },
+            queryParams: {openModal: null},
             queryParamsHandling: 'merge'
         });
     }
-
 
 
     closeRoomModal(): void {
@@ -177,15 +238,14 @@ export class HomeComponent implements OnInit {
         });
     }
 
-    loadUserRooms(): void {
-        this.authService.getCurrentUser().subscribe(user => {
-            if (!user) return;
-
-            this.dbService.getRoomsForUser(user.uid).subscribe(rooms => {
-                console.log('🧩 Szobák, amikben benne van a user:', rooms);
-                this.userRooms = rooms;
-            });
-        });
+    private normalizeTimestamp(value: any): Date {
+        if (value instanceof Date) {
+            return value;
+        }
+        if (value?.seconds) {
+            return new Date(value.seconds * 1000);
+        }
+        return new Date(0);
     }
 
 
