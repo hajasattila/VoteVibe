@@ -151,7 +151,7 @@ export class HomeComponent implements OnInit {
                 this.translate.get('search.successRequestSent', { name: user.displayName || 'felhasználó' })
                     .subscribe(msg => this.snackbar.success(msg));
             },
-            error: (err) => {
+            error: () => {
                 this.translate.get('search.errorSendFailed', { name: user.displayName || 'felhasználó' })
                     .subscribe(msg => this.snackbar.error(msg));
             }

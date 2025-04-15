@@ -4,7 +4,7 @@ import {
     HostListener,
     ElementRef,
     OnInit,
-    OnDestroy, ChangeDetectorRef, ViewChildren, QueryList, ViewChild
+    OnDestroy, ChangeDetectorRef, ViewChildren, QueryList
 } from '@angular/core';
 import {AuthService} from "../../../api/services/auth-service/auth.service";
 import {UsersService} from "../../../api/services/users-service/users.service";
