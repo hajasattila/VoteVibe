@@ -298,5 +298,59 @@ export class UsersService {
         });
     }
 
+    getLatestUsers(limitCount: number = 5): Observable<ProfileUser[]> {
+        const usersRef = collection(this.firestore, "users");
+        return collectionData(usersRef, {idField: "uid"}).pipe(
+            map((users: any[]) =>
+                users
+                    .map((user: any) => ({
+                        uid: user.uid,
+                        email: user.email,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        displayName: user.displayName,
+                        phone: user.phone,
+                        address: user.address,
+                        photoURL: user.photoURL,
+                        description: user.description,
+                        friendList: user.friendList,
+                        games: user.games,
+                        polls: user.polls,
+                    } as ProfileUser))
+                    .slice(0, limitCount)
+            )
+        );
+    }
+
+
+    getUsersNotInFriendList(userId: string): Observable<ProfileUser[]> {
+        return this.getFriends(userId).pipe(
+            switchMap(friends => {
+                const friendUids = friends.map(f => f.uid);
+                return collectionData(collection(this.firestore, 'users'), { idField: 'uid' }).pipe(
+                    map((users: any[]) =>
+                        users
+                            .map((user: any) => ({
+                                uid: user.uid,
+                                email: user.email,
+                                firstName: user.firstName,
+                                lastName: user.lastName,
+                                displayName: user.displayName,
+                                phone: user.phone,
+                                address: user.address,
+                                photoURL: user.photoURL,
+                                description: user.description,
+                                friendList: user.friendList,
+                                games: user.games,
+                                polls: user.polls,
+                            } as ProfileUser))
+                            .filter(u => u.uid !== userId && !friendUids.includes(u.uid))
+                    )
+                );
+            })
+        );
+    }
+
+
 
 }

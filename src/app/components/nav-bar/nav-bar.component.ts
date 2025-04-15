@@ -114,19 +114,18 @@ export class NavBarComponent implements OnInit, OnDestroy {
     }
 
     loadFriendRequestNames(requestIds: string[]): void {
-        const uniqueNames = new Set<string>();
-        this.incomingFriendNames = [];
+        const uniqueIds = Array.from(new Set(requestIds));
+        const nameObservables = uniqueIds.map(id => this.usersService.getUserById(id));
 
-        requestIds.forEach(id => {
-            this.usersService.getUserById(id).subscribe(requester => {
-                if (requester?.displayName && !uniqueNames.has(requester.displayName)) {
-                    uniqueNames.add(requester.displayName);
-                    this.incomingFriendNames.push(requester.displayName);
-                    this.cdr.markForCheck();
-                }
-            });
+        combineLatest(nameObservables).subscribe(users => {
+            const names = users
+                .map(user => user?.displayName)
+                .filter((name): name is string => !!name);
+            this.incomingFriendNames = Array.from(new Set(names));
+            this.cdr.markForCheck();
         });
     }
+
 
     initLanguage() {
         const savedLang = localStorage.getItem('lang') || 'hu';

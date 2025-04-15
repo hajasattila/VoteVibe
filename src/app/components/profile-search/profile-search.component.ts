@@ -51,7 +51,7 @@ export class ProfileSearchComponent implements OnInit {
                                 map(users =>
                                     users.filter(
                                         user =>
-                                            user.uid !== this.currentUserId && user.displayName !== 'Nati'
+                                            user.uid !== this.currentUserId
                                     )
                                 )
                             )

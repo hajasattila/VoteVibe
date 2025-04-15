@@ -10,6 +10,10 @@ import {DatabaseService} from "../../../api/services/database-service/database.s
 import {ActivatedRoute} from '@angular/router';
 import {HttpClient} from "@angular/common/http";
 import {environment} from 'src/environments/environment';
+import {ProfileUser} from "../../../api/models/user.model";
+import {SnackbarService} from "../../../api/services/snackbar-service/snackbar-service.service";
+import {of, switchMap} from "rxjs";
+import {map} from "rxjs/operators";
 
 
 @Component({
@@ -26,7 +30,9 @@ export class HomeComponent implements OnInit {
                 private userService: UsersService,
                 protected dbService: DatabaseService,
                 private route: ActivatedRoute,
-                private http: HttpClient
+                private http: HttpClient,
+                private snackbar: SnackbarService
+
     ) {
     }
 
@@ -42,17 +48,42 @@ export class HomeComponent implements OnInit {
 
     quote: string | null = null;
 
+    loadedImages: Record<string, boolean> = {};
+    friendsSub: any;
+    randomUsersNotFriends: ProfileUser[] = [];
+
+    isRandomUsersLoading: boolean = true;
+
+
+
 
     ngOnInit(): void {
-        const cachedName = localStorage.getItem('nickname');
-        if (cachedName) {
-            this.nickname = cachedName;
-        }
-
         this.authService.getCurrentUser().subscribe(user => {
-            this.currentUserUid = user?.uid || null;
-
             if (user?.uid) {
+                this.currentUserUid = user.uid;
+
+                this.isRandomUsersLoading = true;
+
+                this.friendsSub = this.userService.getFriendsLive(user.uid).subscribe(friends => {
+                    console.log('🔵 [Live] Barátlista frissült:');
+                    friends.forEach(friend => {
+                        console.log(`- ${friend.displayName} (${friend.uid})`);
+                    });
+
+                    this.userService.getUsersNotInFriendList(user.uid).pipe(
+                        map(users =>
+                            users.filter(u =>
+                                u.uid !== user.uid &&
+                                !friends.some(f => f.uid === u.uid)
+                            )
+                        )
+                    ).subscribe(filtered => {
+                        this.randomUsersNotFriends = this.getRandomUsers(filtered, 5);
+                        this.isRandomUsersLoading = false;
+                        console.log('🟠 Véletlenszerű nem barát felhasználók:', this.randomUsersNotFriends);
+                    });
+                });
+
                 this.userService.getUserById(user.uid).subscribe(profile => {
                     if (profile?.displayName && profile.displayName !== this.nickname) {
                         this.nickname = profile.displayName;
@@ -62,7 +93,13 @@ export class HomeComponent implements OnInit {
             }
         });
 
+        this.loadLatestUsers();
         this.getMotivationalQuote();
+
+        const cachedName = localStorage.getItem('nickname');
+        if (cachedName) {
+            this.nickname = cachedName;
+        }
 
         this.route.queryParams.subscribe(params => {
             const openModal = params['openModal'];
@@ -73,6 +110,54 @@ export class HomeComponent implements OnInit {
             }
         });
     }
+
+
+
+    private loadLatestUsers(): void {
+        this.authService.getCurrentUser().pipe(
+            switchMap(currentUser => {
+                if (!currentUser?.uid) return of([]);
+                return this.userService.getFriends(currentUser.uid).pipe(
+                    switchMap(friends => {
+                        console.log('🔵 Barátlista:');
+                        friends.forEach(friend => {
+                            console.log(`- ${friend.displayName} (${friend.uid})`);
+                        });
+
+                        const friendUids = friends.map(f => f.uid);
+                        return this.userService.getLatestUsers(20).pipe(
+                            map(users => users
+                                .filter(u => u.uid !== currentUser.uid && !friendUids.includes(u.uid))
+                                .slice(0, 5)
+                            )
+                        );
+                    })
+                );
+            })
+        )
+    }
+
+    private getRandomUsers(users: ProfileUser[], count: number): ProfileUser[] {
+        const shuffled = [...users].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
+    }
+
+
+    sendFriendRequest(user: ProfileUser): void {
+        if (!this.currentUserUid || !user.uid) return;
+
+        this.userService.sendFriendRequest(this.currentUserUid, user.uid).subscribe({
+            next: () => {
+                this.translate.get('search.successRequestSent', { name: user.displayName || 'felhasználó' })
+                    .subscribe(msg => this.snackbar.success(msg));
+            },
+            error: (err) => {
+                this.translate.get('search.errorSendFailed', { name: user.displayName || 'felhasználó' })
+                    .subscribe(msg => this.snackbar.error(msg));
+            }
+        });
+    }
+
 
 
     getMotivationalQuote(forceRefresh = false): void {
@@ -249,4 +334,5 @@ export class HomeComponent implements OnInit {
     }
 
 
+    protected readonly HTMLImageElement = HTMLImageElement;
 }

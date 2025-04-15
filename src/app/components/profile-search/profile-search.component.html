@@ -28,7 +28,11 @@
 
             <ul *ngIf="searchControl.value && users.length > 0; else noResults">
                 <li *ngFor="let user of users"
-                    class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 border border-indigo-800">
+                    class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 border border-indigo-800"
+                    [class.cursor-not-allowed]="isAlreadyFriendOrRequested(user.uid)"
+                    [class.opacity-50]="isAlreadyFriendOrRequested(user.uid)"
+                    [class.pointer-events-none]="isAlreadyFriendOrRequested(user.uid)"
+                    (click)="!isAlreadyFriendOrRequested(user.uid) && onAddFriend(user)">
                     <img class="w-10 h-10 rounded-full mr-3"
                          [src]="user.photoURL ?? 'assets/images/image-placeholder.png'" alt="{{ user.displayName }}"/>
                     <div class="flex-grow">
@@ -36,14 +40,12 @@
                     </div>
                     <button
                             class="ml-4 hover:text-indigo-500 disabled:text-gray-400"
-                            (click)="onAddFriend(user)"
-                            [disabled]="isAlreadyFriendOrRequested(user.uid)"
-                    >
+                            [disabled]="isAlreadyFriendOrRequested(user.uid)">
                         <mat-icon>add</mat-icon>
                     </button>
-
                 </li>
             </ul>
+
         </div>
 
         <ng-template #noResults>

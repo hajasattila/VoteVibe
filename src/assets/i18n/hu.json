@@ -289,6 +289,9 @@
     "submit": "Regisztráció"
   },
   "home": {
+    "latestUsersTitle": "Legfrissebb felhasználók",
+    "noUsers": "Jelenleg nincs megjeleníthető új felhasználó.",
+    "unnamedUser": "Névtelen",
     "menu": {
       "game": "Játék",
       "stats": "Statisztika",
@@ -376,7 +379,9 @@
     "unmarkedForInvite": "{{name}} eltávolítva a meghívandók közül.",
     "confirmUninvite": "Eltávolítod {{name}}-t a meghívottak közül?",
     "confirmYesUninvite": "Igen, törlöm",
-    "uninvited": "Eltávolítva a meghívottak közül."
+    "uninvited": "Eltávolítva a meghívottak közül.",
+    "requestSent": "{{name}} sikeresen hozzáadva a barátlistához.",
+    "requestFailed": "Nem sikerült {{name}} hozzáadása a barátlistához."
   },
   "poll": {
     "winnerTitle": "🏆 A győztes opció!",

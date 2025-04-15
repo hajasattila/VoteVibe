@@ -285,6 +285,9 @@
     "submit": "Sign Up"
   },
   "home": {
+    "latestUsersTitle": "Latest Users",
+    "noUsers": "There are no new users to show right now.",
+    "unnamedUser": "Unnamed",
     "menu": {
       "game": "Game",
       "stats": "Statistics",
@@ -358,7 +361,7 @@
     }
   },
   "friends": {
-    "inviteSuccess" : "Succesfull invitation!",
+    "inviteSuccess": "Succesfull invitation!",
     "confirmRemove": "Are you sure you want to remove {{name}} from your friends?",
     "confirmYes": "Yes",
     "confirmNo": "Cancel",
@@ -371,7 +374,9 @@
     "invited": "Invitation sent!",
     "markedForInvite": "{{name}} marked for invitation.",
     "unmarkedForInvite": "{{name}} removed from invitations.",
-    "uninvited": "Removed from invitations."
+    "uninvited": "Removed from invitations.",
+    "requestSent": "{{name}} successfully added to your friends list.",
+    "requestFailed": "Failed to add {{name}} to your friends list."
   },
   "poll": {
     "winnerTitle": "🏆 Winning Option!",
