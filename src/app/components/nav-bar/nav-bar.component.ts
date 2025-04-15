@@ -13,6 +13,7 @@ import {ThemeService} from "../../../api/services/theme-service/theme-service.se
 import {combineLatest, Observable, of, Subscription, switchMap} from "rxjs";
 import {filter, map, take} from "rxjs/operators";
 import {TranslateService} from "@ngx-translate/core";
+import {SnackbarService} from "../../../api/services/snackbar-service/snackbar-service.service";
 
 @Component({
     selector: 'app-nav-bar',
@@ -37,8 +38,10 @@ export class NavBarComponent implements OnInit, OnDestroy {
     protected hasRoomInvites$!: Observable<boolean>;
     protected combinedNotification$!: Observable<boolean>;
 
-    protected roomInviteNames: string[] = [];
     protected roomInviteMessages: { inviterName: string; roomName: string }[] = [];
+
+    private hasNotifiedFriendRequest = false;
+    private hasNotifiedRoomInvite = false;
 
 
     constructor(
@@ -48,7 +51,9 @@ export class NavBarComponent implements OnInit, OnDestroy {
         protected themeService: ThemeService,
         private eRef: ElementRef,
         private cdr: ChangeDetectorRef,
-        protected translate: TranslateService
+        protected translate: TranslateService,
+        private snackbar: SnackbarService
+
     ) {
         this.themeService.initTheme();
         this.initLanguage();
@@ -59,16 +64,29 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
         this.hasFriendRequests$ = this.usersService.currentUserProfile$.pipe(
             map(user => {
-                if (!!user && Array.isArray(user.friendRequests) && user.friendRequests.length > 0) {
+                const hasRequests = !!user && Array.isArray(user.friendRequests) && user.friendRequests.length > 0;
+
+                if (hasRequests && user?.friendRequests) {
                     this.loadFriendRequestNames(user.friendRequests);
+
+                    if (!this.hasNotifiedFriendRequest) {
+                        this.hasNotifiedFriendRequest = true;
+                        this.translate.get('notifications.friendRequest').subscribe(msg => {
+                            this.snackbar.info(msg);
+                            this.cdr.markForCheck();
+                        });
+                    }
                     return true;
                 }
+
                 return false;
             })
         );
+
         this.hasRoomInvites$ = this.usersService.currentUserProfile$.pipe(
             switchMap(user => {
                 if (!user?.uid) return of(false);
+
                 return this.usersService.getRoomInvites(user.uid).pipe(
                     map(invites => {
                         const pending = invites.filter(inv => inv.status === 'pending');
@@ -76,20 +94,20 @@ export class NavBarComponent implements OnInit, OnDestroy {
                             inviterName: invite.inviterName || 'Ismeretlen',
                             roomName: invite.roomName || 'Szoba'
                         }));
+
+                        if (pending.length > 0 && !this.hasNotifiedRoomInvite) {
+                            this.hasNotifiedRoomInvite = true;
+                            this.translate.get('notifications.roomInvite').subscribe(msg => {
+                                this.snackbar.info(msg);
+                                this.cdr.markForCheck();
+                            });
+                        }
+
                         return pending.length > 0;
                     })
                 );
             })
         );
-
-
-        this.combinedNotification$ = combineLatest([
-            this.hasFriendRequests$,
-            this.hasRoomInvites$
-        ]).pipe(
-            map(([hasFriends, hasRooms]) => hasFriends || hasRooms)
-        );
-
 
         this.combinedNotification$ = combineLatest([
             this.hasFriendRequests$,
@@ -107,11 +125,13 @@ export class NavBarComponent implements OnInit, OnDestroy {
                     this.navbarOpen = false;
                     this.cdr.detectChanges();
                 }
+
                 this.profileDropdownOpen = false;
                 this.friendRequestDropdownOpen = false;
                 this.previousUrl = navigation.urlAfterRedirects;
             });
     }
+
 
     loadFriendRequestNames(requestIds: string[]): void {
         const uniqueIds = Array.from(new Set(requestIds));

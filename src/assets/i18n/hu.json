@@ -131,8 +131,10 @@
     "github": "GitHub belépés"
   },
   "room": {
+    "moreStats": "További statisztikák",
     "createdAt": "Létrehozva",
     "statsChart": {
+      "anonymousWarning": "Ez egy anonim szoba, a szavazatok nem visszakövethetők.",
       "sortBy": "Rendezés",
       "sortDefault": "Alapértelmezett sorrend",
       "sortAsc": "Növekvő sorrend",
@@ -289,7 +291,7 @@
     "submit": "Regisztráció"
   },
   "home": {
-    "latestUsersTitle": "Legfrissebb felhasználók",
+    "latestUsersTitle": "Ajánlott felhasználók",
     "noUsers": "Jelenleg nincs megjeleníthető új felhasználó.",
     "unnamedUser": "Névtelen",
     "menu": {
@@ -398,5 +400,9 @@
   "language": {
     "hu": "Magyar",
     "en": "Angol"
+  },
+  "notifications": {
+    "friendRequest": "Új barátkérelem érkezett!",
+    "roomInvite": "Új szobameghívód van!"
   }
 }

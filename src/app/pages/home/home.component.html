@@ -107,26 +107,35 @@
                 </h3>
 
                 <div class="overflow-hidden">
-                    <ul class="flex flex-wrap gap-4 overflow-hidden">
-                        <ng-container *ngIf="!isRandomUsersLoading && randomUsersNotFriends.length > 0; else loadingSkeleton">
-                            <li *ngFor="let user of randomUsersNotFriends" class="flex flex-col items-center w-16">
-                                <img
-                                        class="w-12 h-12 rounded-full shadow-md object-cover cursor-pointer transition duration-200 transform hover:scale-105 hover:opacity-90"
-                                        [src]="user.photoURL && loadedImages[user.uid] ? user.photoURL : 'assets/images/image-placeholder.png'"
-                                        (load)="loadedImages[user.uid] = true"
-                                        (click)="sendFriendRequest(user)"
-                                        alt="{{ user.displayName }}"
-                                />
-                                <span class="mt-2 text-sm text-gray-800 dark:text-white text-center truncate w-full">
+                    <ul class="flex gap-4 overflow-hidden min-w-[20rem]">
+                        <ng-container *ngIf="!isRandomUsersLoading; else skeletonLoading">
+                            <ng-container *ngFor="let user of randomUsersNotFriends">
+                                <li class="flex flex-col items-center w-16">
+                                    <img
+                                            class="w-12 h-12 rounded-full shadow-md object-cover cursor-pointer transition duration-200 transform hover:scale-105 hover:opacity-90"
+                                            [src]="user.photoURL && loadedImages[user.uid] ? user.photoURL : 'assets/images/image-placeholder.png'"
+                                            (load)="loadedImages[user.uid] = true"
+                                            (click)="sendFriendRequest(user)"
+                                            alt="{{ user.displayName }}"
+                                    />
+                                    <span class="mt-2 text-sm text-gray-800 dark:text-white text-center truncate w-full">
             {{ user.displayName || 'Névtelen' }}
           </span>
-                            </li>
+                                </li>
+                            </ng-container>
+
+                            <ng-container *ngFor="let i of [].constructor(5 - randomUsersNotFriends.length)">
+                                <li class="flex flex-col items-center w-16">
+                                    <div class="w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-700 skeleton-shimmer"></div>
+                                    <div class="mt-2 h-3 w-10 rounded-full bg-gray-300 dark:bg-gray-700 skeleton-shimmer"></div>
+                                </li>
+                            </ng-container>
                         </ng-container>
 
-                        <ng-template #loadingSkeleton>
-                            <li *ngFor="let i of [0,1,2,3,4]" class="flex flex-col items-center w-16">
-                                <div class="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
-                                <div class="w-10 h-3 mt-2 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                        <ng-template #skeletonLoading>
+                            <li *ngFor="let i of [1, 2, 3, 4, 5]" class="flex flex-col items-center w-16">
+                                <div class="w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-700 skeleton-shimmer"></div>
+                                <div class="mt-2 h-3 w-10 rounded-full bg-gray-300 dark:bg-gray-700 skeleton-shimmer"></div>
                             </li>
                         </ng-template>
                     </ul>
@@ -234,20 +243,42 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 h-64 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-slide-up"
-                 style="animation-delay: 0.1s">
-                <h3 class="text-xl font-bold text-indigo-800 dark:text-indigo-400">{{ 'home.stats.card1' | translate }}</h3>
-            </div>
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 h-64 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-slide-up"
-                 style="animation-delay: 0.2s">
-                <h3 class="text-xl font-bold text-indigo-800 dark:text-indigo-400">{{ 'home.stats.card2' | translate }}</h3>
-            </div>
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 h-64 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-slide-up"
-                 style="animation-delay: 0.3s">
-                <h3 class="text-xl font-bold text-indigo-800 dark:text-indigo-400">{{ 'home.stats.card3' | translate }}</h3>
-            </div>
-        </div>
+            <ng-container *ngIf="!isStatsLoading && lastRoomCharts.length > 0; else loadingStats">
+                <div *ngFor="let chart of lastRoomCharts"
+                     (click)="navigateToRoomByCode(chart.code)"
+                     class="cursor-pointer bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-slide-up h-[350px] flex items-center justify-center">
 
+                    <apx-chart
+                            [series]="chart.options.series"
+                            [chart]="chart.options.chart"
+                            [labels]="chart.options.labels"
+                            [responsive]="chart.options.responsive"
+                            [title]="chart.options.title"
+                            class="w-fit sm:w-full h-full "
+                    ></apx-chart>
+                </div>
+
+            </ng-container>
+
+            <ng-template #loadingStats>
+                <ng-container *ngFor="let i of [1,2,3]">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 h-[420px] flex items-center justify-center animate-slide-up">
+                        <div class="relative w-12 h-12">
+                            <div class="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
+                            <span class="sr-only">Loading chart...</span>
+                        </div>
+                    </div>
+                </ng-container>
+            </ng-template>
+        </div>
+        <div class="mt-6 flex justify-center">
+            <button
+                    (click)="openRoomModal()"
+                    class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-md shadow transition-all duration-300">
+                <span class="material-icons-outlined">bar_chart</span>
+                {{ 'room.moreStats' | translate }}
+            </button>
+        </div>
     </div>
 </div>
 

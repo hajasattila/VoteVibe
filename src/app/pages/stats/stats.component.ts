@@ -17,6 +17,9 @@ export class StatsComponent implements OnInit, AfterViewInit {
     @ViewChild('sortDropdown') sortDropdownRef!: ElementRef;
     dropdownReady = false;
 
+    protected isAnonymous = true;
+
+
     public chartOptions!: ChartOptions;
     public chartType: ApexChart['type'] = 'pie';
 
@@ -118,21 +121,39 @@ export class StatsComponent implements OnInit, AfterViewInit {
                 return;
             }
 
+            this.isAnonymous = room.isAnonymous ?? true;
+            this.labels = room.poll.options;
+
             const userMap: Record<string, string> = {};
 
-            this.voterDetails = Object.entries(room.pollResults)
-                .filter(([_, userVotes]) => userVotes && typeof userVotes === 'object')
-                .map(([uid, userVotes]) => {
-                    const display = room.members?.find(m => m.uid === uid)?.displayName || uid;
-                    userMap[uid] = display;
-                    return { uid, votes: userVotes };
-                });
+            if (!this.isAnonymous) {
+                this.voterDetails = Object.entries(room.pollResults)
+                    .filter(([_, userVotes]) => userVotes && typeof userVotes === 'object')
+                    .map(([uid, userVotes]) => {
+                        const display = room.members?.find(m => m.uid === uid)?.displayName || uid;
+                        userMap[uid] = display;
+                        return { uid, votes: userVotes };
+                    });
 
-            this.userDisplayMap = userMap;
-            this.labels = room.poll.options;
-            this.voterUids = this.voterDetails.map(v => v.uid);
+                this.userDisplayMap = userMap;
+                this.voterUids = this.voterDetails.map(v => v.uid);
+            } else {
+                this.voterDetails = [{
+                    uid: 'all',
+                    votes: Object.entries(room.pollResults || {})
+                        .reduce((agg, [_, userVotes]) => {
+                            if (userVotes && typeof userVotes === 'object') {
+                                Object.entries(userVotes).forEach(([option, count]) => {
+                                    agg[option] = (agg[option] || 0) + count;
+                                });
+                            }
+                            return agg;
+                        }, {} as Record<string, number>)
+                }];
 
-            if (this.selectedUserId === 'all') {
+            }
+
+            if (this.selectedUserId === 'all' || this.isAnonymous) {
                 this.series = this.labels.map(option => {
                     return this.voterDetails.reduce((sum, v) => sum + (v.votes?.[option] || 0), 0);
                 });
@@ -148,6 +169,7 @@ export class StatsComponent implements OnInit, AfterViewInit {
             this.isLoading = false;
         });
     }
+
 
 
     updateChart(): void {

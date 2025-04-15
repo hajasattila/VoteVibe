@@ -131,12 +131,14 @@
     "github": "Sign in with GitHub"
   },
   "room": {
+    "moreStats": "More statictics",
     "createdAt": "Created",
     "statsChart": {
-      "sortBy": "Rendezés",
-      "sortDefault": "Alapértelmezett sorrend",
-      "sortAsc": "Növekvő sorrend",
-      "sortDesc": "Csökkenő sorrend",
+      "anonymousWarning": "This is an anonymous room, votes cannot be tracked.",
+      "sortBy": "Sort",
+      "sortDefault": "Default sort",
+      "sortAsc": "Ascending sort",
+      "sortDesc": "Descending sort",
       "sortIcons": {
         "default": "sort",
         "asc": "north",
@@ -285,7 +287,7 @@
     "submit": "Sign Up"
   },
   "home": {
-    "latestUsersTitle": "Latest Users",
+    "latestUsersTitle": "Recommended Users",
     "noUsers": "There are no new users to show right now.",
     "unnamedUser": "Unnamed",
     "menu": {
@@ -393,5 +395,9 @@
   "language": {
     "hu": "Hungarian",
     "en": "English"
+  },
+  "notifications": {
+    "friendRequest": "You have a new friend request!",
+    "roomInvite": "You've been invited to a room!"
   }
 }

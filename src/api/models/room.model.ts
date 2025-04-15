@@ -20,7 +20,7 @@ export interface RoomModel {
     pollCreated?: boolean;
     pollResults?: Record<string, Record<string, number>>;
     createdAt: Date;
+    updatedAt?: Date;
 }
 
 export {textPollModel};
-
