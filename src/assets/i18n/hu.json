@@ -131,6 +131,7 @@
     "github": "GitHub belépés"
   },
   "room": {
+    "bulkUpload": "Több kép feltöltése",
     "errorOnlyImages": "Csak képfájlokat tölthetsz fel!",
     "uploadImages": "Képek feltöltése",
     "uploadImage": "Kép feltöltése (kattints vagy húzd be)",

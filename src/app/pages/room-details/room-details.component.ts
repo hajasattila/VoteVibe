@@ -32,7 +32,7 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
 
     protected room: RoomModel | null = null;
     protected remainingTime = '';
-    protected options: string[] = ['', ''];
+    protected options: string[] = [];
     protected question = '';
     protected pollCreated = false;
     protected isLoading = true;
@@ -51,6 +51,9 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
     protected imageFiles: (File | null)[] = [];
     protected imagePreviews: (string | null)[] = [];
 
+    protected bulkUploadMode: boolean = false;
+
+
 
     constructor(
         private cdr: ChangeDetectorRef,
@@ -67,25 +70,17 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-
         this.loadFriends();
         this.loadCurrentUser();
-
         this.initTimestamp = performance.now();
         const roomCode = this.route.snapshot.paramMap.get('code');
         if (roomCode) this.loadRoomDetails(roomCode);
-
-
         this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
             this.isDarkMode = e.matches;
             this.cdr.markForCheck();
         });
-
-        if (this.room?.voteType === 'picture' && this.imageFiles.length < 2) {
-            this.imageFiles = [null as any, null as any];
-        }
+        this.initializeOptions();
     }
 
     ngOnDestroy(): void {
@@ -93,23 +88,39 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         this.timerSubscription?.unsubscribe();
     }
 
+    initializeOptions(): void {
+        if (this.room?.voteType === 'picture' && !this.bulkUploadMode) {
+            this.options = ['', ''];
+            this.imageFiles = [null as any, null as any];
+            this.imagePreviews = [null, null];
+        }
+    }
+
+    onBulkToggle(): void {
+        if (this.bulkUploadMode) {
+            this.options = [];
+            this.imageFiles = [];
+            this.imagePreviews = [];
+        } else {
+            this.options = ['', ''];
+            this.imageFiles = [null as any, null as any];
+            this.imagePreviews = [null, null];
+        }
+        this.cdr.markForCheck();
+    }
 
     loadRoomDetails(roomCode: string): void {
         this.dbService.getRoomDocRefByCode(roomCode).subscribe({
             next: (roomRef: DocumentReference<DocumentData>) => {
                 this.unsubscribeSnapshot?.();
-
                 this.unsubscribeSnapshot = onSnapshot(roomRef, (snapshot) => {
                     const room = snapshot.data() as RoomModel;
-
                     if (room && room.endTime) {
                         this.room = {...room, docId: roomRef.id};
                         this.pollCreated = !!room.pollCreated;
-
                         const endTime = new Date(room.endTime.seconds * 1000);
                         const now = Date.now();
                         const diff = endTime.getTime() - now;
-
                         if (diff <= 0) {
                             this.translate.get('room.expired').subscribe((translated) => {
                                 this.remainingTime = translated;
@@ -119,7 +130,6 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
                             this.remainingTime = this.convertMsToTime(diff);
                             this.startTimer(endTime);
                         }
-
                         this.authService.getCurrentUser().subscribe(currentUser => {
                             this.isCreator = currentUser?.uid === room.creator?.uid;
                             const hasNoPollYet = !room.poll?.options || room.poll?.options.length === 0;
@@ -127,11 +137,6 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
                             this.cdr.markForCheck();
                         });
                     }
-
-                    if (this.room?.voteType === 'picture' && this.imageFiles.length < 2) {
-                        this.imageFiles = [null as any, null as any];
-                    }
-
                     this.isLoading = false;
                     this.cdr.markForCheck();
                 });
@@ -148,12 +153,10 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
 
     startTimer(endTime: Date): void {
         this.timerSubscription = interval(1000)
-            .pipe(
-                map(() => {
-                    const diff = endTime.getTime() - Date.now();
-                    return diff <= 0 ? null : this.convertMsToTime(diff);
-                })
-            )
+            .pipe(map(() => {
+                const diff = endTime.getTime() - Date.now();
+                return diff <= 0 ? null : this.convertMsToTime(diff);
+            }))
             .subscribe((timeStr) => {
                 if (timeStr === null) {
                     this.translate.get('room.expired').subscribe((translated) => {
@@ -175,10 +178,11 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         return `${hrs} h, ${min} m, ${sec} s`;
     }
 
-
     addOption(): void {
         if (this.room?.voteType === 'picture') {
             this.imageFiles.push(null as any);
+            this.imagePreviews.push(null);
+            this.options.push('');
         } else {
             this.options.push('');
             this.cdr.detectChanges();
@@ -189,9 +193,16 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         }
     }
 
-
     removeOption(index: number): void {
-        if (this.options.length > 2) this.options.splice(index, 1);
+        if (this.options.length > 2) {
+            this.options.splice(index, 1);
+            this.imageFiles.splice(index, 1);
+            this.imagePreviews.splice(index, 1);
+        } else {
+            this.imageFiles[index] = null;
+            this.imagePreviews[index] = null;
+        }
+        this.cdr.markForCheck();
     }
 
     trackByFn(index: number): number {
@@ -205,14 +216,12 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
             );
             return;
         }
-
         if (!this.question.trim()) {
             this.translate.get('room.errorMissingQuestion').subscribe(msg =>
                 this.snackbar.error(msg)
             );
             return;
         }
-
         if (this.options.some((o) => !o.trim())) {
             this.translate.get('room.errorMissingOption').subscribe(msg =>
                 this.snackbar.error(msg)
@@ -230,7 +239,6 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
                 this.translate.get('room.pollSuccess').subscribe(msg =>
                     this.snackbar.success(msg)
                 );
-
                 this.dbService.updateRoomPollState(this.room!.docId!, true).subscribe({
                     next: () => {
                         this.pollCreated = true;
@@ -267,7 +275,6 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         });
     }
 
-
     private loadFriends(): void {
         this.authService.getCurrentUser().pipe(take(1)).subscribe((user) => {
             if (user) {
@@ -283,7 +290,6 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         });
     }
 
-
     toggleFriendList(): void {
         this.showFriendList = !this.showFriendList;
     }
@@ -293,7 +299,6 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         if (code) this.router.navigate(['/room', code, 'stats']);
     }
 
-    // Picture based
     previewImage(file: File, index: number): void {
         const reader = new FileReader();
         reader.onload = () => {
@@ -306,16 +311,13 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
     onImageSelected(event: Event, index: number): void {
         const input = event.target as HTMLInputElement;
         const file = input?.files?.[0];
-
         if (!file) return;
-
         if (!file.type.startsWith('image/')) {
             this.translate.get('room.errorOnlyImages').subscribe(msg => {
                 this.snackbar.error(msg);
             });
             return;
         }
-
         this.imageCompressor.compressImage(file).then(compressedFile => {
             this.imageFiles[index] = compressedFile;
             this.previewImage(compressedFile, index);
@@ -328,8 +330,6 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
 
     uploadImagesAndCreatePoll(): void {
         if (!this.room?.docId) return;
-
-        // Ellenőrzés: minden fájl ki van választva
         if (this.imageFiles.some(file => !file)) {
             this.snackbar.error('Minden opcióhoz adj meg képet!');
             return;
@@ -364,16 +364,13 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
     onFileDrop(event: DragEvent, index: number): void {
         event.preventDefault();
         const file = event.dataTransfer?.files?.[0];
-
         if (!file) return;
-
         if (!file.type.startsWith('image/')) {
             this.translate.get('room.errorOnlyImages').subscribe(msg => {
                 this.snackbar.error(msg);
             });
             return;
         }
-
         this.imageCompressor.compressImage(file).then(compressedFile => {
             this.imageFiles[index] = compressedFile;
             this.previewImage(compressedFile, index);
@@ -389,6 +386,7 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         if (this.imageFiles.length > 2) {
             this.imageFiles.splice(index, 1);
             this.imagePreviews.splice(index, 1);
+            this.options.splice(index, 1);
         } else {
             this.imageFiles[index] = null;
             this.imagePreviews[index] = null;
@@ -396,5 +394,34 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
     }
 
+    onBulkImagesSelected(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        const files = Array.from(input?.files || []);
+        if (!files.length) return;
 
+        const validImages = files.filter(file => file.type.startsWith('image/'));
+        const compressTasks = validImages.map(file =>
+            this.imageCompressor.compressImage(file).then(compressed => {
+                console.log(`📦 ${file.name}: ${Math.round(file.size / 1024)}KB ➡️ ${Math.round(compressed.size / 1024)}KB`);
+                return compressed;
+            })
+        );
+
+        Promise.all(compressTasks).then(compressedImages => {
+            compressedImages.forEach((file) => {
+                if (this.imageFiles.length < 10) {
+                    this.imageFiles.push(file);
+                    this.imagePreviews.push('');
+                    this.options.push('');
+                    const index = this.imageFiles.length - 1;
+                    this.previewImage(file, index);
+                }
+            });
+            this.cdr.markForCheck();
+        }).catch(() => {
+            this.translate.get('room.errorImageCompression').subscribe(msg => {
+                this.snackbar.error(msg);
+            });
+        });
+    }
 }
