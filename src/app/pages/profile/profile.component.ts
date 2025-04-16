@@ -31,6 +31,9 @@ export class ProfileComponent implements OnInit {
     createdRoomsCount: number = 0;
     joinedRoomsCount: number = 0;
 
+    showImageModal = false;
+    modalImageUrl: string | null = null;
+
 
     profileForm = this.fb.group({
         uid: [""],
@@ -55,6 +58,8 @@ export class ProfileComponent implements OnInit {
         private databaseService: DatabaseService,
     ) {
     }
+
+
 
     ngOnInit(): void {
         this.initializeProfile();
@@ -278,4 +283,17 @@ export class ProfileComponent implements OnInit {
             }
         });
     }
+
+    openImageModal(url: string | undefined | null) {
+        if (url) {
+            this.modalImageUrl = url;
+            this.showImageModal = true;
+        }
+    }
+
+    closeImageModal() {
+        this.showImageModal = false;
+        this.modalImageUrl = null;
+    }
+
 }

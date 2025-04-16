@@ -52,5 +52,25 @@ export class CacheService {
         this.friendUid = null;
         this.imageCache.clear();
     }
+
+    private friendImagesCache: { [uid: string]: string } = {};
+    private friendLoadedImagesCache: { [uid: string]: boolean } = {};
+
+    setFriendImages(images: { [uid: string]: string }) {
+        this.friendImagesCache = { ...images };
+    }
+
+    getFriendImages(): { [uid: string]: string } {
+        return this.friendImagesCache;
+    }
+
+    setLoadedImages(data: { [uid: string]: boolean }) {
+        this.friendLoadedImagesCache = { ...data };
+    }
+
+    getLoadedImages(): { [uid: string]: boolean } {
+        return this.friendLoadedImagesCache;
+    }
+
 }
 

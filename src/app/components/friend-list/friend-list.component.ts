@@ -14,6 +14,7 @@ import {SnackbarService} from "../../../api/services/snackbar-service/snackbar-s
 import {AuthService} from "../../../api/services/auth-service/auth.service";
 import {Router} from "@angular/router";
 import {RoomModel} from "../../../api/models/room.model";
+import {CacheService} from "../../../api/services/cache-service/cache.service";
 
 @Component({
     selector: "app-friend-list",
@@ -74,7 +75,9 @@ export class FriendListComponent implements OnInit, OnChanges, OnDestroy {
         private translate: TranslateService,
         private authService: AuthService,
         private router: Router,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private cache: CacheService
+
     ) {
     }
 
@@ -86,14 +89,36 @@ export class FriendListComponent implements OnInit, OnChanges, OnDestroy {
             this.currentUserDisplayName = user?.displayName || '';
 
             if (this.currentUserId) {
-                this.friendsSub = this.userService.getFriendsLive(this.currentUserId).subscribe(friends => {
-                    this.friends = friends;
-                    this.loadFriendImages();
+                const cachedFriends = this.cache.getFriends(this.currentUserId);
+                const cachedImages = this.cache.getFriendImages();
+                const cachedLoaded = this.cache.getLoadedImages();
+
+                if (cachedFriends && Object.keys(cachedImages).length > 0 && Object.keys(cachedLoaded).length > 0) {
+                    this.friends = cachedFriends;
+                    this.friendImages = cachedImages;
+                    this.loadedImages = cachedLoaded;
+                    this.isLoadingFriends = false;
                     this.cdr.markForCheck();
-                });
+                } else {
+                    this.friendsSub = this.userService.getFriendsLive(this.currentUserId).subscribe(liveFriends => {
+                        const cached = this.cache.getFriends(this.currentUserId!);
+                        const changed = !cached ||
+                            cached.length !== liveFriends.length ||
+                            cached.some((c, i) => c.uid !== liveFriends[i]?.uid);
+
+                        if (changed) {
+                            this.friends = liveFriends;
+                            this.cache.setFriends(this.currentUserId!, liveFriends);
+                            this.loadFriendImages();
+                            this.cdr.markForCheck();
+                        }
+                    });
+                }
             }
         });
     }
+
+
 
     ngOnDestroy(): void {
         if (this.friendsSub) {
@@ -115,29 +140,41 @@ export class FriendListComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         let loadedCount = 0;
+        const images: { [uid: string]: string } = {};
+        const loadedFlags: { [uid: string]: boolean } = {};
 
         for (let friend of this.friends) {
             this.userService.getUserById(friend.uid).pipe(
                 switchMap((user: ProfileUser) => {
                     const photoURL = user.photoURL || "/assets/images/image-placeholder.png";
-                    this.friendImages[friend.uid] = photoURL;
+                    images[friend.uid] = photoURL;
                     return of(photoURL);
                 })
             ).subscribe((photoURL) => {
                 const img = new Image();
                 img.onload = () => {
-                    this.loadedImages[friend.uid] = true;
+                    loadedFlags[friend.uid] = true;
                     loadedCount++;
                     if (loadedCount === this.friends.length) {
+                        this.friendImages = images;
+                        this.loadedImages = loadedFlags;
+                        this.cache.setFriendImages(images);
+                        this.cache.setLoadedImages(loadedFlags);
                         this.isLoadingFriends = false;
+                        this.cdr.markForCheck();
                     }
                 };
                 img.onerror = () => {
-                    this.loadedImages[friend.uid] = false;
-                    this.friendImages[friend.uid] = "/assets/images/image-placeholder.png";
+                    loadedFlags[friend.uid] = false;
+                    images[friend.uid] = "/assets/images/image-placeholder.png";
                     loadedCount++;
                     if (loadedCount === this.friends.length) {
+                        this.friendImages = images;
+                        this.loadedImages = loadedFlags;
+                        this.cache.setFriendImages(images);
+                        this.cache.setLoadedImages(loadedFlags);
                         this.isLoadingFriends = false;
+                        this.cdr.markForCheck();
                     }
                 };
                 img.src = photoURL;
@@ -170,6 +207,7 @@ export class FriendListComponent implements OnInit, OnChanges, OnDestroy {
         this.userService.removeFriend(this.selectedFriend).subscribe({
             next: () => {
                 this.friends = this.friends.filter(f => f.uid !== this.selectedFriend?.uid);
+                this.cache.setFriends(this.currentUserId!, this.friends); // frissítés a cache-ben
                 this.translate.get('friends.removeSuccess', {name: this.selectedFriend?.displayName}).subscribe(msg =>
                     this.snackbar.success(msg)
                 );
