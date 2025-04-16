@@ -13,6 +13,7 @@ import {
 import {from, Observable, switchMap} from "rxjs";
 import {ProfileUser} from "../../models/user.model";
 import {Firestore, doc, getDoc, setDoc} from "@angular/fire/firestore";
+import {CacheService} from "../cache-service/cache.service";
 
 @Injectable({
     providedIn: "root",
@@ -20,7 +21,10 @@ import {Firestore, doc, getDoc, setDoc} from "@angular/fire/firestore";
 export class AuthService {
     currentUser$ = authState(this.auth);
 
-    constructor(private auth: Auth, private firestore: Firestore) {
+    constructor(private auth: Auth,
+                private firestore: Firestore,
+                private cache: CacheService
+    ) {
     }
 
     loginWithGithub(): Observable<UserCredential | void> {
@@ -80,6 +84,7 @@ export class AuthService {
     }
 
     logout(): Observable<any> {
+        this.cache.clear();
         return from(this.auth.signOut());
     }
 }

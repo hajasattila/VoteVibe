@@ -59,9 +59,9 @@ export class TextPollComponent implements OnInit, AfterViewInit, OnDestroy {
     private imageLoadMonitorInterval?: any;
     private preloadImageUrls: string[] = [];
 
-    nextLeftOption?: string;
-    nextRightOption?: string;
-    readyToDisplay: boolean = true;
+    loadingLeft: boolean = true;
+    loadingRight: boolean = true;
+
 
     constructor(
         private dbService: DatabaseService,
@@ -112,6 +112,8 @@ export class TextPollComponent implements OnInit, AfterViewInit, OnDestroy {
         }, 500);
     }
 
+    nextLeftOption?: string;
+    nextRightOption?: string;
 
     loadPollData(roomCode: string): void {
         this.dbService.getRoomByCode(roomCode).subscribe((room) => {
@@ -182,9 +184,18 @@ export class TextPollComponent implements OnInit, AfterViewInit, OnDestroy {
             this.leftOption = shuffled[0];
             this.rightOption = shuffled.find(o => o !== this.leftOption);
 
+            this.loadingLeft = this.leftOption?.startsWith('http') ?? false;
+            this.loadingRight = this.rightOption?.startsWith('http') ?? false;
+
             if (this.leftOption && this.rightOption) {
                 this.addComparedPair(this.leftOption, this.rightOption);
             }
+
+            this.nextLeftOption = this.rightOption ? this.getUncomparedOptionFor(this.rightOption) : undefined;
+            this.nextRightOption = this.leftOption ? this.getUncomparedOptionFor(this.leftOption) : undefined;
+
+            console.log('[👉 JOBB húzás esetén jönne]:', this.nextLeftOption);
+            console.log('[👈 BAL húzás esetén jönne]:', this.nextRightOption);
 
             const totalOptions = this.allOptions.length;
             this.remainingCombinations = (totalOptions * (totalOptions - 1)) / 2;
@@ -210,11 +221,7 @@ export class TextPollComponent implements OnInit, AfterViewInit, OnDestroy {
             this.preloadImageUrls = otherImages;
             setTimeout(() => {
                 this.cacheService.preloadImages(this.preloadImageUrls);
-                console.log('[🚀 Háttérképek betöltése indult]', this.preloadImageUrls);
             }, 0);
-
-
-
 
             this.loading = false;
             this.cdr.markForCheck();
@@ -315,18 +322,18 @@ export class TextPollComponent implements OnInit, AfterViewInit, OnDestroy {
         if (newOption) {
             this.addComparedPair(option, newOption);
 
-            // 🔥 ÚJ kép AZONNAL beállítva még az animáció előtt
             if (side === 'left') {
                 this.leftOption = option;
                 this.rightOption = newOption;
+                this.loadingRight = newOption.startsWith('http');
                 this.animateIncoming = 'right';
             } else {
                 this.rightOption = option;
                 this.leftOption = newOption;
+                this.loadingLeft = newOption.startsWith('http');
                 this.animateIncoming = 'left';
             }
 
-            // ⏱ csak az animációk nullázása késik
             setTimeout(() => {
                 this.selectedSide = null;
                 this.disappearSide = null;
@@ -387,7 +394,17 @@ export class TextPollComponent implements OnInit, AfterViewInit, OnDestroy {
         this.activeDragSide = side;
         this.dragOffsetX = 0;
         this.isDragging = true;
+
+        if (this.leftOption) {
+            this.nextRightOption = this.getUncomparedOptionFor(this.leftOption);
+            console.log('[👈 BAL húzás esetén jönne]:', this.nextRightOption);
+        }
+        if (this.rightOption) {
+            this.nextLeftOption = this.getUncomparedOptionFor(this.rightOption);
+            console.log('[👉 JOBB húzás esetén jönne]:', this.nextLeftOption);
+        }
     }
+
 
     onTouchMove(event: TouchEvent) {
         if (!this.isDragging) return;
@@ -413,10 +430,7 @@ export class TextPollComponent implements OnInit, AfterViewInit, OnDestroy {
 
         if (Math.abs(deltaX) > swipeThreshold) {
             const direction = deltaX > 0 ? 'right' : 'left';
-            this.disappearSide = this.activeDragSide;
-            this.disappearDirection = direction;
             this.selectedSide = chosenSide;
-
             this.voteCounts[chosenOption] = (this.voteCounts[chosenOption] || 0) + 1;
 
             this.clickSound.volume = 0.05;
@@ -433,27 +447,39 @@ export class TextPollComponent implements OnInit, AfterViewInit, OnDestroy {
             const newOption = this.getUncomparedOptionFor(chosenOption);
 
             if (newOption) {
+                console.log('[➡️ Következő betöltendő opció]:', newOption);
                 this.addComparedPair(chosenOption, newOption);
-                setTimeout(() => {
+
+                const img = new Image();
+                img.src = newOption;
+                img.onload = () => {
                     if (chosenSide === 'left') {
                         this.leftOption = chosenOption;
                         this.rightOption = newOption;
+                        this.loadingRight = false;
                         this.animateIncomingRight = true;
                     } else {
                         this.rightOption = chosenOption;
                         this.leftOption = newOption;
+                        this.loadingLeft = false;
                         this.animateIncomingLeft = true;
                     }
+
+                    this.resetSwipeState();
+                    this.cdr.markForCheck();
 
                     setTimeout(() => {
                         this.animateIncomingLeft = false;
                         this.animateIncomingRight = false;
-                        this.resetSwipeState();
                         this.cdr.markForCheck();
                     }, 400);
+                };
 
-                    this.resetSwipeState();
-                }, 700);
+                if (newOption.startsWith('http')) {
+                    if (chosenSide === 'left') this.loadingRight = true;
+                    else this.loadingLeft = true;
+                }
+
             } else {
                 this.winnerOption = chosenOption;
                 this.showWinnerModal = true;

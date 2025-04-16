@@ -19,6 +19,11 @@ export class StatsComponent implements OnInit, AfterViewInit {
 
     protected isAnonymous = true;
 
+    public originalOptions: string[] = [];
+    public imagePreviewUrl: string | null = null;
+
+    showAllImages = false;
+
 
     public chartOptions!: ChartOptions;
     public chartType: ApexChart['type'] = 'pie';
@@ -111,6 +116,9 @@ export class StatsComponent implements OnInit, AfterViewInit {
         this.sortDropdownOpen = !this.sortDropdownOpen;
     }
 
+    isPictureBased = false;
+
+
     ngOnInit(): void {
         const code = this.route.snapshot.paramMap.get('code');
         if (!code) return;
@@ -120,9 +128,19 @@ export class StatsComponent implements OnInit, AfterViewInit {
                 this.isLoading = false;
                 return;
             }
+            this.isPictureBased = room.voteType === 'picture';
+
 
             this.isAnonymous = room.isAnonymous ?? true;
-            this.labels = room.poll.options;
+            this.originalOptions = room.poll.options;
+
+            const isImageOption = (opt: string): boolean =>
+                /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif|bmp|svg)(\?.*)?$/i.test(opt) ||
+                opt.includes('firebasestorage.googleapis.com');
+
+            this.labels = room.poll.options.map((opt, i) =>
+                isImageOption(opt) ? `🖼️ Kép ${i + 1}` : opt
+            );
 
             const userMap: Record<string, string> = {};
 
@@ -150,18 +168,13 @@ export class StatsComponent implements OnInit, AfterViewInit {
                             return agg;
                         }, {} as Record<string, number>)
                 }];
-
             }
 
-            if (this.selectedUserId === 'all' || this.isAnonymous) {
-                this.series = this.labels.map(option => {
-                    return this.voterDetails.reduce((sum, v) => sum + (v.votes?.[option] || 0), 0);
-                });
-            } else {
-                const userVotes = this.voterDetails.find(v => v.uid === this.selectedUserId)?.votes || {};
-                this.series = this.labels.map(option => userVotes[option] || 0);
-            }
+            const getVoteCount = (option: string) => {
+                return this.voterDetails.reduce((sum, v) => sum + (v.votes?.[option] || 0), 0);
+            };
 
+            this.series = room.poll.options.map(opt => getVoteCount(opt));
             this.originalLabels = [...this.labels];
             this.originalSeries = [...this.series];
 
@@ -170,6 +183,9 @@ export class StatsComponent implements OnInit, AfterViewInit {
         });
     }
 
+    scrollToTop(): void {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
 
     updateChart(): void {
@@ -342,5 +358,55 @@ export class StatsComponent implements OnInit, AfterViewInit {
         }
     }
 
+    toggleImageDisplay(): void {
+        this.showAllImages = !this.showAllImages;
+        this.imagePreviewUrl = null;
+    }
 
+
+    isImage(url: string): boolean {
+        return typeof url === 'string' &&
+            (/^https?:\/\/.+\.(jpg|jpeg|png|webp|gif|bmp|svg)(\?.*)?$/i.test(url) ||
+                url.startsWith('https://firebasestorage.googleapis.com'));
+    }
+
+    hasImageOptions(): boolean {
+        return Array.isArray(this.originalOptions) && this.originalOptions.some(opt => this.isImage(opt));
+    }
+    showImageModal = false;
+    modalImageUrl: string | null = null;
+
+    openImageModal(url: string | undefined | null) {
+        if (url) {
+            this.modalImageUrl = url;
+            this.showImageModal = true;
+
+            setTimeout(() => {
+                const previewBlock = document.querySelector('.preview-scroll-target');
+                if (previewBlock) {
+                    previewBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 50);
+        }
+    }
+
+    onPreviewFromListClick(url: string): void {
+        this.imagePreviewUrl = url;
+        this.showAllImages = false;
+
+        setTimeout(() => {
+            const previewBlock = document.querySelector('.preview-scroll-target');
+            if (previewBlock) {
+                previewBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 50);
+    }
+
+
+
+
+    closeImageModal() {
+        this.showImageModal = false;
+        this.modalImageUrl = null;
+    }
 }

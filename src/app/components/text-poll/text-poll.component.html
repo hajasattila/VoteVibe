@@ -46,13 +46,24 @@
     }"
             [ngStyle]="activeDragSide === 'left' ? { transform: 'translateX(' + dragOffsetX + 'px)', opacity: dragOpacity } : {}">
 
+        <!-- BAL OPCIÓ -->
         <ng-container *ngIf="leftOption?.startsWith('http'); else textLeft">
-            <div class="relative w-full h-full group overflow-hidden">
-                <img [src]="leftOption" alt="left option image"
-                     class="w-full h-full max-w-full max-h-full object-contain transition-opacity duration-300"/>
-                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition duration-300"></div>
+            <div class="relative w-full h-full group overflow-hidden flex items-center justify-center">
+                <div *ngIf="loadingLeft"
+                     class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 dark:bg-gray-900 dark:bg-opacity-80 z-20">
+                    <div class="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+                <img
+                        [src]="leftOption"
+                        (load)="loadingLeft = false"
+                        alt="left option image"
+                        class="w-full h-full max-w-full max-h-full object-contain transition-opacity duration-300"
+                />
+                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition duration-300 z-10"></div>
             </div>
         </ng-container>
+
+
 
 
         <ng-template #textLeft>
@@ -88,11 +99,20 @@
     }"
             [ngStyle]="activeDragSide === 'right' ? { transform: 'translateX(' + dragOffsetX + 'px)', opacity: dragOpacity } : {}">
 
+        <!-- JOBB OPCIÓ -->
         <ng-container *ngIf="rightOption?.startsWith('http'); else textRight">
-            <div class="relative w-full h-full group overflow-hidden">
-                <img [src]="rightOption" alt="right option image"
-                     class="w-full h-full max-w-full max-h-full object-contain transition-opacity duration-300"/>
-                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition duration-300"></div>
+            <div class="relative w-full h-full group overflow-hidden flex items-center justify-center">
+                <div *ngIf="loadingRight"
+                     class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 dark:bg-gray-900 dark:bg-opacity-80 z-20">
+                    <div class="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+                <img
+                        [src]="rightOption"
+                        (load)="loadingRight = false"
+                        alt="right option image"
+                        class="w-full h-full max-w-full max-h-full object-contain transition-opacity duration-300"
+                />
+                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition duration-300 z-10"></div>
             </div>
         </ng-container>
 

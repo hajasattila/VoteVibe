@@ -385,6 +385,7 @@ export class HomeComponent implements OnInit {
         });
     }
     private processRooms(rooms: RoomModel[], cachedHash: string | null, cachedCharts: string | null): void {
+
         const sortedRooms = rooms
             .filter(room => !!room.pollResults && !!room.poll?.options)
             .sort((a, b) => {
@@ -404,25 +405,38 @@ export class HomeComponent implements OnInit {
         const isDark = document.documentElement.classList.contains('dark');
 
         this.lastRoomCharts = sortedRooms.map(room => {
-            const labels = room.poll!.options;
+            const isDark = document.documentElement.classList.contains('dark');
             const pollResults = room.pollResults!;
             const code = room.roomId;
 
-            const series = labels.map(option => {
+            const originalOptions = room.poll!.options;
+
+            const labels: string[] = [];
+            const optionMap: { [label: string]: string } = {}; // label -> original
+
+            originalOptions.forEach((opt, i) => {
+                const isImageUrl = /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif|bmp|svg)(\?.*)?$/i.test(opt) || opt.startsWith('https://firebasestorage.googleapis.com');
+                const label = isImageUrl ? `🖼️ Kép ${i + 1}` : opt;
+                labels.push(label);
+                optionMap[label] = opt;
+            });
+
+            const series = labels.map(label => {
+                const originalOption = optionMap[label];
                 return Object.values(pollResults).reduce((sum, userVotes) => {
-                    return sum + (userVotes?.[option] || 0);
+                    return sum + (userVotes?.[originalOption] || 0);
                 }, 0);
             });
 
             return {
                 title: room.roomName,
-                code: code,
+                code,
                 options: {
                     series,
                     chart: {
                         type: 'pie',
                         height: '100%',
-                        width:'100%'
+                        width: '100%',
                     },
                     labels,
                     title: {
@@ -457,6 +471,7 @@ export class HomeComponent implements OnInit {
                 }
             };
         });
+
 
         sessionStorage.setItem('lastRoomHash', roomHash);
         sessionStorage.setItem('lastRoomCharts', JSON.stringify(this.lastRoomCharts));

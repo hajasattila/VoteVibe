@@ -144,8 +144,9 @@
                     [title]="chartOptions.title"
             ></apx-chart>
 
+
             <!-- 🏆 PÓDIUM -->
-                    <div class="relative mt-12 z-10 overflow-hidden min-h-[350px]">
+                    <div class="relative mt-12 z-10 overflow-hidden min-h-[250px]">
                 <h3 class="text-2xl font-bold text-center text-indigo-600 dark:text-indigo-300 mb-4">
                     🏆 Top 3 – {{ 'room.statsChart.podiumTitle' | translate }}
                 </h3>
@@ -187,20 +188,98 @@
                 </div>
             </div>
 
+            <div *ngIf="isPictureBased" class="text-center mt-4">
+                <p class="text-sm text-gray-600 dark:text-gray-400 italic flex items-center justify-center gap-1">
+                    <span class="material-icons-outlined text-indigo-500 text-base">info</span>
+                    {{ 'room.statsChart.clickToViewInfo' | translate }}
+                </p>
+            </div>
+
+
+
             <ul class="mt-6 divide-y divide-gray-200 dark:divide-gray-700">
                 <li
                         *ngFor="let label of chartOptions.labels; let i = index"
-                        class="py-2 flex justify-between items-center"
+                        class="py-2 flex justify-between items-center cursor-pointer transition duration-200"
+                        [ngClass]="{ 'bg-indigo-100 dark:bg-indigo-800 rounded': imagePreviewUrl === originalOptions[i] && !showAllImages }"
+                        (click)="onPreviewFromListClick(originalOptions[i])"
                 >
-        <span class="font-semibold text-indigo-700 dark:text-indigo-300">
-            {{ i + 1 }}. {{ label }}
-        </span>
+    <span class="font-semibold text-indigo-700 dark:text-indigo-300">
+      {{ i + 1 }}. {{ label }}
+    </span>
                     <span class="text-gray-600 dark:text-gray-300">
-            {{ getVoteCountAtIndex(i) }} {{ 'room.statsChart.votes' | translate }}
-        </span>
+      {{ getVoteCountAtIndex(i) }} {{ 'room.statsChart.votes' | translate }}
+    </span>
                 </li>
             </ul>
 
+            <div class="mt-4 text-center">
+                <button
+                        *ngIf="hasImageOptions()"
+                        (click)="toggleImageDisplay(); imagePreviewUrl = null"
+                        class="text-indigo-600 hover:underline text-sm"
+                >
+                    {{ showAllImages ? ('room.statsChart.hideImages' | translate) : ('room.statsChart.showAllImages' | translate) }}
+                </button>
+            </div>
+
+            <div
+                    *ngIf="imagePreviewUrl && imagePreviewUrl.startsWith('http') && !showAllImages"
+                    class="mt-6 text-center relative flex justify-center preview-scroll-target"
+            >
+
+
+                <div class="relative inline-block">
+                    <img
+                            [src]="imagePreviewUrl"
+                            class="max-w-full max-h-[400px] rounded shadow-md cursor-pointer transition duration-300 hover:opacity-50 hover:shadow-lg"
+                            (click)="openImageModal(imagePreviewUrl)"
+                    />
+
+
+                    <button
+                            class="absolute top-0 right-0 px-1 text-indigo-600 hover:text-white dark:hover:text-white border rounded-full border-indigo-800"
+                            (click)="imagePreviewUrl = null"
+                    >
+                        <span class="material-icons text-base">close</span>
+                    </button>
+                </div>
+            </div>
+
+
+            <div *ngIf="showAllImages" class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+                <ng-container *ngFor="let opt of originalOptions">
+                    <img
+                            *ngIf="opt.startsWith('http')"
+                            [src]="opt"
+                            class="w-full aspect-square object-cover rounded shadow cursor-pointer transition duration-300 hover:opacity-50 hover:shadow-lg"
+                            (click)="openImageModal(opt)"
+                    />
+
+                </ng-container>
+            </div>
+
+            <!-- MODAL háttér és overlay -->
+            <div
+                    *ngIf="showImageModal"
+                    class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center pt-20"
+                    (click)="closeImageModal()"
+            >
+                <div class="relative max-w-full max-h-full p-4" (click)="$event.stopPropagation()">
+                    <img
+                            [src]="modalImageUrl"
+                            alt="Large image"
+                            class="zoom-animate max-w-full max-h-[90vh] rounded-lg shadow-2xl border-4 border-indigo-600"
+                    />
+                    <button
+                            (click)="closeImageModal()"
+                            class="absolute top-0 right-0 px-1 mt-6 mr-6 text-indigo-600 hover:text-white dark:hover:text-white border rounded-full border-indigo-800"
+
+                    >
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+            </div>
 
         </div>
 
