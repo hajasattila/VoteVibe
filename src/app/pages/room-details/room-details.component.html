@@ -249,10 +249,12 @@
                                 </ng-container>
 
                                 <ng-template #placeholder>
-            <span class="text-indigo-500 dark:text-indigo-300">
-              {{ 'room.uploadImage' | translate }}
-            </span>
+                                      <span class="text-indigo-500 dark:text-indigo-300 text-sm">
+                                        {{ isMobile ? ('room.mobilePlaceholder' | translate) : ('room.desktopPlaceholder' | translate) }}
+                                      </span>
                                 </ng-template>
+
+
 
                                 <button
                                         (click)="removeImage(i)"

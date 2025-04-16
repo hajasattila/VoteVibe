@@ -19,9 +19,15 @@
 
     <label *ngIf="leftOption && !rightOption"
            class="flex flex-col h-full w-full justify-center items-center text-center cursor-default group">
-        <span class="text-white text-3xl font-bold z-30 px-8 py-4 lg:text-5xl xl:text-6xl">
-          {{ leftOption }}
-        </span>
+        <ng-container *ngIf="leftOption?.startsWith('http'); else textLeft">
+            <img [src]="leftOption" alt="left option image"
+                 class="max-h-48 md:max-h-64 lg:max-h-72 xl:max-h-80 object-contain rounded-lg shadow-md border-2 border-white dark:border-gray-700"/>
+        </ng-container>
+        <ng-template #textLeft>
+              <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl">
+                {{ leftOption }}
+              </span>
+        </ng-template>
     </label>
 
     <!-- BAL OPCIÓ -->
@@ -34,24 +40,33 @@
             (touchmove)="onTouchMove($event)"
             (touchend)="onTouchEnd(leftOption, $event)"
             [ngClass]="{
-                      'animate-slide-out-left': disappearSide === 'left' && disappearDirection === 'left',
-                      'animate-slide-out-right': disappearSide === 'left' && disappearDirection === 'right',
-                      'animate-slide-in-left': animateIncomingLeft
-            }"
+              'animate-slide-out-left': disappearSide === 'left' && disappearDirection === 'left',
+              'animate-slide-out-right': disappearSide === 'left' && disappearDirection === 'right',
+              'animate-slide-in-left': animateIncomingLeft
+    }"
             [ngStyle]="activeDragSide === 'left' ? { transform: 'translateX(' + dragOffsetX + 'px)', opacity: dragOpacity } : {}">
 
-          <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl">
+        <ng-container *ngIf="leftOption?.startsWith('http'); else textLeft">
+            <img [src]="leftOption" alt="left option image"
+                 class="max-h-48 md:max-h-64 lg:max-h-72 xl:max-h-80 object-contain rounded-lg shadow-md border-2 border-white dark:border-gray-700"/>
+        </ng-container>
+        <ng-template #textLeft>
+        <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl">
             {{ leftOption }}
-          </span>
+        </span>
+        </ng-template>
+
         <div class="absolute inset-0 z-20"></div>
         <div *ngIf="selectedSide === 'left'"
              class="firework left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
     </div>
+
     <p *ngIf="remainingTime"
        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30  font-bold py-2 lg:hidden w-48
         text-center text-xl text-gray-800 dark:text-gray-100 drop-shadow-sm bg-white dark:bg-gray-900 bg-opacity-70 dark:bg-opacity-70 rounded-lg shadow-md transition-all duration-300">
         ⏳ {{ remainingTime }} ⏳
     </p>
+
     <!-- JOBB OPCIÓ -->
     <div
             *ngIf="leftOption && rightOption"
@@ -62,19 +77,27 @@
             (touchmove)="onTouchMove($event)"
             (touchend)="onTouchEnd(rightOption, $event)"
             [ngClass]="{
-                      'animate-slide-out-left': disappearSide === 'right' && disappearDirection === 'left',
-                      'animate-slide-out-right': disappearSide === 'right' && disappearDirection === 'right',
-                      'animate-slide-in-right': animateIncomingRight
-            }"
+              'animate-slide-out-left': disappearSide === 'right' && disappearDirection === 'left',
+              'animate-slide-out-right': disappearSide === 'right' && disappearDirection === 'right',
+              'animate-slide-in-right': animateIncomingRight
+    }"
             [ngStyle]="activeDragSide === 'right' ? { transform: 'translateX(' + dragOffsetX + 'px)', opacity: dragOpacity } : {}">
 
-        <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl ">
-                {{ rightOption }}
-              </span>
+        <ng-container *ngIf="rightOption?.startsWith('http'); else textRight">
+            <img [src]="rightOption" alt="right option image"
+                 class="max-h-48 md:max-h-64 lg:max-h-72 xl:max-h-80 object-contain rounded-lg shadow-md border-2 border-white dark:border-gray-700"/>
+        </ng-container>
+        <ng-template #textRight>
+        <span class="text-white text-2xl font-bold relative z-30 m-auto px-12 lg:text-4xl xl:text-6xl">
+            {{ rightOption }}
+        </span>
+        </ng-template>
+
         <div class="absolute inset-0 z-20"></div>
         <div *ngIf="selectedSide === 'right'"
              class="firework left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
     </div>
+
 </div>
 
 
@@ -88,8 +111,14 @@
             <h2 class="text-2xl font-bold text-indigo-600 dark:text-indigo-300 mb-2">
                 {{ 'poll.winnerTitle' | translate }}
             </h2>
-            <p class="text-lg text-gray-700 dark:text-gray-200">
-                {{ 'poll.winnerIs' | translate:{option: winnerOption} }}
+            <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-300 my-0 pb-0">
+                <ng-container *ngIf="winnerOption?.startsWith('http'); else winnerText">
+                    <img [src]="winnerOption" alt="winner image"
+                         class="max-h-48 mx-auto rounded-lg shadow-md border-2 border-white dark:border-gray-700"/>
+                </ng-container>
+                <ng-template #winnerText>
+                    {{ 'poll.winnerIs' | translate:{option: winnerOption} }}
+                </ng-template>
             </p>
         </div>
         <div class="flex justify-center">
@@ -115,8 +144,16 @@
         </button>
 
         <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-300 my-0 pb-0 pt-6">
-            🏆 {{ 'poll.winnerIs' | translate:{option: winnerOption} }}
+            🏆 {{ 'poll.winnerIsTitle' | translate }}
+            <ng-container *ngIf="winnerOption?.startsWith('http'); else textWinner">
+                <img [src]="winnerOption" alt="winner image"
+                     class="max-h-48 mx-auto rounded-lg shadow-md border-2 border-white dark:border-gray-700 mt-4"/>
+            </ng-container>
+            <ng-template #textWinner>
+                <span class="block mt-2">{{ winnerOption }}</span>
+            </ng-template>
         </p>
+
         <p class="mt-4 text-sm text-gray-600 dark:text-gray-300">
             {{ 'poll.revoteInfo' | translate }}
         </p>

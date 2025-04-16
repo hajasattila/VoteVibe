@@ -131,10 +131,13 @@
     "github": "Sign in with GitHub"
   },
   "room": {
-    "bulkUpload": "Bulk image upload",
+    "desktopPlaceholder": "Upload an image (click or drag)",
+    "mobilePlaceholder": "Take a picture!",
+    "bulkUpload": "Upload images",
     "errorOnlyImages": "Only image files are allowed!",
     "uploadImages": "Upload Images",
-    "uploadImage": "Upload Image (click or drag)",
+    "uploadImage": "Upload an image (click or drag)",
+    "takePhoto": "Take a photo",
     "removeOption": "Remove",
     "moreStats": "More statictics",
     "createdAt": "Created",

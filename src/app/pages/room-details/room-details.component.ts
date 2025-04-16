@@ -53,6 +53,7 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
 
     protected bulkUploadMode: boolean = false;
 
+    protected isMobile = false;
 
 
     constructor(
@@ -70,6 +71,8 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this.detectPlatform();
+
         this.loadFriends();
         this.loadCurrentUser();
         this.initTimestamp = performance.now();
@@ -423,5 +426,9 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
                 this.snackbar.error(msg);
             });
         });
+    }
+    private detectPlatform(): void {
+        const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
+        this.isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua.toLowerCase());
     }
 }

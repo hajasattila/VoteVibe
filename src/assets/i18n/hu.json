@@ -131,10 +131,13 @@
     "github": "GitHub belépés"
   },
   "room": {
-    "bulkUpload": "Több kép feltöltése",
+    "desktopPlaceholder": "Kép feltöltése (kattints vagy húzd be)",
+    "mobilePlaceholder": "Készíts képet!",
+    "bulkUpload": "Kép feltöltése",
     "errorOnlyImages": "Csak képfájlokat tölthetsz fel!",
     "uploadImages": "Képek feltöltése",
     "uploadImage": "Kép feltöltése (kattints vagy húzd be)",
+    "takePhoto": "Kép készítése",
     "removeOption": "Eltávolítás",
     "moreStats": "További statisztikák",
     "createdAt": "Létrehozva",
@@ -393,6 +396,7 @@
   "poll": {
     "winnerTitle": "🏆 A győztes opció!",
     "winnerIs": "A győztes: {{ option }}",
+    "winnerIsTitle": "A győztes:",
     "close": "Bezárás",
     "revote": "Újraszavazás",
     "revoteInfo": "Nem tetszik az eredmény?",
