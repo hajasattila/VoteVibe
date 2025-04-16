@@ -3,7 +3,7 @@ import {
     Input,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
-    OnInit, OnDestroy
+    OnInit, OnDestroy, AfterViewInit
 } from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DatabaseService} from "src/api/services/database-service/database.service";
@@ -12,6 +12,7 @@ import {AuthService} from "../../../api/services/auth-service/auth.service";
 import {User} from "@angular/fire/auth";
 import {interval, Subscription} from "rxjs";
 import {TranslateService} from "@ngx-translate/core";
+import {CacheService} from "../../../api/services/cache-service/cache.service";
 
 @Component({
     selector: "app-text-poll",
@@ -19,7 +20,7 @@ import {TranslateService} from "@ngx-translate/core";
     styleUrls: ["./text-poll.component.css"],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TextPollComponent implements OnInit, OnDestroy {
+export class TextPollComponent implements OnInit, AfterViewInit, OnDestroy {
     currentUser: User | null = null;
     roomDocId: string | null = null;
 
@@ -55,7 +56,12 @@ export class TextPollComponent implements OnInit, OnDestroy {
 
     allPollResults: Record<string, Record<string, number>> = {};
 
+    private imageLoadMonitorInterval?: any;
+    private preloadImageUrls: string[] = [];
 
+    nextLeftOption?: string;
+    nextRightOption?: string;
+    readyToDisplay: boolean = true;
 
     constructor(
         private dbService: DatabaseService,
@@ -64,7 +70,9 @@ export class TextPollComponent implements OnInit, OnDestroy {
         private fireworkService: FireworkService,
         private authService: AuthService,
         private translate: TranslateService,
-        private router: Router
+        private router: Router,
+        private cacheService: CacheService,
+
     ) {
     }
 
@@ -83,17 +91,31 @@ export class TextPollComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.timerSubscription?.unsubscribe();
         this.revoteCheckSubscription?.unsubscribe();
+        if (this.imageLoadMonitorInterval) {
+            clearInterval(this.imageLoadMonitorInterval);
+        }
     }
+
+
+    ngAfterViewInit(): void {
+        if (this.preloadImageUrls.length === 0) return;
+
+        this.imageLoadMonitorInterval = setInterval(() => {
+            const loaded = this.preloadImageUrls.filter(url => this.cacheService.isImagePreloaded(url));
+            const remaining = this.preloadImageUrls.length - loaded.length;
+
+            console.log(`[📥 Kép cache állapot]: ${loaded.length}/${this.preloadImageUrls.length} betöltve`);
+            if (remaining === 0) {
+                console.log('[✅ Minden kép be lett töltve a cache-be]');
+                clearInterval(this.imageLoadMonitorInterval);
+            }
+        }, 500);
+    }
+
 
     loadPollData(roomCode: string): void {
         this.dbService.getRoomByCode(roomCode).subscribe((room) => {
             if (!room?.poll) return;
-
-            // if (Object.keys(this.allPollResults).length > 0) {
-            //     console.log('[📥 Szoba pollResults állapota betöltéskor]:', this.allPollResults);
-            // } else {
-            //     console.log('[ℹ️ Nincs pollResults adat a szobában]');
-            // }
 
             this.animateIncomingLeft = false;
             this.animateIncomingRight = false;
@@ -180,6 +202,20 @@ export class TextPollComponent implements OnInit, OnDestroy {
                 }
             }
 
+            const otherImages = this.allOptions.filter(opt =>
+                opt !== this.leftOption &&
+                opt !== this.rightOption &&
+                opt.startsWith('http')
+            );
+            this.preloadImageUrls = otherImages;
+            setTimeout(() => {
+                this.cacheService.preloadImages(this.preloadImageUrls);
+                console.log('[🚀 Háttérképek betöltése indult]', this.preloadImageUrls);
+            }, 0);
+
+
+
+
             this.loading = false;
             this.cdr.markForCheck();
 
@@ -245,9 +281,12 @@ export class TextPollComponent implements OnInit, OnDestroy {
     getUncomparedOptionFor(selected: string): string | undefined {
         return this.allOptions.find(option => {
             const pairKey = this.getPairKey(selected, option);
-            return option !== selected && !this.comparedPairs.has(pairKey);
+            return option !== selected &&
+                !this.comparedPairs.has(pairKey) &&
+                (!option.startsWith('http') || this.cacheService.isImagePreloaded(option));
         });
     }
+
 
     disappearSide: 'left' | 'right' | null = null;
     disappearDirection: 'left' | 'right' | null = null;
@@ -276,28 +315,25 @@ export class TextPollComponent implements OnInit, OnDestroy {
         if (newOption) {
             this.addComparedPair(option, newOption);
 
-            setTimeout(() => {
-                if (side === 'left') {
-                    this.leftOption = option;
-                    this.rightOption = newOption;
-                    this.animateIncoming = 'right';
-                } else {
-                    this.rightOption = option;
-                    this.leftOption = newOption;
-                    this.animateIncoming = 'left';
-                }
+            // 🔥 ÚJ kép AZONNAL beállítva még az animáció előtt
+            if (side === 'left') {
+                this.leftOption = option;
+                this.rightOption = newOption;
+                this.animateIncoming = 'right';
+            } else {
+                this.rightOption = option;
+                this.leftOption = newOption;
+                this.animateIncoming = 'left';
+            }
 
+            // ⏱ csak az animációk nullázása késik
+            setTimeout(() => {
                 this.selectedSide = null;
                 this.disappearSide = null;
                 this.disappearDirection = null;
-
-                setTimeout(() => {
-                    this.animateIncoming = null;
-                    this.cdr.markForCheck();
-                }, 400);
-
+                this.animateIncoming = null;
                 this.cdr.markForCheck();
-            }, 700);
+            }, 400);
         } else {
             this.winnerOption = option;
             this.showWinnerModal = true;

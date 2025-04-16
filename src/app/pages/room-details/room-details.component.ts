@@ -333,12 +333,16 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
 
     uploadImagesAndCreatePoll(): void {
         if (!this.room?.docId) return;
-        if (this.imageFiles.some(file => !file)) {
-            this.snackbar.error('Minden opcióhoz adj meg képet!');
+
+        const validImages = this.imageFiles.filter(file => !!file);
+        if (validImages.length < 2) {
+            this.translate.get('room.errorMinimumTwoImages').subscribe(msg => {
+                this.snackbar.error(msg);
+            });
             return;
         }
 
-        const uploadTasks = this.imageFiles.map((file, i) =>
+        const uploadTasks = validImages.map((file, i) =>
             this.dbService.uploadPollImage(this.room!.roomId, file as File, `option_${i + 1}.jpg`)
         );
 
@@ -359,6 +363,16 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
             this.snackbar.error('Image upload failed');
         });
     }
+
+    get isImagePollValid(): boolean {
+        const validImages = this.imageFiles.filter(file => !!file);
+        return validImages.length >= 2;
+    }
+    get isTextPollValid(): boolean {
+        const validOptions = this.options.filter(option => option.trim().length > 0);
+        return validOptions.length >= 2 && !!this.question.trim();
+    }
+
 
     onDragOver(event: DragEvent): void {
         event.preventDefault();
@@ -403,7 +417,26 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         if (!files.length) return;
 
         const validImages = files.filter(file => file.type.startsWith('image/'));
-        const compressTasks = validImages.map(file =>
+
+        const maxAllowed = 10;
+        const availableSlots = maxAllowed - this.imageFiles.length;
+
+        if (availableSlots <= 0) {
+            this.translate.get('room.errorMaxImages').subscribe(msg => {
+                this.snackbar.error(msg);
+            });
+            return;
+        }
+
+        if (validImages.length > availableSlots) {
+            this.translate.get('room.errorMaxImages').subscribe(msg => {
+                this.snackbar.error(`${msg} (max: ${maxAllowed})`);
+            });
+        }
+
+        const selectedToAdd = validImages.slice(0, availableSlots);
+
+        const compressTasks = selectedToAdd.map(file =>
             this.imageCompressor.compressImage(file).then(compressed => {
                 console.log(`📦 ${file.name}: ${Math.round(file.size / 1024)}KB ➡️ ${Math.round(compressed.size / 1024)}KB`);
                 return compressed;
@@ -412,13 +445,11 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
 
         Promise.all(compressTasks).then(compressedImages => {
             compressedImages.forEach((file) => {
-                if (this.imageFiles.length < 10) {
-                    this.imageFiles.push(file);
-                    this.imagePreviews.push('');
-                    this.options.push('');
-                    const index = this.imageFiles.length - 1;
-                    this.previewImage(file, index);
-                }
+                this.imageFiles.push(file);
+                this.imagePreviews.push('');
+                this.options.push('');
+                const index = this.imageFiles.length - 1;
+                this.previewImage(file, index);
             });
             this.cdr.markForCheck();
         }).catch(() => {
@@ -427,8 +458,10 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
             });
         });
     }
+
     private detectPlatform(): void {
         const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
         this.isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua.toLowerCase());
     }
+
 }

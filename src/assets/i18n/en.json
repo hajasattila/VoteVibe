@@ -131,6 +131,7 @@
     "github": "Sign in with GitHub"
   },
   "room": {
+    "errorMaxImages": "You can upload up to 10 images",
     "desktopPlaceholder": "Upload an image (click or drag)",
     "mobilePlaceholder": "Take a picture!",
     "bulkUpload": "Upload images",
@@ -389,8 +390,9 @@
     "requestFailed": "Failed to add {{name}} to your friends list."
   },
   "poll": {
-    "winnerTitle": "🏆 Winning Option!",
-    "winnerIs": "The winner is: {{ option }}",
+    "winnerTitle": "🏆 The winning option!",
+    "winnerIs": "The winner is {{ option }}",
+    "winnerIsTitle": "The winner is:",
     "close": "Close",
     "revote": "Revote",
     "revoteInfo": "Not happy with the result? You have a chance to vote again.",

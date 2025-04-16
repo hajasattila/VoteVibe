@@ -131,6 +131,7 @@
     "github": "GitHub belépés"
   },
   "room": {
+    "errorMaxImages": "Legfeljebb 10 képet tölthetsz fel",
     "desktopPlaceholder": "Kép feltöltése (kattints vagy húzd be)",
     "mobilePlaceholder": "Készíts képet!",
     "bulkUpload": "Kép feltöltése",
