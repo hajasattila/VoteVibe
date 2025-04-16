@@ -1,4 +1,3 @@
-import {Injectable} from "@angular/core";
 import {
     Firestore,
     arrayUnion,
@@ -14,13 +13,19 @@ import {
 import {BehaviorSubject, Observable, from, map, switchMap} from "rxjs";
 import {RoomModel, textPollModel} from "../../models/room.model";
 import {ProfileUser} from "../../models/user.model";
+import {inject, Injectable} from '@angular/core';
+import {Storage, ref, uploadBytes, getDownloadURL} from '@angular/fire/storage';
+
 
 
 @Injectable({
     providedIn: "root",
 })
 export class DatabaseService {
-    constructor(private firestore: Firestore) {
+    private storage: Storage = inject(Storage);
+
+    constructor(private firestore: Firestore
+    ) {
     }
 
     createRoom(room: RoomModel): Observable<void> {
@@ -152,7 +157,7 @@ export class DatabaseService {
 
                 const roomData = snapshot.docs[0].data() as RoomModel;
                 const docId = snapshot.docs[0].id;
-                observer.next({ ...roomData, docId });
+                observer.next({...roomData, docId});
             }, error => {
                 observer.error(error);
             });
@@ -160,5 +165,13 @@ export class DatabaseService {
             return () => unsubscribe();
         });
     }
+    uploadPollImage(roomId: string, file: File, filename: string): Promise<string> {
+        const path = `rooms/${roomId}/poll/${filename}`;
+        const storageRef = ref(this.storage, path);
+        return uploadBytes(storageRef, file).then(() => getDownloadURL(storageRef));
+    }
+
+
+
 
 }

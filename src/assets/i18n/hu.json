@@ -131,6 +131,10 @@
     "github": "GitHub belépés"
   },
   "room": {
+    "errorOnlyImages": "Csak képfájlokat tölthetsz fel!",
+    "uploadImages": "Képek feltöltése",
+    "uploadImage": "Kép feltöltése (kattints vagy húzd be)",
+    "removeOption": "Eltávolítás",
     "moreStats": "További statisztikák",
     "createdAt": "Létrehozva",
     "statsChart": {
@@ -367,7 +371,7 @@
     }
   },
   "friends": {
-    "inviteSuccess" : "Sikeres meghívás!",
+    "inviteSuccess": "Sikeres meghívás!",
     "confirmRemove": "Biztosan törölni szeretnéd {{name}} felhasználót a barátaid közül?",
     "confirmYes": "Igen",
     "confirmNo": "Mégse",

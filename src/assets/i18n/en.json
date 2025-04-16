@@ -131,6 +131,10 @@
     "github": "Sign in with GitHub"
   },
   "room": {
+    "errorOnlyImages": "Only image files are allowed!"
+    "uploadImages": "Upload Images",
+    "uploadImage": "Upload Image (click or drag)",
+    "removeOption": "Remove",
     "moreStats": "More statictics",
     "createdAt": "Created",
     "statsChart": {

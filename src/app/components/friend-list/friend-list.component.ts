@@ -24,6 +24,8 @@ export class FriendListComponent implements OnInit, OnChanges, OnDestroy {
     @Input() friends: ProfileUser[] = [];
     wasInvited: boolean = false;
     isLoadingFriends = true;
+    @Input() invitedUids: string[] = [];
+
 
     @Input() set room(value: RoomModel | null) {
         this._room = value;
@@ -86,7 +88,7 @@ export class FriendListComponent implements OnInit, OnChanges, OnDestroy {
             if (this.currentUserId) {
                 this.friendsSub = this.userService.getFriendsLive(this.currentUserId).subscribe(friends => {
                     this.friends = friends;
-                    this.loadFriendImages(); // minden frissülés után újratöltjük a képeket is
+                    this.loadFriendImages();
                     this.cdr.markForCheck();
                 });
             }

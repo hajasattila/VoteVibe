@@ -326,4 +326,8 @@ export class GameComponent implements OnInit {
 
         return sanitized;
     }
+    onVoteTypeChange(value: string): void {
+        console.log(value === 'text' ? 'text based' : 'picture based');
+    }
+
 }

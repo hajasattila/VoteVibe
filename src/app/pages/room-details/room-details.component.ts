@@ -19,6 +19,7 @@ import firebase from "firebase/compat";
 import DocumentData = firebase.firestore.DocumentData;
 import {ProfileUser} from "../../../api/models/user.model";
 import {UsersService} from "../../../api/services/users-service/users.service";
+import {ImageCompressorService} from "../../../api/services/image-compress-service/imagecompress.service";
 
 @Component({
     selector: 'app-room-details',
@@ -47,6 +48,9 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
 
     private unsubscribeSnapshot?: () => void;
 
+    protected imageFiles: (File | null)[] = [];
+    protected imagePreviews: (string | null)[] = [];
+
 
     constructor(
         private cdr: ChangeDetectorRef,
@@ -57,7 +61,8 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         private location: Location,
         private authService: AuthService,
         private userService: UsersService,
-        private router: Router
+        private router: Router,
+        private imageCompressor: ImageCompressorService
     ) {
     }
 
@@ -77,6 +82,10 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
             this.isDarkMode = e.matches;
             this.cdr.markForCheck();
         });
+
+        if (this.room?.voteType === 'picture' && this.imageFiles.length < 2) {
+            this.imageFiles = [null as any, null as any];
+        }
     }
 
     ngOnDestroy(): void {
@@ -117,6 +126,10 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
                             this.showWaitingMessage = !this.isCreator && hasNoPollYet && !room.pollCreated;
                             this.cdr.markForCheck();
                         });
+                    }
+
+                    if (this.room?.voteType === 'picture' && this.imageFiles.length < 2) {
+                        this.imageFiles = [null as any, null as any];
                     }
 
                     this.isLoading = false;
@@ -164,9 +177,10 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
 
 
     addOption(): void {
-        if (this.options.length < 10) {
+        if (this.room?.voteType === 'picture') {
+            this.imageFiles.push(null as any);
+        } else {
             this.options.push('');
-
             this.cdr.detectChanges();
             setTimeout(() => {
                 const lastInput = this.optionInputs.last;
@@ -278,5 +292,109 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
         const code = this.route.snapshot.paramMap.get('code');
         if (code) this.router.navigate(['/room', code, 'stats']);
     }
+
+    // Picture based
+    previewImage(file: File, index: number): void {
+        const reader = new FileReader();
+        reader.onload = () => {
+            this.imagePreviews[index] = reader.result as string;
+            this.cdr.markForCheck();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    onImageSelected(event: Event, index: number): void {
+        const input = event.target as HTMLInputElement;
+        const file = input?.files?.[0];
+
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            this.translate.get('room.errorOnlyImages').subscribe(msg => {
+                this.snackbar.error(msg);
+            });
+            return;
+        }
+
+        this.imageCompressor.compressImage(file).then(compressedFile => {
+            this.imageFiles[index] = compressedFile;
+            this.previewImage(compressedFile, index);
+        }).catch(() => {
+            this.translate.get('room.errorImageCompression').subscribe(msg => {
+                this.snackbar.error(msg);
+            });
+        });
+    }
+
+    uploadImagesAndCreatePoll(): void {
+        if (!this.room?.docId) return;
+
+        // Ellenőrzés: minden fájl ki van választva
+        if (this.imageFiles.some(file => !file)) {
+            this.snackbar.error('Minden opcióhoz adj meg képet!');
+            return;
+        }
+
+        const uploadTasks = this.imageFiles.map((file, i) =>
+            this.dbService.uploadPollImage(this.room!.roomId, file as File, `option_${i + 1}.jpg`)
+        );
+
+        Promise.all(uploadTasks).then(downloadUrls => {
+            const poll = {
+                question: this.question.trim() || 'Image poll',
+                options: downloadUrls
+            };
+
+            this.dbService.addPollToRoom(this.room!.docId!, poll).subscribe(() => {
+                this.dbService.updateRoomPollState(this.room!.docId!, true).subscribe(() => {
+                    this.pollCreated = true;
+                    this.cdr.markForCheck();
+                    this.snackbar.success('Poll created with images');
+                });
+            });
+        }).catch(() => {
+            this.snackbar.error('Image upload failed');
+        });
+    }
+
+    onDragOver(event: DragEvent): void {
+        event.preventDefault();
+    }
+
+    onFileDrop(event: DragEvent, index: number): void {
+        event.preventDefault();
+        const file = event.dataTransfer?.files?.[0];
+
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            this.translate.get('room.errorOnlyImages').subscribe(msg => {
+                this.snackbar.error(msg);
+            });
+            return;
+        }
+
+        this.imageCompressor.compressImage(file).then(compressedFile => {
+            this.imageFiles[index] = compressedFile;
+            this.previewImage(compressedFile, index);
+            this.cdr.markForCheck();
+        }).catch(() => {
+            this.translate.get('room.errorImageCompression').subscribe(msg => {
+                this.snackbar.error(msg);
+            });
+        });
+    }
+
+    removeImage(index: number): void {
+        if (this.imageFiles.length > 2) {
+            this.imageFiles.splice(index, 1);
+            this.imagePreviews.splice(index, 1);
+        } else {
+            this.imageFiles[index] = null;
+            this.imagePreviews[index] = null;
+        }
+        this.cdr.markForCheck();
+    }
+
 
 }
