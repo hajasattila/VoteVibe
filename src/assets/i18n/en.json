@@ -382,7 +382,7 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "inviteSuccess": "Succesfull invitation!",
-    "confirmRemove": "Are you sure you want to remove {{name}} from your friends?",
+    "confirmRemove": "Are you sure you want to remove your friend?",
     "confirmYes": "Yes",
     "confirmNo": "Cancel",
     "removeSuccess": "{{name}} successfully removed.",

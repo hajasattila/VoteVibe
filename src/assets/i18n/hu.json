@@ -389,7 +389,7 @@
     "cancel": "Mégse",
     "confirm": "Igen",
     "inviteSuccess": "Sikeres meghívás!",
-    "confirmRemove": "Biztosan törölni szeretnéd {{name}} felhasználót a barátaid közül?",
+    "confirmRemove": "Biztosan törölni szeretnéd a barátaid közül?",
     "confirmYes": "Igen",
     "confirmNo": "Mégse",
     "removeSuccess": "{{name}} sikeresen eltávolítva.",
