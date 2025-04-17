@@ -191,10 +191,16 @@ export class FriendListComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     openConfirmModal(friend: ProfileUser) {
+        if (this.isProfileRoute) {
+            this.router.navigate([`/profile/${friend.uid}`]);
+            return;
+        }
+
         this.selectedFriend = friend;
         this.showConfirmModal = true;
         this.deletionSuccess = false;
     }
+
 
     cancelDelete() {
         this.selectedFriend = null;
@@ -234,52 +240,51 @@ export class FriendListComponent implements OnInit, OnChanges, OnDestroy {
         const uid = this.selectedFriend.uid;
 
         if (this.isProfileRoute) {
-            this.confirmDelete();
-        } else {
-            if (!this._room?.roomId) {
+            this.router.navigate([`/profile/${uid}`]);
+            return;
+        }
 
-                if (this.invitedFriends.has(uid)) {
-                    this.invitedFriends.delete(uid);
-                    this.wasInvited = false;
-                    this.translate.get('friends.unmarkedForInvite', {name: this.selectedFriend.displayName}).subscribe(msg =>
-                        this.snackbar.info(msg)
+        if (!this._room?.roomId) {
+            if (this.invitedFriends.has(uid)) {
+                this.invitedFriends.delete(uid);
+                this.wasInvited = false;
+                this.translate.get('friends.unmarkedForInvite', {name: this.selectedFriend.displayName}).subscribe(msg =>
+                    this.snackbar.info(msg)
+                );
+            } else {
+                this.invitedFriends.add(uid);
+                this.wasInvited = true;
+                this.translate.get('friends.markedForInvite', {name: this.selectedFriend.displayName}).subscribe(msg =>
+                    this.snackbar.info(msg)
+                );
+            }
+            this.deletionSuccess = true;
+        } else {
+            this.userService.inviteUserToRoom(
+                uid,
+                this._room.roomId,
+                this._room.creator,
+                this._room.roomName
+            ).subscribe({
+                next: () => {
+                    this.translate.get('friends.inviteSuccess', {name: this.selectedFriend!.displayName}).subscribe(msg =>
+                        this.snackbar.success(msg)
                     );
-                } else {
                     this.invitedFriends.add(uid);
                     this.wasInvited = true;
-                    this.translate.get('friends.markedForInvite', {name: this.selectedFriend.displayName}).subscribe(msg =>
-                        this.snackbar.info(msg)
-                    );
+                    this.deletionSuccess = true;
+                },
+                error: (err) => {
+                    console.error(`${err.message}`);
+                    this.snackbar.error('Hiba történt a meghívás során.');
                 }
-                this.deletionSuccess = true;
-            } else {
-
-                this.userService.inviteUserToRoom(
-                    uid,
-                    this._room.roomId,
-                    this._room.creator,
-                    this._room.roomName
-                ).subscribe({
-                    next: () => {
-                        this.translate.get('friends.inviteSuccess', {name: this.selectedFriend!.displayName}).subscribe(msg =>
-                            this.snackbar.success(msg)
-                        );
-                        this.invitedFriends.add(uid);
-                        this.wasInvited = true;
-                        this.deletionSuccess = true;
-                    },
-                    error: (err) => {
-                        console.error(`${err.message}`);
-                        this.snackbar.error('Hiba történt a meghívás során.');
-                    }
-                });
-            }
-
-            setTimeout(() => {
-                this.showConfirmModal = false;
-                this.selectedFriend = null;
-            }, 1500);
+            });
         }
+
+        setTimeout(() => {
+            this.showConfirmModal = false;
+            this.selectedFriend = null;
+        }, 1500);
     }
 
     get isProfileRoute(): boolean {

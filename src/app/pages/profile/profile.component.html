@@ -1,7 +1,8 @@
-<div class="min-h-screen flex items-center justify-center p-4 mt-16 sm:mt-24 mb-0 sm:mb-6">
-    <div class="bg-indigo-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded-lg shadow-lg w-full max-w-5xl animate-slide-up transition-colors duration-300"
-         *ngIf="user$ | async as user">
-
+<div
+        class=" flex items-center justify-center p-4 mt-16 sm:mt-24 mb-0 sm:mb-6"
+>
+<div class="bg-indigo-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded-lg shadow-lg w-full max-w-5xl animate-slide-up transition-colors duration-300"
+         *ngIf="user as user">
 
         <div class="relative flex flex-col lg:flex-row items-center gap-8 mb-6 overflow-hidden rounded-t-lg">
             <div
@@ -14,21 +15,21 @@
                 <div class="relative w-40 h-40 flex-shrink-0 ">
                     <img
                             class="rounded-full w-full h-full object-cover shadow-md absolute top-0 left-0 border-4 border-indigo-600 cursor-pointer hover:scale-105 transition-transform duration-200"
-                            [src]="imageLoaded && user?.photoURL ? user.photoURL : fallbackImage"
+                            [src]="user?.photoURL || fallbackImage"
                             alt="Profile Image"
                             (click)="openImageModal(user?.photoURL)"
                             (error)="imageLoaded = false"
-                            (load)="imageLoaded = true"
                     />
 
 
 
-
                     <label
+                            *ngIf="!readonlyProfile"
                             for="fileUpload"
                             class="bg-indigo-600 text-white hover:bg-indigo-700 p-2 rounded-full absolute top-0 right-0 shadow transition cursor-pointer"
                             title="Upload new photo"
                     >
+
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M17.414 2.586a2 2 0 00-2.828 0L6 11.172V14h2.828l8.586-8.586a2 2 0 000-2.828z"/>
                             <path fill-rule="evenodd" d="M4 16a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z"
@@ -40,36 +41,66 @@
             </div>
 
 
-            <div class="text-center lg:text-left">
-                <h1 class="!text-3xl !font-bold text-indigo-700 dark:text-indigo-400 tracking-widest drop-shadow-lg">
-                    {{ user?.displayName }}
-                </h1>
+            <div class="text-center lg:text-left flex flex-col lg:flex-row lg:items-center lg:justify-between w-full px-4">
+                <div>
+                    <h1 class="!text-3xl !font-bold text-indigo-700 dark:text-indigo-400 tracking-widest drop-shadow-lg">
+                        {{ user?.displayName }}
+                    </h1>
 
-                <div class="flex justify-center lg:justify-start gap-8 mt-4 text-indigo-800">
-                    <div class="flex flex-col items-center">
-                        <span class="material-icons-outlined text-2xl text-indigo-600 mb-1 ">how_to_vote</span>
-                        <div class="text-xl font-bold dark:text-white">{{ createdRoomsCount  || 0 }}</div>
-                        <div class="text-sm text-gray-600 dark:text-white">{{ 'profile.polls' | translate }}</div>
-                    </div>
+                    <div class="flex justify-center lg:justify-start gap-8 mt-4 text-indigo-800">
+                        <div class="flex flex-col items-center">
+                            <span class="material-icons-outlined text-2xl text-indigo-600 mb-1">how_to_vote</span>
+                            <div class="text-xl font-bold dark:text-white">{{ createdRoomsCount || 0 }}</div>
+                            <div class="text-sm text-gray-600 dark:text-white">{{ 'profile.polls' | translate }}</div>
+                        </div>
 
-                    <div class="flex flex-col items-center">
-                        <span class="material-icons-outlined text-2xl text-indigo-600 mb-1">sports_esports</span>
-                        <div class="text-xl font-bold dark:text-white">{{ joinedRoomsCount  || 0 }}</div>
-                        <div class="text-sm text-gray-600 dark:text-white">{{ 'profile.games' | translate }}</div>
-                    </div>
+                        <div class="flex flex-col items-center">
+                            <span class="material-icons-outlined text-2xl text-indigo-600 mb-1">sports_esports</span>
+                            <div class="text-xl font-bold dark:text-white">{{ joinedRoomsCount || 0 }}</div>
+                            <div class="text-sm text-gray-600 dark:text-white">{{ 'profile.games' | translate }}</div>
+                        </div>
 
-                    <div class="flex flex-col items-center">
-                        <span class="material-icons-outlined text-2xl text-indigo-600 mb-1">group</span>
-                        <div class="text-xl font-bold dark:text-white">{{ user?.friendList?.length || 0 }}</div>
-                        <div class="text-sm text-gray-600 dark:text-white">{{ 'profile.friends' | translate }}</div>
+                        <div class="flex flex-col items-center">
+                            <span class="material-icons-outlined text-2xl text-indigo-600 mb-1">group</span>
+                            <div class="text-xl font-bold dark:text-white">{{ user?.friendList?.length || 0 }}</div>
+                            <div class="text-sm text-gray-600 dark:text-white">{{ 'profile.friends' | translate }}</div>
+                        </div>
                     </div>
                 </div>
 
+                <div *ngIf="readonlyProfile && user?.uid !== currentUserId" class="flex flex-row gap-3 justify-center my-4 lg:mt-0 z-50 lg:pt-24">
+                    <button
+                            *ngIf="!isCurrentUserFriend && !isFriendRequestSent"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg flex items-center gap-2 shadow transition"
+                            (click)="openFriendConfirm(user!, false)"
+                    >
+                        <mat-icon>person_add</mat-icon>
+                        {{ 'profile.addFriend' | translate }}
+                    </button>
+
+                    <button
+                            *ngIf="isFriendRequestSent"
+                            class="bg-gray-400 text-white px-5 py-2 rounded-lg flex items-center gap-2 shadow transition cursor-not-allowed"
+                            disabled
+                    >
+                        <mat-icon>hourglass_top</mat-icon>
+                        {{ 'profile.requestPending' | translate }}
+                    </button>
+
+                    <button
+                            *ngIf="isCurrentUserFriend"
+                            class="bg-pink-600 hover:bg-pink-700 text-white px-5 py-2 rounded-lg flex items-center gap-2 shadow transition"
+                            (click)="openFriendConfirm(user!, true)"
+                    >
+                        <mat-icon>person_remove</mat-icon>
+                        {{ 'profile.removeFriend' | translate }}
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="p-4 sm:px-6 sm:pb-6 sm:pt-0">
-            <div class="mb-3">
+        <div class="p-4 sm:px-6 sm:pb-6 sm:pt-0" >
+            <div class="mb-3" *ngIf="!readonlyProfile">
                 <h2 class="text-2xl font-semibold text-indigo-800 mb-3 flex items-center gap-2">
                     <span class="material-icons-outlined text-indigo-600">group</span>
                     {{ 'profile.friendList' | translate }}
@@ -87,7 +118,7 @@
 
 
 
-            <div class="mb-3">
+            <div class="mb-3" *ngIf="!readonlyProfile">
                 <h2 class="text-2xl font-semibold text-indigo-800 mb-3 flex items-center gap-2">
                     <span class="material-icons-outlined text-indigo-600">person_add</span>
                     {{ 'profile.friendRequests' | translate }}
@@ -143,28 +174,31 @@
             </div>
 
             <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="space-y-6">
-                <h2 class="text-2xl font-semibold text-indigo-800 mb-3 flex items-center gap-2">
+                <h2 class="text-2xl font-semibold text-indigo-800 mb-3 flex items-center gap-2" *ngIf="!readonlyProfile">
                     <span class="material-icons-outlined text-indigo-600">edit</span>
                     {{ 'profile.editProfile' | translate }}
                 </h2>
+                <h2 class="text-2xl font-semibold text-indigo-800 mb-3 flex items-center gap-2" *ngIf="readonlyProfile">
+                    <span class="material-icons-outlined text-indigo-600">badge</span>
+                    {{ 'profile.userData' | translate }}
+                </h2>
+
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="w-full">
                         <label for="firstName" class="block text-sm font-medium text-indigo-700 mb-1">
                             {{ 'profile.firstName' | translate }}
                         </label>
-
                         <input
                                 id="firstName"
                                 type="text"
                                 maxlength="12"
                                 formControlName="firstName"
+                                [disabled]="readonlyProfile"
                                 [placeholder]="'profile.firstName' | translate"
                                 class="dark:bg-gray-800 text-gray-800 dark:text-gray-100 dark:border-indigo-600 bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
                         />
-
-                        <!-- ⚠️ Hibaüzenet -->
-                        <div class="text-sm text-red-500 mt-1"
-                             *ngIf="profileForm.get('firstName')?.touched && profileForm.get('firstName')?.invalid">
+                        <div class="text-sm text-red-500 mt-1" *ngIf="profileForm.get('firstName')?.touched && profileForm.get('firstName')?.invalid">
                             <div *ngIf="profileForm.get('firstName')?.hasError('required')">
                                 {{ 'profile.error.required' | translate }}
                             </div>
@@ -172,8 +206,6 @@
                                 {{ 'profile.error.maxLength' | translate:{ max: 12 } }}
                             </div>
                         </div>
-
-                        <!-- 🧮 Karakter számláló -->
                         <div class="text-sm text-gray-500 text-right mt-1">
                             {{ profileForm.get('firstName')?.value?.length || 0 }} / 12
                         </div>
@@ -188,11 +220,11 @@
                                 type="text"
                                 formControlName="lastName"
                                 maxlength="12"
+                                [disabled]="readonlyProfile"
                                 [placeholder]="'profile.lastName' | translate"
                                 class="dark:bg-gray-800 text-gray-800 dark:text-gray-100 dark:border-indigo-600 bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
                         />
-                        <div class="text-sm text-red-500 mt-1"
-                             *ngIf="profileForm.get('lastName')?.touched && profileForm.get('lastName')?.invalid">
+                        <div class="text-sm text-red-500 mt-1" *ngIf="profileForm.get('lastName')?.touched && profileForm.get('lastName')?.invalid">
                             <div *ngIf="profileForm.get('lastName')?.hasError('required')">
                                 {{ 'profile.error.required' | translate }}
                             </div>
@@ -205,7 +237,6 @@
                         </div>
                     </div>
 
-
                     <div class="w-full">
                         <label for="displayName" class="block text-sm font-medium text-indigo-700 mb-1">
                             {{ 'profile.nickname' | translate }}
@@ -215,11 +246,11 @@
                                 type="text"
                                 formControlName="displayName"
                                 maxlength="12"
+                                [disabled]="readonlyProfile"
                                 [placeholder]="'profile.nickname' | translate"
                                 class="dark:bg-gray-800 text-gray-800 dark:text-gray-100 dark:border-indigo-600 bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
                         />
-                        <div class="text-sm text-red-500 mt-1"
-                             *ngIf="profileForm.get('displayName')?.touched && profileForm.get('displayName')?.invalid">
+                        <div class="text-sm text-red-500 mt-1" *ngIf="profileForm.get('displayName')?.touched && profileForm.get('displayName')?.invalid">
                             <div *ngIf="profileForm.get('displayName')?.hasError('required')">
                                 {{ 'profile.error.required' | translate }}
                             </div>
@@ -232,7 +263,6 @@
                         </div>
                     </div>
 
-
                     <div class="w-full">
                         <label for="phone" class="block text-sm font-medium text-indigo-700 mb-1">
                             {{ 'profile.phone' | translate }}
@@ -242,11 +272,11 @@
                                 type="tel"
                                 maxlength="11"
                                 formControlName="phone"
+                                [disabled]="readonlyProfile"
                                 [placeholder]="'profile.phone' | translate"
                                 class="dark:bg-gray-800 text-gray-800 dark:text-gray-100 dark:border-indigo-600 bg-transparent w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
                         />
-                        <div class="text-sm text-red-500 mt-1"
-                             *ngIf="profileForm.get('phone')?.touched && profileForm.get('phone')?.invalid">
+                        <div class="text-sm text-red-500 mt-1" *ngIf="profileForm.get('phone')?.touched && profileForm.get('phone')?.invalid">
                             <div *ngIf="profileForm.get('phone')?.hasError('required')">
                                 {{ 'profile.error.required' | translate }}
                             </div>
@@ -258,7 +288,6 @@
                             {{ profileForm.get('phone')?.value?.length || 0 }} / 11
                         </div>
                     </div>
-
                 </div>
 
                 <div class="w-full">
@@ -269,37 +298,29 @@
                             id="description"
                             maxlength="100"
                             formControlName="description"
+                            [disabled]="readonlyProfile"
                             [placeholder]="'profile.description' | translate"
-                            class="bg-transparent dark:bg-gray-800 text-gray-800 dark:text-gray-100  dark:border-indigo-600  w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition resize-none"
+                            class="bg-transparent dark:bg-gray-800 text-gray-800 dark:text-gray-100 dark:border-indigo-600 w-full px-4 py-2 border border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition resize-none"
                     ></textarea>
-
                     <div class="text-sm text-gray-500 text-right mt-1">
                         {{ profileForm.get('description')?.value?.length || 0 }} / 100
                     </div>
                 </div>
 
-                <div class="flex flex-wrap gap-3 -mt-4">
+                <div class="flex flex-wrap gap-3 -mt-4" *ngIf="!readonlyProfile">
                     <div class="w-full flex justify-between sm:justify-start">
                         <button type="submit"
-                                class="bg-indigo-600 text-white py-2 px-6 rounded-lg  hover:bg-indigo-900 transition mr-6 flex items-center gap-2">
+                                class="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-900 transition mr-6 flex items-center gap-2">
                             <mat-icon>save</mat-icon>
                             {{ 'profile.save' | translate }}
                         </button>
 
                         <button (click)="resetPassword()"
-                                class="bg-indigo-600 text-white py-2 px-6 rounded-lg  hover:bg-indigo-900 transition flex items-center gap-2">
+                                class="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-900 transition flex items-center gap-2">
                             <mat-icon>lock_reset</mat-icon>
                             {{ 'profile.resetPassword' | translate }}
                         </button>
                     </div>
-
-<!--                    <div class="w-full flex justify-start">-->
-<!--                        <button (click)="logout()"-->
-<!--                                class="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-900 transition flex items-center gap-2">-->
-<!--                            <mat-icon>logout</mat-icon>-->
-<!--                            {{ 'profile.logout' | translate }}-->
-<!--                        </button>-->
-<!--                    </div>-->
                 </div>
             </form>
             <input hidden type="file" (change)="uploadFile($event, user)"/>
@@ -329,3 +350,36 @@
         </button>
     </div>
 </div>
+
+<ng-template [ngIf]="showConfirmModal">
+    <div class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg text-center w-80">
+            <p class="text-lg text-indigo-700 dark:text-white mb-4">
+                {{ isFriend ? ('friends.confirmRemove' | translate) : ('friends.confirmAdd' | translate) }}
+            </p>
+            <div class="flex justify-center gap-4">
+                <button
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded"
+                        (click)="confirmFriendAction()"
+                >
+                    {{ 'friends.confirm' | translate }}
+                </button>
+                <button
+                        class="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded"
+                        (click)="showConfirmModal = false"
+                >
+                    {{ 'friends.cancel' | translate }}
+                </button>
+
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-40">
+    <div class="relative w-16 h-16">
+        <div class="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+

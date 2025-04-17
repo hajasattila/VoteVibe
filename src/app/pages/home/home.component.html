@@ -115,7 +115,7 @@
                                             class="w-12 h-12 rounded-full shadow-md object-cover cursor-pointer transition duration-200 transform hover:scale-105 hover:opacity-90"
                                             [src]="user.photoURL && loadedImages[user.uid] ? user.photoURL : 'assets/images/image-placeholder.png'"
                                             (load)="loadedImages[user.uid] = true"
-                                            (click)="sendFriendRequest(user)"
+                                            (click)="goToProfile(user.uid)"
                                             alt="{{ user.displayName }}"
                                     />
                                     <span class="mt-2 text-sm text-gray-800 dark:text-white text-center truncate w-full">

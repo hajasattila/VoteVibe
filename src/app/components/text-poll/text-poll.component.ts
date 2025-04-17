@@ -104,9 +104,8 @@ export class TextPollComponent implements OnInit, AfterViewInit, OnDestroy {
             const loaded = this.preloadImageUrls.filter(url => this.cacheService.isImagePreloaded(url));
             const remaining = this.preloadImageUrls.length - loaded.length;
 
-            console.log(`[📥 Kép cache állapot]: ${loaded.length}/${this.preloadImageUrls.length} betöltve`);
+            // console.log(`[📥 Kép cache állapot]: ${loaded.length}/${this.preloadImageUrls.length} betöltve`);
             if (remaining === 0) {
-                console.log('[✅ Minden kép be lett töltve a cache-be]');
                 clearInterval(this.imageLoadMonitorInterval);
             }
         }, 500);
@@ -194,8 +193,6 @@ export class TextPollComponent implements OnInit, AfterViewInit, OnDestroy {
             this.nextLeftOption = this.rightOption ? this.getUncomparedOptionFor(this.rightOption) : undefined;
             this.nextRightOption = this.leftOption ? this.getUncomparedOptionFor(this.leftOption) : undefined;
 
-            console.log('[👉 JOBB húzás esetén jönne]:', this.nextLeftOption);
-            console.log('[👈 BAL húzás esetén jönne]:', this.nextRightOption);
 
             const totalOptions = this.allOptions.length;
             this.remainingCombinations = (totalOptions * (totalOptions - 1)) / 2;
@@ -397,11 +394,9 @@ export class TextPollComponent implements OnInit, AfterViewInit, OnDestroy {
 
         if (this.leftOption) {
             this.nextRightOption = this.getUncomparedOptionFor(this.leftOption);
-            console.log('[👈 BAL húzás esetén jönne]:', this.nextRightOption);
         }
         if (this.rightOption) {
             this.nextLeftOption = this.getUncomparedOptionFor(this.rightOption);
-            console.log('[👉 JOBB húzás esetén jönne]:', this.nextLeftOption);
         }
     }
 
@@ -447,7 +442,6 @@ export class TextPollComponent implements OnInit, AfterViewInit, OnDestroy {
             const newOption = this.getUncomparedOptionFor(chosenOption);
 
             if (newOption) {
-                console.log('[➡️ Következő betöltendő opció]:', newOption);
                 this.addComparedPair(chosenOption, newOption);
 
                 const img = new Image();

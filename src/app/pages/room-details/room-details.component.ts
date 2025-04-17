@@ -438,7 +438,6 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
 
         const compressTasks = selectedToAdd.map(file =>
             this.imageCompressor.compressImage(file).then(compressed => {
-                console.log(`📦 ${file.name}: ${Math.round(file.size / 1024)}KB ➡️ ${Math.round(compressed.size / 1024)}KB`);
                 return compressed;
             })
         );

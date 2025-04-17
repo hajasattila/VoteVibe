@@ -7,6 +7,8 @@ import {AuthService} from "../../../api/services/auth-service/auth.service";
 import {ProfileUser} from "../../../api/models/user.model";
 import {TranslateService} from "@ngx-translate/core";
 import {SnackbarService} from "../../../api/services/snackbar-service/snackbar-service.service";
+import {DatabaseService} from "../../../api/services/database-service/database.service";
+import {Router} from "@angular/router";
 
 @Component({
     selector: "app-profile-search",
@@ -27,7 +29,8 @@ export class ProfileSearchComponent implements OnInit {
         private userService: UsersService,
         private authService: AuthService,
         private snackbar: SnackbarService,
-        private translate: TranslateService
+        private translate: TranslateService,
+        private router: Router,
     ) {
 
 
@@ -82,64 +85,47 @@ export class ProfileSearchComponent implements OnInit {
     }
 
     onAddFriend(user: ProfileUser) {
-        if (!user.uid) {
-            this.translate.get('search.errorNotLoggedIn').subscribe(msg =>
-                this.snackbar.error(msg)
-            );
-            return;
-        }
+        if (!user.uid) return;
+        if (user.uid === this.currentUserId) return;
 
-        if (user.uid === this.currentUserId) {
-            this.translate.get('search.errorSelfFriend').subscribe(msg =>
-                this.snackbar.error(msg)
-            );
-            return;
-        }
+        this.router.navigate([`/profile/${user.uid}`]);
+    }
 
-        if (this.currentUser && this.currentUser.friendList) {
-            const isAlreadyFriend = this.currentUser.friendList.some(friend => friend.uid === user.uid);
-            if (isAlreadyFriend) {
-                this.translate.get('search.errorAlreadyFriend').subscribe(msg =>
-                    this.snackbar.info(msg)
-                );
-                return;
-            }
-        }
 
-        this.userService.hasAlreadySentRequest(this.currentUserId!, user.uid)
+    isAlreadyFriendOrRequested(uid: string): boolean {
+        const alreadyRequested = !!this.currentUser?.sentFriendRequests?.includes(uid);
+        return alreadyRequested;
+    }
+    onNavigateToProfile(user: ProfileUser) {
+        if (!user.uid || user.uid === this.currentUserId) return;
+        this.router.navigate([`/profile/${user.uid}`]);
+    }
+    sendFriendRequest(user: ProfileUser, event: Event) {
+        event.stopPropagation(); // Ne triggerelje a navigációt is
+
+        if (!user.uid || user.uid === this.currentUserId || this.isAlreadyFriendOrRequested(user.uid)) return;
+
+        this.translate.get('search.loadingSendingRequest').subscribe(loadingMsg =>
+            this.snackbar.info(loadingMsg)
+        );
+
+        this.userService.sendFriendRequest(this.currentUserId!, user.uid)
             .pipe(take(1))
-            .subscribe((hasSent) => {
-                if (hasSent) {
-                    this.translate.get('search.errorAlreadySent', {name: user.displayName}).subscribe(msg =>
+            .subscribe({
+                next: () => {
+                    this.translate.get('search.successRequestSent', { name: user.displayName }).subscribe(msg =>
+                        this.snackbar.success(msg)
+                    );
+                    this.currentUser?.sentFriendRequests?.push(user.uid); // opcionális frissítés
+                },
+                error: () => {
+                    this.translate.get('search.errorSendFailed', { name: user.displayName }).subscribe(msg =>
                         this.snackbar.error(msg)
                     );
-                } else {
-                    this.translate.get('search.loadingSendingRequest').subscribe(loadingMsg =>
-                        this.snackbar.info(loadingMsg)
-                    );
-
-                    this.userService.sendFriendRequest(this.currentUserId!, user.uid)
-                        .pipe(take(1))
-                        .subscribe({
-                            next: () => {
-                                this.translate.get('search.successRequestSent', {name: user.displayName}).subscribe(msg =>
-                                    this.snackbar.success(msg)
-                                );
-                            },
-                            error: () => {
-                                this.translate.get('search.errorSendFailed', {name: user.displayName}).subscribe(msg =>
-                                    this.snackbar.error(msg)
-                                );
-                            }
-                        });
                 }
             });
     }
 
-    isAlreadyFriendOrRequested(uid: string): boolean {
-        const alreadyFriend = !!this.currentUser?.friendList?.some(friend => friend.uid === uid);
-        const alreadyRequested = !!this.currentUser?.sentFriendRequests?.includes(uid);
-        return alreadyFriend || alreadyRequested;
-    }
+
 
 }

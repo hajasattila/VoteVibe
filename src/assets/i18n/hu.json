@@ -1,5 +1,9 @@
 {
   "profile": {
+    "requestPending": "Kérelem elküldve",
+    "addFriend": "Jelölés",
+    "removeFriend": "Törlése",
+    "userData": "Felhasználói adatok",
     "noFriends": "Üres a lista. 🥲",
     "polls": "Szavazások",
     "games": "Játékok",
@@ -381,6 +385,9 @@
     }
   },
   "friends": {
+    "confirmAdd": "Biztosan hozzá akarod adni barátnak?",
+    "cancel": "Mégse",
+    "confirm": "Igen",
     "inviteSuccess": "Sikeres meghívás!",
     "confirmRemove": "Biztosan törölni szeretnéd {{name}} felhasználót a barátaid közül?",
     "confirmYes": "Igen",

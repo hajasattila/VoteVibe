@@ -6,7 +6,7 @@ import {ProfileUser} from "src/api/models/user.model";
 import {ImageUploadService} from "src/api/services/image-upload-service/image-upload.service";
 import {UsersService} from "src/api/services/users-service/users.service";
 import {AuthService} from "src/api/services/auth-service/auth.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {SnackbarService} from "../../../api/services/snackbar-service/snackbar-service.service";
 import {TranslateService} from "@ngx-translate/core";
 import {ImageCompressorService} from "../../../api/services/image-compress-service/imagecompress.service";
@@ -34,6 +34,10 @@ export class ProfileComponent implements OnInit {
     showImageModal = false;
     modalImageUrl: string | null = null;
 
+    readonlyProfile = false;
+
+    isLoading: boolean = true;
+
 
     profileForm = this.fb.group({
         uid: [""],
@@ -43,7 +47,6 @@ export class ProfileComponent implements OnInit {
         phone: ["", [Validators.required, Validators.pattern(/^06\d{9}$/)]],
         description: ["", [Validators.maxLength(100)]],
     });
-
 
     constructor(
         private imageUploadService: ImageUploadService,
@@ -56,64 +59,105 @@ export class ProfileComponent implements OnInit {
         private translate: TranslateService,
         private imageCompressor: ImageCompressorService,
         private databaseService: DatabaseService,
+        private route: ActivatedRoute,
     ) {
     }
 
-
-
     ngOnInit(): void {
+        const currentUrl = this.router.url;
+        const isReadonlyByUrl = currentUrl.startsWith('/profile/') && currentUrl !== '/profile';
+
+        this.profileForm = this.fb.group({
+            uid: [""],
+            displayName: ["", [Validators.required, Validators.maxLength(12)]],
+            firstName: ["", [Validators.required, Validators.maxLength(12)]],
+            lastName: ["", [Validators.required, Validators.maxLength(12)]],
+            phone: ["", [Validators.required, Validators.pattern(/^06\d{9}$/)]],
+            description: ["", [Validators.maxLength(100)]],
+        });
+
+        if (isReadonlyByUrl) {
+            this.profileForm.disable();
+            this.readonlyProfile = true;
+        }
+
         this.initializeProfile();
     }
 
-
-
     private initializeProfile(): void {
-        this.user$
-            .pipe(
-                first(),
-                switchMap((user) => {
-                    if (!user) {
-                        this.router.navigate(["/register"]);
-                        return [];
-                    }
+        this.authService.currentUser$.pipe(
+            first(),
+            switchMap(currentUser => {
+                if (!currentUser) {
+                    this.router.navigate(['/login']);
+                    return [];
+                }
 
-                    this.user = user;
-                    this.profileForm.patchValue({
-                        uid: user.uid,
-                        displayName: user.displayName,
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        phone: user.phone,
-                        description: user.description,
-                    });
+                this.currentUserIdInternal = currentUser.uid;
 
-                    this.cdRef.detectChanges();
+                return this.route.paramMap.pipe(
+                    switchMap(params => {
+                        const routeUid = params.get('uid');
+                        const uidToLoad = routeUid || currentUser.uid;
+                        const isOwnProfile = uidToLoad === currentUser.uid;
 
-                    const cached = sessionStorage.getItem(`rooms_${user.uid}`);
-                    const parsed = cached ? JSON.parse(cached) : null;
+                        this.readonlyProfile = !isOwnProfile;
 
-                    if (parsed?.rooms?.length) {
-                        this.setRoomCounts(parsed.rooms);
-                    }
+                        return this.usersService.getUserById(uidToLoad).pipe(
+                            tap(user => {
+                                if (!user) {
+                                    this.translate.get('profile.error.userNotFound').subscribe(msg => this.snackbar.error(msg));
+                                    this.router.navigate(['/']);
+                                    this.isLoading = false;
+                                    return;
+                                }
 
-                    return this.databaseService.getRoomsForUser(user.uid).pipe(
-                        tap((rooms) => {
-                            if (!parsed || parsed.rooms.length !== rooms.length) {
-                                this.setRoomCounts(rooms);
-                                sessionStorage.setItem(`rooms_${user.uid}`, JSON.stringify({rooms}));
-                            }
-                        })
-                    );
-                }),
-                untilDestroyed(this)
-            )
-            .subscribe({
-                error: (err) => {
-                    console.error("Error fetching user data:", err);
-                    this.translate.get('profile.error.fetchUser').subscribe(msg => this.snackbar.error(msg));
-                    this.cdRef.detectChanges();
-                },
-            });
+                                this.user = user;
+                                this.profileForm.patchValue({
+                                    uid: user.uid,
+                                    displayName: user.displayName,
+                                    firstName: user.firstName,
+                                    lastName: user.lastName,
+                                    phone: user.phone,
+                                    description: user.description,
+                                });
+
+                                this.cdRef.detectChanges();
+
+                                const cached = sessionStorage.getItem(`rooms_${user.uid}`);
+                                const parsed = cached ? JSON.parse(cached) : null;
+
+                                if (parsed?.rooms?.length) {
+                                    this.setRoomCounts(parsed.rooms);
+                                }
+
+                                this.databaseService.getRoomsForUser(user.uid).pipe(
+                                    take(1),
+                                    tap((rooms) => {
+                                        if (!parsed || parsed.rooms.length !== rooms.length) {
+                                            this.setRoomCounts(rooms);
+                                            sessionStorage.setItem(`rooms_${user.uid}`, JSON.stringify({rooms}));
+                                        }
+                                        this.isLoading = false;
+                                    })
+                                ).subscribe({
+                                    complete: () => {
+                                        this.isLoading = false;
+                                    }
+                                });
+                            })
+                        );
+                    })
+                );
+            }),
+            untilDestroyed(this)
+        ).subscribe({
+            error: (err) => {
+                console.error("Error loading profile:", err);
+                this.translate.get('profile.error.fetchUser').subscribe(msg => this.snackbar.error(msg));
+                this.isLoading = false;
+            }
+        });
     }
 
     private setRoomCounts(rooms: (RoomModel & { isCreator: boolean })[]) {
@@ -122,8 +166,9 @@ export class ProfileComponent implements OnInit {
         this.cdRef.detectChanges();
     }
 
-
     uploadFile(event: any, {uid}: ProfileUser) {
+        if (this.readonlyProfile) return;
+
         const file = event.target.files[0];
         if (!file) return;
 
@@ -145,9 +190,6 @@ export class ProfileComponent implements OnInit {
                 const imagePath = `images/profile/${uid}`;
 
                 this.imageUploadService.deleteImageByPath(imagePath)
-                    .then(() => {
-                        // console.log(`🗑️ Törölt kép: ${imagePath}`);
-                    })
                     .catch((err) => {
                         console.warn(`⚠️ Nem sikerült törölni a képet (${imagePath}) vagy nem létezett.`, err);
                     })
@@ -156,7 +198,6 @@ export class ProfileComponent implements OnInit {
                             .uploadImage(compressedFile, imagePath)
                             .pipe(
                                 switchMap((photoURL) => {
-                                    // console.log(`⬆️ Feltöltött kép új URL-je: ${photoURL}`);
                                     return this.usersService.updateUser({uid, photoURL});
                                 })
                             )
@@ -176,8 +217,9 @@ export class ProfileComponent implements OnInit {
         });
     }
 
-
     saveProfile() {
+        if (this.readonlyProfile) return;
+
         const {uid, ...data} = this.profileForm.value;
         let displayName = this.profileForm.get("displayName")?.value?.trim();
 
@@ -206,12 +248,10 @@ export class ProfileComponent implements OnInit {
 
     resetPassword() {
         const shouldReset = confirm("Are you sure you want to update your password?");
-
         if (shouldReset) {
-            this.user$.subscribe((user) => {
+            this.user$.pipe(take(1)).subscribe((user) => {
                 if (user && user.email) {
                     const email = user.email;
-
                     this.authService.resetPassword(email).subscribe(
                         () => {
                         },
@@ -285,15 +325,78 @@ export class ProfileComponent implements OnInit {
     }
 
     openImageModal(url: string | undefined | null) {
-        if (url) {
-            this.modalImageUrl = url;
-            this.showImageModal = true;
-        }
+        this.modalImageUrl = url || this.fallbackImage;
+        this.showImageModal = true;
+    }
+
+    get isFriendRequestSent(): boolean {
+        return !!this.user?.friendRequests?.includes(this.currentUserId);
     }
 
     closeImageModal() {
         this.showImageModal = false;
         this.modalImageUrl = null;
+    }
+
+    showConfirmModal = false;
+    selectedUserToModify: ProfileUser | null = null;
+    isFriend = false;
+
+    private currentUserIdInternal: string = '';
+
+    get currentUserId(): string {
+        return this.currentUserIdInternal;
+    }
+
+
+    confirmFriendAction() {
+        if (!this.selectedUserToModify) return;
+
+        if (this.isFriend) {
+            this.usersService.removeFriend(this.selectedUserToModify).subscribe({
+                next: () => {
+                    this.translate.get('friends.removeSuccess', {name: this.selectedUserToModify?.displayName}).subscribe(msg =>
+                        this.snackbar.success(msg)
+                    );
+                    this.isFriend = false;
+                    this.showConfirmModal = false;
+                    this.selectedUserToModify = null;
+                },
+                error: () => {
+                    this.translate.get('friends.removeError', {name: this.selectedUserToModify?.displayName}).subscribe(msg =>
+                        this.snackbar.error(msg)
+                    );
+                    this.showConfirmModal = false;
+                }
+            });
+        } else {
+            this.usersService.sendFriendRequest(this.currentUserId, this.user!.uid).subscribe({
+                next: () => {
+                    this.translate.get('friends.requestSent', {name: this.user?.displayName}).subscribe(msg =>
+                        this.snackbar.success(msg)
+                    );
+                    this.isFriend = true;
+                    this.showConfirmModal = false;
+                    this.selectedUserToModify = null;
+                },
+                error: () => {
+                    this.translate.get('friends.requestFailed', {name: this.user?.displayName}).subscribe(msg =>
+                        this.snackbar.error(msg)
+                    );
+                    this.showConfirmModal = false;
+                }
+            });
+        }
+    }
+
+    openFriendConfirm(user: ProfileUser, isAlreadyFriend: boolean) {
+        this.selectedUserToModify = user;
+        this.isFriend = isAlreadyFriend;
+        this.showConfirmModal = true;
+    }
+
+    get isCurrentUserFriend(): boolean {
+        return !!this.user?.friendList?.some(f => f.uid === this.currentUserId);
     }
 
 }

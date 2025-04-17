@@ -43,6 +43,12 @@ const routes: Routes = [
         ...canActivate(redirectUnauthorizedToLogin),
     },
     {
+        path: 'profile/:uid',
+        component: ProfileComponent,
+        ...canActivate(redirectUnauthorizedToLogin),
+    },
+
+    {
         path: "game",
         component: GameComponent,
     },

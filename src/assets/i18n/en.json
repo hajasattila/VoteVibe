@@ -1,5 +1,9 @@
 {
   "profile": {
+    "requestPending": "Request sent",
+    "addFriend": "Add Friend",
+    "removeFriend": "Remove Friend",
+    "userData": "User profile data",
     "noFriends": "The list is empty. 🥲",
     "polls": "Polls",
     "games": "Games",
@@ -374,6 +378,9 @@
     }
   },
   "friends": {
+    "confirmAdd": "Are you sure you want to add this friend?",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
     "inviteSuccess": "Succesfull invitation!",
     "confirmRemove": "Are you sure you want to remove {{name}} from your friends?",
     "confirmYes": "Yes",

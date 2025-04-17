@@ -170,19 +170,25 @@ export class HomeComponent implements OnInit {
     }
 
 
-    sendFriendRequest(user: ProfileUser): void {
-        if (!this.currentUserUid || !user.uid) return;
+    // sendFriendRequest(user: ProfileUser): void {
+    //     if (!this.currentUserUid || !user.uid) return;
+    //
+    //     this.userService.sendFriendRequest(this.currentUserUid, user.uid).subscribe({
+    //         next: () => {
+    //             this.translate.get('search.successRequestSent', {name: user.displayName || 'felhasználó'})
+    //                 .subscribe(msg => this.snackbar.success(msg));
+    //         },
+    //         error: () => {
+    //             this.translate.get('search.errorSendFailed', {name: user.displayName || 'felhasználó'})
+    //                 .subscribe(msg => this.snackbar.error(msg));
+    //         }
+    //     });
+    // }
 
-        this.userService.sendFriendRequest(this.currentUserUid, user.uid).subscribe({
-            next: () => {
-                this.translate.get('search.successRequestSent', {name: user.displayName || 'felhasználó'})
-                    .subscribe(msg => this.snackbar.success(msg));
-            },
-            error: () => {
-                this.translate.get('search.errorSendFailed', {name: user.displayName || 'felhasználó'})
-                    .subscribe(msg => this.snackbar.error(msg));
-            }
-        });
+    goToProfile(uid: string): void {
+        if (uid && uid !== this.currentUserUid) {
+            this.router.navigate([`/profile/${uid}`]);
+        }
     }
 
 
