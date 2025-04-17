@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {CanActivate, ActivatedRouteSnapshot, UrlTree, Router} from "@angular/router";
+import { ActivatedRouteSnapshot, UrlTree, Router } from "@angular/router";
 import {AuthService} from "../auth-service/auth.service";
 import {DatabaseService} from "../database-service/database.service";
 import {take} from "rxjs/operators";
@@ -7,7 +7,7 @@ import {take} from "rxjs/operators";
 @Injectable({
     providedIn: "root",
 })
-export class RoomMemberGuard implements CanActivate {
+export class RoomMemberGuard  {
     constructor(
         private authService: AuthService,
         private dbService: DatabaseService,
