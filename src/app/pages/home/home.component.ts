@@ -408,8 +408,6 @@ export class HomeComponent implements OnInit {
 
         if (roomHash === cachedHash && cachedCharts) return;
 
-        const isDark = document.documentElement.classList.contains('dark');
-
         this.lastRoomCharts = sortedRooms.map(room => {
             const isDark = document.documentElement.classList.contains('dark');
             const pollResults = room.pollResults!;

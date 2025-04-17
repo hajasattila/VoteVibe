@@ -148,8 +148,7 @@ export class StatsComponent implements OnInit, AfterViewInit {
                 this.voterDetails = Object.entries(room.pollResults)
                     .filter(([_, userVotes]) => userVotes && typeof userVotes === 'object')
                     .map(([uid, userVotes]) => {
-                        const display = room.members?.find(m => m.uid === uid)?.displayName || uid;
-                        userMap[uid] = display;
+                        userMap[uid] = room.members?.find(m => m.uid === uid)?.displayName || uid;
                         return { uid, votes: userVotes };
                     });
 
@@ -365,9 +364,7 @@ export class StatsComponent implements OnInit, AfterViewInit {
 
 
     isImage(url: string): boolean {
-        return typeof url === 'string' &&
-            (/^https?:\/\/.+\.(jpg|jpeg|png|webp|gif|bmp|svg)(\?.*)?$/i.test(url) ||
-                url.startsWith('https://firebasestorage.googleapis.com'));
+        return (/^https?:\/\/.+\.(jpg|jpeg|png|webp|gif|bmp|svg)(\?.*)?$/i.test(url) || url.startsWith('https://firebasestorage.googleapis.com'));
     }
 
     hasImageOptions(): boolean {

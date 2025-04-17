@@ -234,6 +234,7 @@
                             [src]="imagePreviewUrl"
                             class="max-w-full max-h-[400px] rounded shadow-md cursor-pointer transition duration-300 hover:opacity-50 hover:shadow-lg"
                             (click)="openImageModal(imagePreviewUrl)"
+                            alt="ImagePreview"
                     />
 
 
@@ -254,6 +255,8 @@
                             [src]="opt"
                             class="w-full aspect-square object-cover rounded shadow cursor-pointer transition duration-300 hover:opacity-50 hover:shadow-lg"
                             (click)="openImageModal(opt)"
+                            alt="ImagePreview"
+
                     />
 
                 </ng-container>

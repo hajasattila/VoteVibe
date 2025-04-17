@@ -33,8 +33,9 @@ export class ImageCompressorService {
                                     lastModified: Date.now(),
                                 });
 
-                                const originalSizeKB = (file.size / 1024).toFixed(2);
-                                const compressedSizeKB = (compressedFile.size / 1024).toFixed(2);
+                                //Needed only for test porpuses
+                                // const originalSizeKB = (file.size / 1024).toFixed(2);
+                                // const compressedSizeKB = (compressedFile.size / 1024).toFixed(2);
                                 // console.log(`Tömörítés: ${file.name} - ${originalSizeKB} KB → ${compressedSizeKB} KB`);
 
                                 resolve(compressedFile);

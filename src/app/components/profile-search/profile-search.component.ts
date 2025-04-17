@@ -7,7 +7,6 @@ import {AuthService} from "../../../api/services/auth-service/auth.service";
 import {ProfileUser} from "../../../api/models/user.model";
 import {TranslateService} from "@ngx-translate/core";
 import {SnackbarService} from "../../../api/services/snackbar-service/snackbar-service.service";
-import {DatabaseService} from "../../../api/services/database-service/database.service";
 import {Router} from "@angular/router";
 
 @Component({
@@ -93,15 +92,15 @@ export class ProfileSearchComponent implements OnInit {
 
 
     isAlreadyFriendOrRequested(uid: string): boolean {
-        const alreadyRequested = !!this.currentUser?.sentFriendRequests?.includes(uid);
-        return alreadyRequested;
+        return !!this.currentUser?.sentFriendRequests?.includes(uid);
     }
     onNavigateToProfile(user: ProfileUser) {
         if (!user.uid || user.uid === this.currentUserId) return;
         this.router.navigate([`/profile/${user.uid}`]);
     }
+
     sendFriendRequest(user: ProfileUser, event: Event) {
-        event.stopPropagation(); // Ne triggerelje a navigációt is
+        event.stopPropagation();
 
         if (!user.uid || user.uid === this.currentUserId || this.isAlreadyFriendOrRequested(user.uid)) return;
 

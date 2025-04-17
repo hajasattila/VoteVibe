@@ -210,12 +210,11 @@ export class TextPollComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
 
-            const otherImages = this.allOptions.filter(opt =>
+            this.preloadImageUrls = this.allOptions.filter(opt =>
                 opt !== this.leftOption &&
                 opt !== this.rightOption &&
                 opt.startsWith('http')
             );
-            this.preloadImageUrls = otherImages;
             setTimeout(() => {
                 this.cacheService.preloadImages(this.preloadImageUrls);
             }, 0);
@@ -424,7 +423,6 @@ export class TextPollComponent implements OnInit, AfterViewInit, OnDestroy {
         const chosenOption = chosenSide === 'left' ? this.leftOption! : this.rightOption!;
 
         if (Math.abs(deltaX) > swipeThreshold) {
-            const direction = deltaX > 0 ? 'right' : 'left';
             this.selectedSide = chosenSide;
             this.voteCounts[chosenOption] = (this.voteCounts[chosenOption] || 0) + 1;
 
