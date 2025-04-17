@@ -47,7 +47,7 @@
                         {{ user?.displayName }}
                     </h1>
 
-                    <div class="flex justify-center lg:justify-start gap-8 mt-4 text-indigo-800">
+                    <div class="flex justify-center lg:justify-start gap-8 my-4 text-indigo-800">
                         <div class="flex flex-col items-center">
                             <span class="material-icons-outlined text-2xl text-indigo-600 mb-1">how_to_vote</span>
                             <div class="text-xl font-bold dark:text-white">{{ createdRoomsCount || 0 }}</div>
@@ -68,7 +68,7 @@
                     </div>
                 </div>
 
-                <div *ngIf="readonlyProfile && user?.uid !== currentUserId" class="flex flex-row gap-3 justify-center my-4 lg:mt-0 z-50 lg:pt-24">
+                <div *ngIf="readonlyProfile && user?.uid !== currentUserId" class="flex flex-row gap-3 justify-center mb-4 lg:mt-0 z-50 lg:pt-24">
                     <button
                             *ngIf="!isCurrentUserFriend && !isFriendRequestSent"
                             class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg flex items-center gap-2 shadow transition"
