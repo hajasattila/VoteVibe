@@ -264,7 +264,7 @@ export class RoomDetailsComponent implements OnInit, OnDestroy {
     }
 
     goBack(): void {
-        this.location.back();
+        this.router.navigate(['/home']);
     }
 
     private loadCurrentUser(): void {

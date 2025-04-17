@@ -408,6 +408,44 @@ html.dark .apexcharts-menu {
   border-color: #374151 !important;
 }
 
+.custom-snackbar {
+  font-weight: 500;
+  color: white;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+  0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(6px);
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  &.snackbar-success {
+    background-color: #4f46e5;
+  }
+
+  &.snackbar-error {
+    background-color: #dc2626;
+  }
+
+  &.snackbar-info {
+    background-color: #2563eb;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &.snackbar-success {
+      background-color: #6366f1;
+    }
+
+    &.snackbar-error {
+      background-color: #ef4444;
+    }
+
+    &.snackbar-info {
+      background-color: #3b82f6;
+    }
+  }
+}
+
+
 
 
 

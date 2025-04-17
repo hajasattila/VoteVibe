@@ -144,9 +144,8 @@
                     [title]="chartOptions.title"
             ></apx-chart>
 
-
             <!-- 🏆 PÓDIUM -->
-                    <div class="relative mt-12 z-10 overflow-hidden min-h-[250px]">
+            <div class="relative mt-12 z-10 overflow-hidden min-h-[250px]">
                 <h3 class="text-2xl font-bold text-center text-indigo-600 dark:text-indigo-300 mb-4">
                     🏆 Top 3 – {{ 'room.statsChart.podiumTitle' | translate }}
                 </h3>
@@ -157,31 +156,34 @@
                 </div>
 
                 <div class="flex justify-center items-end gap-6 mt-10 animate-fade-in">
+
                     <!-- 2. hely -->
-                    <div class="flex flex-col items-center">
-                        <div class="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">{{ top3[1]?.label }}</div>
+                    <div class="flex flex-col items-center" *ngIf="top3[1]">
+                        <div class="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">{{ top3[1].label }}</div>
                         <div class="bg-slate-400 dark:bg-slate-600 w-20 h-24 rounded-t-md flex items-center justify-center text-white text-lg font-bold">
                             2
                         </div>
                     </div>
 
                     <!-- 1. hely -->
-                    <div class="flex flex-col items-center">
-                        <div class="text-base font-semibold text-yellow-600 dark:text-yellow-400 mb-2">{{ top3[0]?.label }}</div>
+                    <div class="flex flex-col items-center" *ngIf="top3[0]">
+                        <div class="text-base font-semibold text-yellow-600 dark:text-yellow-400 mb-2">{{ top3[0].label }}</div>
                         <div class="bg-yellow-400 dark:bg-yellow-600 w-24 h-32 rounded-t-md flex items-center justify-center text-white text-xl font-bold shadow-lg">
                             1
                         </div>
                     </div>
 
                     <!-- 3. hely -->
-                    <div class="flex flex-col items-center" *ngIf="top3[2]?.label">
-                        <div class="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">{{ top3[2]?.label }}</div>
+                    <div class="flex flex-col items-center" *ngIf="top3[2]">
+                        <div class="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">{{ top3[2].label }}</div>
                         <div class="bg-orange-400 dark:bg-orange-600 w-20 h-20 rounded-t-md flex items-center justify-center text-white text-lg font-bold">
                             3
                         </div>
                     </div>
-                    <div class="flex flex-col items-center" *ngIf="!top3[2]?.label">
-                        <div class="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">{{ top3[2]?.label }}</div>
+
+                    <!-- üres hely tartó, ha 3. nincs -->
+                    <div class="flex flex-col items-center" *ngIf="!top3[2]">
+                        <div class="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">&nbsp;</div>
                         <div class="bg-transparent dark:bg-transparent w-20 h-20 rounded-t-md flex items-center justify-center text-white text-lg font-bold">
                         </div>
                     </div>
