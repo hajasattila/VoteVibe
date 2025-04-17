@@ -213,7 +213,7 @@ export class FriendListComponent implements OnInit, OnChanges, OnDestroy {
         this.userService.removeFriend(this.selectedFriend).subscribe({
             next: () => {
                 this.friends = this.friends.filter(f => f.uid !== this.selectedFriend?.uid);
-                this.cache.setFriends(this.currentUserId!, this.friends); // frissítés a cache-ben
+                this.cache.setFriends(this.currentUserId!, this.friends);
                 this.translate.get('friends.removeSuccess', {name: this.selectedFriend?.displayName}).subscribe(msg =>
                     this.snackbar.success(msg)
                 );

@@ -93,11 +93,14 @@
                     {{ quote }}
                 </p>
 
-                <button (click)="getMotivationalQuote(true)"
-                        class="mt-4 inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded transition">
+                <button (click)="getMotivationalQuote()"
+                        [disabled]="quoteRequestsLeft <= 0"
+                        class="mt-4 inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded transition disabled:opacity-50 disabled:cursor-not-allowed">
                     <span class="material-icons-outlined">autorenew</span>
-                    {{ 'home.hero.new_quote' | translate }}
+                    {{ 'home.hero.new_quote' | translate }} ({{ quoteRequestsLeft }}/3)
                 </button>
+
+
 
             </div>
 

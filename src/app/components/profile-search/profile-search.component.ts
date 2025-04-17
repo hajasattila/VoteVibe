@@ -115,7 +115,7 @@ export class ProfileSearchComponent implements OnInit {
                     this.translate.get('search.successRequestSent', { name: user.displayName }).subscribe(msg =>
                         this.snackbar.success(msg)
                     );
-                    this.currentUser?.sentFriendRequests?.push(user.uid); // opcionális frissítés
+                    this.currentUser?.sentFriendRequests?.push(user.uid);
                 },
                 error: () => {
                     this.translate.get('search.errorSendFailed', { name: user.displayName }).subscribe(msg =>

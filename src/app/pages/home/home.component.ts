@@ -62,8 +62,15 @@ export class HomeComponent implements OnInit {
 
     isStatsLoading: boolean = true;
 
+    quoteRequestsLeft: number = 3;
+    readonly MAX_QUOTES_PER_DAY = 3;
+    readonly QUOTE_KEY = 'daily_quote_count';
+    readonly QUOTE_TIME_KEY = 'daily_quote_time';
 
     ngOnInit(): void {
+        this.loadQuoteLimit();
+        this.quote = localStorage.getItem('daily_quote');
+
         this.loadLastRoomStats();
         this.loadFriendListWithCache();
 
@@ -81,7 +88,6 @@ export class HomeComponent implements OnInit {
         });
 
         this.loadLatestUsers();
-        this.getMotivationalQuote();
 
         const cachedName = localStorage.getItem('nickname');
         if (cachedName) {
@@ -192,41 +198,40 @@ export class HomeComponent implements OnInit {
     }
 
 
-    getMotivationalQuote(forceRefresh = false): void {
-        const now = new Date().getTime();
+    getMotivationalQuote(): void {
+        const now = Date.now();
         const oneDay = 24 * 60 * 60 * 1000;
+        const quoteTimestamp = Number(localStorage.getItem(this.QUOTE_TIME_KEY));
+        const quoteCount = Number(localStorage.getItem(this.QUOTE_KEY)) || 0;
 
-        if (!forceRefresh) {
-            const cachedQuote = localStorage.getItem('daily_quote');
-            const cachedTimestamp = localStorage.getItem('daily_quote_time');
-
-            if (cachedQuote && cachedTimestamp && now - Number(cachedTimestamp) < oneDay) {
-                this.quote = cachedQuote;
-                return;
-            }
-        } else {
-            localStorage.removeItem('daily_quote');
-            localStorage.removeItem('daily_quote_time');
+        if (quoteTimestamp && now - quoteTimestamp > oneDay) {
+            localStorage.setItem(this.QUOTE_TIME_KEY, now.toString());
+            localStorage.setItem(this.QUOTE_KEY, '0');
+            this.quoteRequestsLeft = this.MAX_QUOTES_PER_DAY;
         }
 
-        const headers = {
-            'X-Api-Key': environment.quotesApiKey
-        };
+        if (this.quoteRequestsLeft <= 0) {
+            this.translate.get('home.hero.limitReached').subscribe(msg => this.snackbar.error(msg));
+            return;
+        }
 
-        this.http.get<any>('https://api.api-ninjas.com/v1/quotes', {headers})
-            .subscribe({
-                next: (data) => {
-                    if (data.length > 0) {
-                        this.quote = `"${data[0].quote}" — ${data[0].author}`;
-                        localStorage.setItem('daily_quote', this.quote);
-                        localStorage.setItem('daily_quote_time', now.toString());
-                    }
-                },
-                error: (err) => {
-                    console.error(err);
-                    this.quote = null;
+        const headers = { 'X-Api-Key': environment.quotesApiKey };
+
+        this.http.get<any>('https://api.api-ninjas.com/v1/quotes', { headers }).subscribe({
+            next: (data) => {
+                if (data.length > 0) {
+                    this.quote = `"${data[0].quote}" — ${data[0].author}`;
+                    localStorage.setItem('daily_quote', this.quote);
+
+                    const newCount = quoteCount + 1;
+                    localStorage.setItem(this.QUOTE_KEY, newCount.toString());
+                    this.quoteRequestsLeft = this.MAX_QUOTES_PER_DAY - newCount;
                 }
-            });
+            },
+            error: () => {
+                this.quote = null;
+            }
+        });
     }
 
     logout() {
@@ -481,8 +486,23 @@ export class HomeComponent implements OnInit {
         sessionStorage.setItem('lastRoomCharts', JSON.stringify(this.lastRoomCharts));
         this.isStatsLoading = false;
     }
+
     navigateToRoomByCode(code: string): void {
         this.router.navigate(['/room', code, 'stats']);
+    }
+    private loadQuoteLimit(): void {
+        const now = Date.now();
+        const quoteTimestamp = Number(localStorage.getItem(this.QUOTE_TIME_KEY));
+        const quoteCount = Number(localStorage.getItem(this.QUOTE_KEY)) || 0;
+        const oneDay = 24 * 60 * 60 * 1000;
+
+        if (!quoteTimestamp || now - quoteTimestamp > oneDay) {
+            this.quoteRequestsLeft = this.MAX_QUOTES_PER_DAY;
+            localStorage.setItem(this.QUOTE_TIME_KEY, now.toString());
+            localStorage.setItem(this.QUOTE_KEY, '0');
+        } else {
+            this.quoteRequestsLeft = this.MAX_QUOTES_PER_DAY - quoteCount;
+        }
     }
 
 
